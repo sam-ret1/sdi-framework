@@ -1,0 +1,197 @@
+# Stop-and-Review Patterns
+
+Implementation rounds aren't straight lines. Each phase has natural checkpoints where you deliver partial work and wait for review before continuing.
+
+## Why checkpoints exist
+
+- **Catching drift cheaply.** Errors compound; catching them at checkpoint N is 10x cheaper than catching at checkpoint N+3.
+- **Keeping the user in the loop.** A long silent implementation arrives as one big thing the user can't easily review. Small, regular deliveries = continuous review.
+- **Preserving your own context.** Stopping lets you receive corrections before you've built more code that needs reworking.
+
+## Gates: pass or fail, no in-between
+
+Each checkpoint has a **gate checklist** — a binary list of items that must all be ✓ before the round closes and you proceed to the next checkpoint. Gates are not aspirational. If a gate is unchecked, the checkpoint isn't complete; do not silently move on.
+
+If you're tempted to skip a gate "because it's just one item", that's exactly when the discipline matters. Either complete the gate, or surface the blocker explicitly to the user and ask for an explicit waiver.
+
+## Standard checkpoints per phase
+
+These are typical — adapt to the specific phase.
+
+### Checkpoint 1: Foundation (after audit)
+
+**Deliver:**
+- Audit report of plan vs repo (see `audit-first-protocol.md`).
+- Proposed schema / migration / dependencies (or scaffolding for fresh repos; provider wrappers + initial prompts for AI agents; trigger handlers + first integration wrapper for workflows).
+- Any revision notes to the plan based on audit findings.
+
+**Do not:**
+- Write any endpoint, route, business logic, or UI code.
+- Run package-install commands before approval.
+
+**Gates (all ✓ before next checkpoint):**
+- [ ] Audit report posted in canonical format
+- [ ] All Blockers from the audit are either resolved or explicitly waived by the user
+- [ ] All Open Questions from the audit are answered
+- [ ] Each plan-vs-repo Divergence has a corresponding `DECISIONS.md` entry
+- [ ] Plan has a revision note (`rN`) summarizing audit changes (if any landed)
+- [ ] User has given explicit go ("yes", "go", "proceed") — silence is **not** consent
+- [ ] Today's `memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
+
+**Stop phrase:**
+> "Stopping here and waiting for your review before proceeding to [next deliverable]."
+
+---
+
+### Checkpoint 2: Core domain logic (pure functions, services, types)
+
+**Deliver:**
+- Pure functions (mapping, validation, hashing/signing, normalization, state transitions, prompt rendering, etc.).
+- Types / interfaces / schemas for the domain.
+- Unit tests for everything above.
+
+**Do not:**
+- Write route handlers, API endpoints, or UI yet.
+
+**Gates:**
+- [ ] All pure functions in scope for this checkpoint are implemented
+- [ ] Unit tests cover the edge cases called out in the plan (count vs plan list)
+- [ ] All unit tests pass (real count from the runner, not approximation)
+- [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
+- [ ] Round report posted in canonical format
+- [ ] User has given explicit go to move into integrations
+- [ ] Today's `memory/YYYY-MM-DD.md` entry summarizes the round
+
+---
+
+### Checkpoint 3: Wire up integrations
+
+**Deliver:**
+- Route handlers / API endpoints / background workers / pipeline stages / agent loop wiring.
+- Integration tests proving end-to-end behavior against local services (DB, job runner, LLM provider in mock mode, etc.).
+- Observability hooks (Sentry, OTel, structured logs).
+
+**Do not:**
+- Build UI yet (if applicable).
+
+**Gates:**
+- [ ] All endpoints/handlers/workers in scope for this checkpoint exist and respond
+- [ ] Integration tests cover the canonical happy path + at least one failure mode per surface
+- [ ] All integration tests pass against a real local instance (not mocks-only)
+- [ ] Observability is wired (logs, metrics, tracing) per `ARCHITECTURE.md` requirements
+- [ ] Manual smoke command attempted (curl/httpie/CLI) and result documented
+- [ ] Round report posted
+- [ ] User has given explicit go
+
+---
+
+### Checkpoint 4: UI (only if the phase includes it)
+
+**Deliver:**
+- Pages, screens, forms, tables, dialogs, navigation.
+- Components used (Radix wrappers, shadcn, framework-native primitives, or equivalent per `DESIGN_SYSTEM.md`).
+- State management, form validation, error handling, loading states.
+
+**Do not:**
+- Defer accessibility "for later" — empty/loading/error states and basic a11y are part of this checkpoint.
+
+**Gates:**
+- [ ] Every page/screen in scope is reachable from navigation
+- [ ] Forms validate per the schemas defined in Checkpoint 2
+- [ ] Loading, empty, and error states exist for each data-driven surface
+- [ ] Manual walkthrough of the primary flow completed; screenshots in the round report
+- [ ] No console errors or accessibility warnings on the primary flow
+- [ ] Round report posted
+- [ ] User has given explicit go
+
+---
+
+### Checkpoint 5: Housekeeping (end of phase)
+
+**Deliver:**
+- Acceptance criteria mapped to evidence (test file + line, or smoke step).
+- Updated `PROJECT_STRUCTURE.md` if layout changed.
+- Updated `DESIGN_SYSTEM.md` if tokens or components drifted (UI types only).
+- Updated `AGENTS.md` with newly discovered project conventions.
+- `DECISIONS.md` entries complete (all decisions taken during the phase recorded).
+- Manual smoke test run and results documented.
+- Lint + typecheck + test suites green.
+
+**Gates:**
+- [ ] Every acceptance criterion in the current `IMPLEMENTATION_PLAN_*.md` §Acceptance Criteria has linked evidence
+- [ ] `PROJECT_STRUCTURE.md` reflects the actual repo (no documented paths missing in code, no code paths missing in doc)
+- [ ] `AGENTS.md` updates proposed and approved by user
+- [ ] `DESIGN_SYSTEM.md` audit complete (UI types only) — tokens documented match tokens in code
+- [ ] `DECISIONS.md` end-of-phase sweep done — no orphan/contradictory entries
+- [ ] All revision notes on the plan reference resolved changes
+- [ ] Lint passes
+- [ ] Typecheck passes
+- [ ] All unit + integration test suites pass
+- [ ] Manual smoke test of the main acceptance criterion completed live and documented
+- [ ] Phase tracker in `AGENTS.md` updated to ✓ with date
+- [ ] Today's `memory/YYYY-MM-DD.md` entry marks the phase as closed
+
+---
+
+## Not every phase has 5 checkpoints
+
+Simple phases may have 2–3. Complex phases (lots of integration, many UI surfaces) may have 5–6. Use judgment, but **always include Checkpoint 1 (Foundation) and Checkpoint 5 (Housekeeping)** — those are non-negotiable.
+
+## What to do at each stop
+
+1. **Deliver the round report.** Same format every time. Read `round-report-template.md`.
+2. **Walk through the gates.** Confirm each ✓ in the report. If any are ✗, surface them and propose remediation, do not pretend the checkpoint is complete.
+3. **Explicitly say you're stopping.** "Stopping here for review. Next proposed: [X]."
+4. **Do not proceed until the user gives go.** Silence is not consent.
+5. **Answer questions.** If the user raises concerns, address them before moving forward.
+
+## How to know it's time to stop
+
+Some common natural stopping points within a round:
+
+- You've built the schema + migration. Stop.
+- You've added 2–4 closely related files (service layer, types, schemas). Stop — these are often a natural "foundation + service" unit.
+- You've built pure logic + tests for one module. Stop — UI that consumes it is a separate concern.
+- You've finished an API surface (all routes for one resource). Stop — UI + integration tests are logical next units.
+- You've done end-of-phase housekeeping. Stop — phase closure is itself a checkpoint.
+
+If you catch yourself thinking "might as well also do X while I'm at it", stop — that's scope creep. Put X in the round report as "next round" and let the user decide.
+
+## What to include in the stop message
+
+- **Specific deliverable** you finished.
+- **Gates status**: every gate item with ✓ or ✗.
+- **Test status**: counts and pass/fail.
+- **Observations**: anything noteworthy (a design choice, a small bug, a follow-up).
+- **Next suggested deliverable** with rationale (why this, why now).
+- **Explicit "waiting for review"** — gives the user the cue to engage.
+
+## What NOT to do
+
+- **Don't plow through multiple checkpoints.** Even if you feel confident, stop. The value of checkpoints is independent of your confidence.
+- **Don't fake gate ticks.** A ✓ that doesn't reflect reality is worse than an ✗ — it removes the user's ability to catch a problem. If you're tempted to mark something done that isn't, don't.
+- **Don't over-ask.** If the next step is obvious and low-risk, say so and propose it. Don't phrase it as a vague "what now?" — that wastes the user's time.
+- **Don't skip the stop message.** Ending a round without explicit handoff makes reviews confusing.
+
+## When the user pushes back at a checkpoint
+
+The user might say:
+- "Can you also add [X] before the next round?"
+- "Please revise [Y] first."
+- "The choice in [Z] isn't what I expected — why?"
+- "Gate item N isn't actually true — show me the evidence."
+
+Respond directly. Don't defend out of inertia. If they're right, acknowledge and adjust. If they're mistaken, say so with reasoning. If there's a real question, answer it.
+
+Then, once resolved, re-propose the next deliverable and proceed.
+
+## Emergency deviation
+
+Occasionally something urgent needs to override the normal checkpoint pattern — a security bug, a data loss risk, a breakage of previously-working functionality. In that case:
+
+1. Flag it loudly at the top of the response.
+2. Propose the fix.
+3. Recommend whether to pause the current phase to apply it, or to roll into the next round.
+4. Even in emergency, log the deviation in today's `memory/YYYY-MM-DD.md` so it isn't lost.
+
+Don't silently do security or correctness work without surfacing it.

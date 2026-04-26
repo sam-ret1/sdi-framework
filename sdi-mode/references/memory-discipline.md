@@ -1,0 +1,154 @@
+# Memory Discipline
+
+Spec-driven projects accumulate two distinct kinds of knowledge during implementation:
+
+1. **Atemporal decisions** — non-obvious choices that hold until something changes them (library X over Y, deferred feature, accepted trade-off). These live in `DECISIONS.md`, append-only, numbered.
+
+2. **Datable session memory** — what was actually worked on, when, blockers active, next step, open questions still pending. These live in dated files under `memory/`, indexed by `MEMORY.md`.
+
+Mixing both into a single `DECISIONS.md` is a common failure pattern: the file becomes 80% "what we were doing" and 20% real decisions, and neither is searchable. Splitting them keeps each file useful.
+
+## File layout
+
+```
+docs/
+├── DECISIONS.md              # atemporal, append-only, numbered
+├── MEMORY.md                 # index — one line per dated entry
+└── memory/
+    ├── 2026-04-25.md         # one file per working day
+    ├── 2026-04-26.md
+    └── ...
+```
+
+`memory/` and `MEMORY.md` live alongside other docs under `docs/`. If `DECISIONS.md` is at the repo root in your project, keep `MEMORY.md` and `memory/` next to it for symmetry.
+
+## What goes in `DECISIONS.md`
+
+(Already covered in [`decisions-log-format.md`](./decisions-log-format.md). Brief reminder:)
+
+- Choosing one library / framework / service over another with non-obvious reasons.
+- Deferring a feature to a later phase.
+- Accepting a trade-off.
+- Resolving a plan-vs-repo divergence.
+- Deviating from a convention.
+
+**Atemporal.** A DECISIONS entry stands until explicitly superseded by a later entry. It does not date with time alone.
+
+## What goes in `memory/YYYY-MM-DD.md`
+
+A daily memory file captures the **state** of work on that day:
+
+- **Date and active context** — phase, current round, last completed checkpoint
+- **What was worked on** — round reports posted, files touched, commits/PRs (link if useful)
+- **Blockers** — anything currently preventing progress, with the question or action needed to unblock
+- **Open questions for the user** — questions waiting for an answer
+- **Next planned step** — what you intend to do next
+- **Notable observations** — things you noticed but didn't act on (potential follow-ups, suspected bugs, code smells)
+
+**Datable.** A memory entry is a snapshot of *that moment*. It does not get edited later; subsequent days get their own files.
+
+### Format
+
+```markdown
+# Memory — 2026-04-25
+
+**Phase:** 1 — Sources & ingestion
+**Current round:** Round B (Sources CRUD, API only)
+**Last checkpoint passed:** Checkpoint 2 (Core domain logic)
+
+## Worked on today
+
+- Round B opened: `src/lib/sources/service.ts`, `validation.ts`, route handlers under `src/app/api/sources/`.
+- 25 unit tests + 23 integration tests added; all passing.
+- DECISIONS entries #28, #29, #30, #31 written.
+
+## Blockers
+
+(none active)
+
+## Open questions for user
+
+1. `test-webhook` standalone vs sharing `defaultIngestDeps` — recommended standalone, awaiting confirmation.
+
+## Next planned step
+
+Checkpoint 3 review, then propose Round C (UI for Sources + Leads list).
+
+## Notable observations
+
+- `AGENTS.md` lacks the `requireRoleApi()` vs `requireRole()` distinction — propose adding to project-specific conventions during housekeeping.
+- Smoke test against [local DB service] uncovered a race in dedup that's still benign at MVP scale; flag in DECISIONS if it becomes acute.
+```
+
+Length: 30–80 lines per day. Longer means you're putting decisions in here that should be in DECISIONS.md.
+
+## What goes in `MEMORY.md`
+
+A flat **index** of dated entries. One line per file, ~150 chars max. Newest at the top.
+
+```markdown
+# MEMORY
+
+Index of `memory/` daily entries. Newest first.
+
+- [2026-04-26](memory/2026-04-26.md) — Round B closed; Round C UI started; pricing copy still pending from PO
+- [2026-04-25](memory/2026-04-25.md) — Round B opened, Sources CRUD + tests; DECISIONS #28-#31 written
+- [2026-04-24](memory/2026-04-24.md) — Phase 1 audit + revision note r2; Checkpoint 1 passed
+- [2026-04-23](memory/2026-04-23.md) — Phase 0 scaffolding closed; AGENTS.md initial fill-in
+```
+
+`MEMORY.md` itself stays under ~200 lines (with truncation when older entries roll off into archives if needed). It's a finder, not the full content.
+
+## When to write a memory entry
+
+Write a daily memory entry **at the end of each working session** on the project:
+
+- After a round report ships.
+- After resolving blockers that previously held you up.
+- After end-of-phase housekeeping closes a phase.
+- Before stopping for the day or handing off context.
+
+If a working day produces multiple meaningful events, **append** to that day's file (don't create a new one). The file represents the day, not a single session.
+
+If a working day produces no meaningful events (all spent on review of someone else's work, no implementation), skip the file. Empty memory is worse than no memory.
+
+## What NOT to write here
+
+- **Decisions** — those go in `DECISIONS.md`.
+- **Plan changes** — those go as revision notes in the plan itself.
+- **Detailed code commentary** — the code and round report cover that.
+- **Apologies, hedging, or self-narration** — be matter-of-fact.
+
+## Cross-references
+
+Memory entries should reference, not duplicate, other docs:
+
+- "DECISIONS #28 written" — don't paste the entry; link to it
+- "Round B report posted" — don't paste the report; reference the date or commit
+- "Checkpoint 2 passed" — don't list every gate; reference the report
+
+Memory is the **breadcrumb trail**, not the canonical record.
+
+## Reading memory
+
+When picking up a project after a break, read `MEMORY.md` index first, then the most recent 2–3 daily entries. This re-establishes context faster than re-reading the full implementation plan, because memory captures *where things actually are*, not where the plan said they'd be.
+
+When auditing whether the plan still matches reality, scan the past week of memory entries for `Notable observations` — those often surface drift that hasn't yet hit DECISIONS.md.
+
+## End-of-phase memory housekeeping
+
+At phase close, sweep memory:
+
+- Are there `Open questions` from earlier days still pending? Either answer them now or convert to a Phase N+1 carry-over note in the plan.
+- Are there `Notable observations` that became real (a suspected bug confirmed, a follow-up turned into work)? Convert to DECISIONS or to a plan revision note.
+- Should the older daily files be archived? If the `memory/` directory has more than a few months of entries, consider archiving older years into `memory/archive/YYYY/`. Only do this when it's actively cluttering navigation.
+
+## Why this discipline matters
+
+**Atemporal vs datable** is a real distinction:
+
+- A reviewer reading `DECISIONS.md` 6 months from now wants to find "why did we choose Inngest over Temporal?" — they don't want to wade through "Tuesday, started Round B."
+- A new contributor reading `MEMORY.md` wants to know what was actually happening last week, not search through 60 atemporal entries hoping the breadcrumb is in there.
+- A user resuming after vacation wants to read the most recent 3 daily entries and instantly know what's next, what's blocked, what's pending — not infer it from the union of plan + decisions.
+
+Without the split, both surfaces degrade. With it, both stay useful.

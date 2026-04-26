@@ -1,0 +1,163 @@
+# First work item (Phase 3)
+
+After Phase 2 generates the artifact bundle, Phase 3 generates the **first** `IMPLEMENTATION_PLAN_*.md` and hands the project off to `sdi-mode`. This is the moment the project transitions from "running without framework" to "running under framework".
+
+## Why this phase exists
+
+Without Phase 3, the user has artifacts but no plan to start working from. They'd have to either:
+- Run `mvp-architect` Phase E manually (works, but Phase E expects a previous IMPLEMENTATION_PLAN to read for context — there isn't one yet).
+- Improvise the first plan themselves (defeats the framework's purpose).
+
+Phase 3 bridges this. It's a specialized variant of Phase E that knows:
+- This is the first plan in the project's framework history.
+- §0 Pre-requisites references "current production state" or "current repo state", not "Phase N-1 delivered".
+- The plan is grounded in code reality, not in a previous framework-managed phase.
+
+## The single question
+
+After Phase 2 is complete, ask:
+
+```
+**Phase 3 — primeiro work item.**
+
+Que tipo de trabalho é o próximo concreto?
+(a) Feature nova
+(b) Bugfix / hotfix
+(c) Migração / refactor estruturado
+(d) Performance / observability pass
+(e) Manutenção (tarefas de upkeep, dependency updates, etc.)
+(f) Outro — descreva
+
+E qual o nome curto (slug ou Phase N) que você quer pra esse plano?
+Ex: `billing-portal-fix`, `q1-perf-pass`, `customer-x-bug`, `Phase 1`, etc.
+```
+
+The user answers. From there:
+
+## Naming logic
+
+| User's answer | Suggested name |
+|---|---|
+| (c) Migration / refactor estruturado, AND user gave a "Phase N" style name | `IMPLEMENTATION_PLAN_PHASE_N.md` |
+| (c) Migration / refactor without phase numbering | `IMPLEMENTATION_PLAN_<slug>.md` (e.g. `IMPLEMENTATION_PLAN_auth-refactor.md`) |
+| (a) (b) (d) (e) (f) | `IMPLEMENTATION_PLAN_<slug>.md` |
+
+If the project Q4 said "discrete phases planned", lean toward `PHASE_N`. Otherwise lean toward `<slug>`. When in doubt, ask the user once: *"Naming preference for this plan: `PHASE_N` or `<slug>`?"*
+
+Don't ask multiple naming questions — pick a default and confirm.
+
+## Generating the plan
+
+Use the same templates as `mvp-architect` Phase E:
+
+- Core: `sdi-framework/mvp-architect/references/core-templates/implementation-plan-template.md`
+- Type appendix: `sdi-framework/mvp-architect/references/project-types/{type}/architecture-appendix.md` (for type-specific sections)
+
+But adapt §0 (Pre-requisites):
+
+```markdown
+## 0. Pre-requisites
+
+> Source: code analysis (current repo state). This work item starts from the live production state, not from a previous framework-managed phase.
+
+- Repo at commit [SHA or branch + recent state] — convert2sdi run completed; framework artifacts in place.
+- AGENTS.md at root reflects current stack and conventions.
+- DECISIONS.md seed entries reviewed by team (or pending review).
+- [If stage = production] No incidents in flight; deploy window applicable.
+- [Other pre-reqs the user mentioned during Phase 1 Q5 if relevant.]
+```
+
+For the rest of the plan (§1 Scope, §2+ type-specific, §10 Acceptance Criteria, etc.), follow the standard template. Where the user can supply specifics, ask **focused, narrow** questions:
+
+- "What's the acceptance criterion for this work? How will you know it's done?"
+- "Which files/areas of the repo does this touch?"
+- "Any specific approach you want — or open?"
+
+Keep questions concrete. Aim for 2–4 questions max. Each accepts "não sei — proponha você" — in that case, propose with rationale and let the user accept or revise.
+
+## Plan length
+
+Target same as Phase C / Phase E plans: 400–600 lines. For a small bugfix or single-file feature, OK to be shorter (200–300). Don't pad.
+
+## Update the work tracker
+
+After the plan is generated, add the row to AGENTS.md `Work tracker`:
+
+```markdown
+| [name] | [type] | pending — plan generated | YYYY-MM-DD | docs/IMPLEMENTATION_PLAN_[name].md |
+```
+
+Update today's `memory/YYYY-MM-DD.md` to mention the plan was generated and the user is about to start work.
+
+## Handoff to sdi-mode
+
+After plan generation, instruct the user how to start. Pick the right tool:
+
+### Path A — Claude Code / Codex
+
+```
+Plano gerado em `docs/IMPLEMENTATION_PLAN_[name].md`.
+
+AGENTS.md já está no root do projeto, então a disciplina SDI carrega automaticamente em qualquer nova sessão.
+
+Para iniciar, abra Claude Code (ou Codex) na pasta do projeto e cole:
+
+> Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
+>
+> Read in this order before writing any code:
+> 1. README.md to get context.
+> 2. AGENTS.md (already loaded as context, but verify the conventions).
+> 3. docs/IMPLEMENTATION_PLAN_[name].md fully.
+> 4. docs/PROJECT_STRUCTURE.md for conventions.
+> 5. docs/ARCHITECTURE.md — at minimum the type-specific section and the critical flows.
+>
+> Then audit the plan against the actual repo state. Produce an audit report covering:
+> - Blockers
+> - Plan-repo divergences (where plan and repo disagree — the repo wins)
+> - Open questions for me
+> - Aligned / no action items
+>
+> After the audit, propose the first deliverable and stop for review.
+```
+
+### Path B — Roo Code / Kilo Code / OpenCode
+
+```
+Plano gerado em `docs/IMPLEMENTATION_PLAN_[name].md`.
+
+Antes de iniciar, configure o `sdi-mode` na sua ferramenta seguindo o adapter:
+- Roo Code: `sdi-framework/sdi-mode/adapters/roocode.md`
+- Kilo Code: `sdi-framework/sdi-mode/adapters/kilocode.md`
+- OpenCode: `sdi-framework/sdi-mode/adapters/opencode.md`
+
+Com o modo ativo, cole:
+
+> Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
+>
+> Read in this order: README.md, docs/IMPLEMENTATION_PLAN_[name].md fully, docs/PROJECT_STRUCTURE.md, docs/ARCHITECTURE.md (type-specific section + critical flows).
+>
+> You are operating under SDI mode discipline. Audit the plan against repo, produce audit report, then propose first deliverable and stop for review.
+```
+
+## Closing message
+
+After the plan is delivered and the handoff instructions are given:
+
+> "**Setup completo.** O projeto está sob o framework forge.
+>
+> Próximos work items: depois desse fechar, **não** rode convert2sdi de novo. Use Phase E da skill `mvp-architect` (basta dizer "fase X fechou — vamos planejar a próxima" ou similar). Phase E lê o estado atual do repo + DECISIONS + memory e gera o próximo plano sem refazer todo o discovery."
+
+## What NOT to do in Phase 3
+
+- ❌ **Don't generate multiple plans at once.** First work item only. The framework wants one plan per work item, generated when the previous closes (or for the first one, now).
+- ❌ **Don't skip §0 Pre-requisites.** It's how the plan grounds itself in current reality. Without it, the audit phase of sdi-mode has nothing to compare against.
+- ❌ **Don't ask the user to define the entire roadmap.** The user only needs to define this *one* work item now. Future items are scoped via Phase E later.
+- ❌ **Don't skip the handoff instructions.** Even an experienced user benefits from the explicit kickoff prompt — it activates the framework's audit-first discipline cleanly.
+
+## When the user doesn't have a "next work item" in mind
+
+Sometimes the user runs convert2sdi to "set up the framework" but doesn't have a concrete next thing to work on yet. That's fine. In that case, skip the plan generation:
+
+> "Sem work item concreto agora, não vou gerar plano. Quando você souber o que vem a seguir (feature, fix, migração, etc.), use a skill `mvp-architect` Phase E pra gerar o plano. AGENTS.md, DECISIONS, MEMORY já estão prontos pra receber o trabalho quando ele vier."
+
+Then close the convert2sdi run with a partial completion note in `memory/today.md`.
