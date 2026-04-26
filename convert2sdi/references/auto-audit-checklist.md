@@ -102,7 +102,7 @@ Add a section to the discovery report (per `auto-audit-checklist.md` §"Discover
 | `docs/decisions/` | yes (12 ADR files) | special: ADR | preserve — see Phase 1.5 |
 | `docs/PRD.md` | no | n/a | will be generated thin in Phase 2 |
 | `AGENTS.md` | no | n/a | will be generated in Phase 2 |
-| `CLAUDE.md` | no | n/a | will be generated as pointer to AGENTS.md |
+| `CLAUDE.md` | no | n/a | will be generated as `@AGENTS.md` import |
 
 ## Other docs detected
 

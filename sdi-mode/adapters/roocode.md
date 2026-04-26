@@ -12,6 +12,8 @@ This guide shows how to install `sdi-mode` as a custom mode in Roo Code so the i
 
 Roo Code custom modes can be defined in two formats — **YAML (preferred since v3.18)** or JSON. Both work; YAML is the new default in the UI and avoids the JSON-string-escape pain of multi-line `roleDefinition`. New modes created by the UI default to YAML.
 
+If your Roo setup also loads repo-level instruction files such as `AGENTS.md`, keep those for project-specific conventions and tool parity. The `.roomodes` custom mode remains the recommended SDI carrier because it gives you explicit mode selection, prompt isolation, and file-edit restrictions.
+
 Two scopes:
 
 - **Project-scoped** — `.roomodes` (YAML or JSON) at workspace root. Travels with the repo.

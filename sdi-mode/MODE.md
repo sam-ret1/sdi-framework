@@ -25,7 +25,7 @@ Four rules that, if followed, prevent 80% of implementation problems:
 
 1. **Audit the plan against the repo before coding.** The plan was written against assumptions about the repo. Reality diverges. Catch divergences before writing code against them.
 2. **Stop at explicit checkpoints within a phase.** Don't execute a whole phase end-to-end without reporting. Each phase has 2–5 natural checkpoints with binary gate checklists; every gate must pass before the round closes.
-3. **Maintain `DECISIONS.md` (atemporal) and `memory/` (datable) as you go.** Non-obvious choices → numbered DECISIONS entry. End-of-session state → today's `memory/YYYY-MM-DD.md` file. Don't conflate them.
+3. **Maintain `docs/DECISIONS.md` (atemporal) and `docs/memory/` (datable) as you go.** Non-obvious choices → numbered DECISIONS entry. End-of-session state → today's `docs/memory/YYYY-MM-DD.md` file. Don't conflate them.
 4. **Respect document precedence.** When two docs disagree, the higher-authority one wins (precedence list in `references/expected-artifacts.md`). Lower doc gets a revision note. Live repo state always wins over docs; AGENTS.md wins over planning docs; PRD wins over IMPLEMENTATION_PLAN. Don't silently pick whichever is convenient.
 
 ## The loop (one phase, start to finish)
@@ -100,7 +100,7 @@ Tests are part of the round, not a later phase. Patterns:
 
 Integration tests are where bugs that unit tests can't see surface. Favor a small number of high-value integration tests over many shallow unit tests for the same code path.
 
-### Step 6: Maintain `DECISIONS.md` and `memory/` as you go
+### Step 6: Maintain `DECISIONS.md` and `docs/memory/` as you go
 
 Two distinct surfaces, two distinct purposes. Don't conflate them.
 
@@ -115,14 +115,14 @@ Things that become DECISIONS entries:
 
 Don't over-write. A DECISIONS entry is one short paragraph, not an essay. If a decision is obvious and matches the plan, no entry needed.
 
-**`memory/YYYY-MM-DD.md` + `MEMORY.md` index** — datable session memory. One file per working day with: active phase/round, what was worked on, current blockers, open questions, planned next step, notable observations. `MEMORY.md` is a one-line-per-day index. Format in `references/memory-discipline.md`.
+**`docs/memory/YYYY-MM-DD.md` + `docs/MEMORY.md` index** — datable session memory. One file per working day with: active phase/round, what was worked on, current blockers, open questions, planned next step, notable observations. `docs/MEMORY.md` is a one-line-per-day index. Format in `references/memory-discipline.md`.
 
 Memory is the **breadcrumb trail**: where the work actually is right now, what's next, what's stuck. It's what you'd read first to resume a project after a break.
 
 Rule of thumb for which file to write to:
 - "Why did we pick this?" → DECISIONS.md
-- "What happened today / what's blocked / what's next?" → memory/YYYY-MM-DD.md
-- "Where did we leave off last week?" → read MEMORY.md index, then the recent dailies
+- "What happened today / what's blocked / what's next?" → `docs/memory/YYYY-MM-DD.md`
+- "Where did we leave off last week?" → read `docs/MEMORY.md` index, then the recent dailies
 
 Write memory entries at the end of each working session. Skip days with no meaningful events.
 
@@ -143,7 +143,7 @@ When all rounds of a phase are complete, do a final round specifically for house
 - Update `DESIGN_SYSTEM.md` if tokens/conventions drifted from the doc (only for projects with UI).
 - Update `AGENTS.md` if the phase revealed conventions worth recording for future phases (helper names, file paths, edge cases).
 - Mark divergences in `§Known divergences` of the plan as resolved.
-- Sweep `memory/`: convert any unresolved `Open questions` or `Notable observations` into DECISIONS entries or plan revision notes; mark the phase as closed in today's daily entry.
+- Sweep `docs/memory/`: convert any unresolved `Open questions` or `Notable observations` into DECISIONS entries or plan revision notes; mark the phase as closed in today's daily entry.
 - Run lint + typecheck + all test suites and report green.
 - Execute the smoke test at least once live against a local dev instance and report what happened.
 
@@ -164,7 +164,7 @@ When operating via Claude Code or Codex, `AGENTS.md` at the repo root is your pr
 
 **Your responsibility:** as you implement, propose updates to `AGENTS.md` whenever you discover a project-specific convention worth recording. Do not silently mutate the file — propose the edit, justify it, let the user approve. The discipline rules in `MODE.md` (and the AGENTS.md condensed copy) do not change.
 
-When operating via Roo Code / Kilo Code / OpenCode, the equivalent role is played by the mode metadata + the docs in `docs/`. `AGENTS.md` may still exist for parity but is not loaded automatically by those tools.
+When operating via Roo Code / Kilo Code / OpenCode, the equivalent role is usually played by the configured mode/agent metadata plus the docs in `docs/`. Keep `AGENTS.md` for project-specific conventions and cross-tool parity; Kilo and OpenCode can also read it directly, while the dedicated mode/agent remains useful for explicit selection, prompt isolation, and permissions.
 
 ## What this mode is not
 
@@ -188,5 +188,5 @@ Load these as needed:
 - `references/stop-and-review-patterns.md` — standard within-phase checkpoints, gate checklists, and report shape
 - `references/round-report-template.md` — end-of-round report format
 - `references/decisions-log-format.md` — how to write a DECISIONS.md entry
-- `references/memory-discipline.md` — daily memory under `memory/`, indexed by `MEMORY.md`
+- `references/memory-discipline.md` — daily memory under `docs/memory/`, indexed by `docs/MEMORY.md`
 - `references/revision-notes-format.md` — how to add `r2`, `r3` notes to plans when reality diverges

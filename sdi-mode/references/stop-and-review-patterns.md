@@ -36,7 +36,7 @@ These are typical — adapt to the specific phase.
 - [ ] Each plan-vs-repo Divergence has a corresponding `DECISIONS.md` entry
 - [ ] Plan has a revision note (`rN`) summarizing audit changes (if any landed)
 - [ ] User has given explicit go ("yes", "go", "proceed") — silence is **not** consent
-- [ ] Today's `memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
 
 **Stop phrase:**
 > "Stopping here and waiting for your review before proceeding to [next deliverable]."
@@ -60,7 +60,7 @@ These are typical — adapt to the specific phase.
 - [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
 - [ ] Round report posted in canonical format
 - [ ] User has given explicit go to move into integrations
-- [ ] Today's `memory/YYYY-MM-DD.md` entry summarizes the round
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry summarizes the round
 
 ---
 
@@ -129,7 +129,7 @@ These are typical — adapt to the specific phase.
 - [ ] All unit + integration test suites pass
 - [ ] Manual smoke test of the main acceptance criterion completed live and documented
 - [ ] Phase tracker in `AGENTS.md` updated to ✓ with date
-- [ ] Today's `memory/YYYY-MM-DD.md` entry marks the phase as closed
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry marks the phase as closed
 
 ---
 
@@ -192,6 +192,6 @@ Occasionally something urgent needs to override the normal checkpoint pattern �
 1. Flag it loudly at the top of the response.
 2. Propose the fix.
 3. Recommend whether to pause the current phase to apply it, or to roll into the next round.
-4. Even in emergency, log the deviation in today's `memory/YYYY-MM-DD.md` so it isn't lost.
+4. Even in emergency, log the deviation in today's `docs/memory/YYYY-MM-DD.md` so it isn't lost.
 
 Don't silently do security or correctness work without surfacing it.

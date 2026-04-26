@@ -15,7 +15,7 @@ Windsurf doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead,
 - **Workspace rules** — `.windsurf/rules/*.md` at the project root. Travels with the repo.
 - **Global rules** — `global_rules.md` managed via the "Manage memories" menu (or edited as a file in Cascade's config directory). Active across all workspaces.
 
-Conflict resolution: workspace rules take precedence over global rules. Within each scope, `always_on` rules load with highest priority and other activation modes follow.
+Conflict resolution: workspace rules take precedence over global rules. Within each scope, `always_on` rules load with highest priority and other trigger modes follow.
 
 ## Step 1 — Create the rules directory
 
@@ -32,7 +32,7 @@ Create `.windsurf/rules/sdi-mode.md`:
 ```markdown
 ---
 description: Spec-Driven Implementation discipline. Active when implementing against an IMPLEMENTATION_PLAN_*.md.
-activation: always_on
+trigger: always_on
 ---
 
 <paste the full contents of sdi-framework/sdi-mode/MODE.md here>
@@ -45,7 +45,7 @@ The body of the file is the rule content loaded into Cascade's context. Markdown
 | Field | Purpose |
 |---|---|
 | `description` | Shown in Windsurf's rules UI |
-| `activation` | `always_on` loads the rule on every chat. Other values include `model_decision` (Cascade decides based on description) and glob-based modes. |
+| `trigger` | `always_on` loads the rule on every chat. Other values include `model_decision` (Cascade decides based on description) and glob-based modes. |
 
 ## Step 3 — Activate
 
@@ -87,14 +87,14 @@ For a stricter Cascade setup, configure Cascade's auto-edit settings to require 
 
 Windsurf has a rule budget — rules that don't fit are silently dropped. If MODE.md (~190 lines) plus your other workspace/global rules exceeds the budget, Windsurf will drop something.
 
-If that becomes an issue, split MODE.md into multiple rule files and let `description` + `model_decision` activation pull in only what's relevant per chat. Possible split:
+If that becomes an issue, split MODE.md into multiple rule files and let `description` + `model_decision` triggers pull in only what's relevant per chat. Possible split:
 
 - `.windsurf/rules/sdi-core.md` (always_on) — the 4 core rules + the 8-step loop summary (~80 lines)
 - `.windsurf/rules/sdi-decisions.md` (model_decision) — DECISIONS.md format
-- `.windsurf/rules/sdi-memory.md` (model_decision) — memory/ format
+- `.windsurf/rules/sdi-memory.md` (model_decision) — docs/memory format
 - `.windsurf/rules/sdi-references.md` (model_decision) — pointers to `sdi-framework/sdi-mode/references/`
 
-For most projects, a single `.windsurf/rules/sdi-mode.md` with `activation: always_on` is enough.
+For most projects, a single `.windsurf/rules/sdi-mode.md` with `trigger: always_on` is enough.
 
 ## Tips
 

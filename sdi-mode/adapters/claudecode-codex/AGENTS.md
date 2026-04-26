@@ -1,8 +1,8 @@
 # AGENTS.md
 
-> Operating discipline for the coding agent on this project. This file is read by Claude Code (via `CLAUDE.md` pointer) and Codex (natively) at the start of every session.
+> Operating discipline for the coding agent on this project. This file is imported by Claude Code via `CLAUDE.md` and read by Codex natively at the start of every session.
 >
-> **Source of truth for the discipline:** [`sdi-framework/sdi-mode/MODE.md`](https://github.com/[your-fork]/sdi-framework/blob/main/sdi-mode/MODE.md). The condensed version below is enough for day-to-day operation; consult the source for full detail.
+> **Source of truth for the discipline:** `sdi-framework/sdi-mode/MODE.md` in your local copy of the framework. If you publish this template, replace this sentence with a link to your fork's `sdi-mode/MODE.md`. The condensed version below is enough for day-to-day operation; consult the source for full detail.
 
 ---
 
@@ -58,11 +58,11 @@ A round is a coherent chunk (not a single file). At end of each round: structure
 - UI → manual smoke at MVP scale; E2E only on request
 - AI components → prompt rendering + guardrails as tests; LLM output quality via evals (separate)
 
-### 6. Maintain DECISIONS.md and memory/ as you go
+### 6. Maintain DECISIONS.md and docs/memory/ as you go
 - **DECISIONS.md** — atemporal, append-only, numbered. One entry per non-obvious choice. Format in `sdi-framework/sdi-mode/references/decisions-log-format.md`.
-- **memory/YYYY-MM-DD.md + MEMORY.md** — datable session memory. End of each working session, write today's entry: active round, blockers, open questions, next step. Format in `sdi-framework/sdi-mode/references/memory-discipline.md`.
+- **docs/memory/YYYY-MM-DD.md + docs/MEMORY.md** — datable session memory. End of each working session, write today's entry: active round, blockers, open questions, next step. Format in `sdi-framework/sdi-mode/references/memory-discipline.md`.
 
-Rule: "why" goes in DECISIONS, "where the work is now" goes in memory.
+Rule: "why" goes in DECISIONS, "where the work is now" goes in docs/memory.
 
 ### 7. Revision notes when reality diverges
 Mid-phase plan changes get `r2`, `r3` notes at the top of the plan. Format in `sdi-framework/sdi-mode/references/revision-notes-format.md`.
@@ -123,7 +123,7 @@ When two docs say different things, the higher one wins. Lower doc gets a revisi
 8. **DESIGN_SYSTEM.md** — visual (UI types only)
 9. **README.md** — index, never source of truth
 - **DECISIONS.md** — patches/exceptions, not authority
-- **memory/*.md** — breadcrumb trail, not authority
+- **docs/memory/*.md** — breadcrumb trail, not authority
 
 Full rules in `sdi-framework/sdi-mode/references/expected-artifacts.md` §Document precedence.
 
@@ -145,7 +145,7 @@ Propose AGENTS.md updates explicitly; don't silently mutate. The user reviews an
 - `sdi-framework/sdi-mode/references/audit-first-protocol.md` — full audit format and divergence categories
 - `sdi-framework/sdi-mode/references/round-report-template.md` — round report format
 - `sdi-framework/sdi-mode/references/decisions-log-format.md` — DECISIONS.md entry format
-- `sdi-framework/sdi-mode/references/memory-discipline.md` — daily memory + MEMORY.md index
+- `sdi-framework/sdi-mode/references/memory-discipline.md` — daily memory + docs/MEMORY.md index
 - `sdi-framework/sdi-mode/references/revision-notes-format.md` — plan revision notes
 - `sdi-framework/sdi-mode/references/stop-and-review-patterns.md` — checkpoint shapes + gate checklists
 - `sdi-framework/sdi-mode/references/expected-artifacts.md` — handoff completeness criteria + document precedence

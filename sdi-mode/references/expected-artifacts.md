@@ -16,13 +16,13 @@ At minimum, you should find under `docs/` (or equivalent):
 At repo root:
 
 - `AGENTS.md` — operating discipline + project-specific stack/conventions. Required when running via Claude Code or Codex; optional but recommended for parity when running via Roo Code/Kilo Code/OpenCode (which use mode metadata as the discipline carrier).
-- `CLAUDE.md` — present when using Claude Code; should just point to AGENTS.md.
+- `CLAUDE.md` — present when using Claude Code; should import AGENTS.md with `@AGENTS.md`.
 
 Optionally:
 
 - `DESIGN_SYSTEM.md` — only if the project has a UI.
 - `DECISIONS.md` — atemporal paper trail. May or may not be populated at Phase 1 start; you'll be writing to it throughout.
-- `MEMORY.md` + `memory/YYYY-MM-DD.md` — datable session memory. May not exist at Phase 1 start; you create on first working session. See `memory-discipline.md`.
+- `docs/MEMORY.md` + `docs/memory/YYYY-MM-DD.md` — datable session memory. May not exist at Phase 1 start; you create on first working session. See `memory-discipline.md`.
 
 ## Mode discipline carrier
 
@@ -30,9 +30,9 @@ Different tools carry the SDI discipline differently:
 
 | Tool | Discipline carrier |
 |---|---|
-| Claude Code | `CLAUDE.md` → `AGENTS.md` (full SDI rules embedded) |
+| Claude Code | `CLAUDE.md` imports `AGENTS.md` with `@AGENTS.md` |
 | Codex | `AGENTS.md` (read natively) |
-| Roo Code / Kilo Code / OpenCode | Custom mode `sdi-mode` configured per `sdi-mode/adapters/{tool}.md` |
+| Roo Code / Kilo Code / OpenCode | Custom mode/agent `sdi-mode` configured per `sdi-mode/adapters/{tool}.md`; Kilo/OpenCode may also read `AGENTS.md` directly |
 
 If neither AGENTS.md nor a configured custom mode is present, the SDI discipline isn't loaded. Ask the user before proceeding.
 
@@ -79,7 +79,7 @@ If the file exists but only has the bare template (placeholders unfilled), expec
 ## Reading order for a new phase
 
 1. **AGENTS.md** (if present) — 2 minutes. Stack and project-specific conventions.
-2. **MEMORY.md** (if present) + last 2–3 daily entries from `memory/` — 3 minutes. Tells you where the work actually is right now, what's blocked, what's pending. Faster than re-reading the plan to figure out current state.
+2. **docs/MEMORY.md** (if present) + last 2–3 daily entries from `docs/memory/` — 3 minutes. Tells you where the work actually is right now, what's blocked, what's pending. Faster than re-reading the plan to figure out current state.
 3. **README.md** — 2 minutes. Gives you product and stack context.
 4. **The current `IMPLEMENTATION_PLAN_*.md`** (`PHASE_N` or `<slug>`) — top to bottom. This is your primary spec.
 5. **Relevant sections of ARCHITECTURE.md** — type-specific section + critical flows for this phase.
@@ -121,7 +121,7 @@ The hierarchy below is from highest authority (top) to lowest (bottom). When two
 | 8 | **DESIGN_SYSTEM.md** | Visual language (UI types only). Lower than the higher docs because design must serve product, not vice versa. |
 | 9 | **README.md** | Index. Never source of truth — if README disagrees with anything, README is wrong. |
 | – | **DECISIONS.md** | *Patches and exceptions*, not authority. See note below. |
-| – | **memory/YYYY-MM-DD.md** | *Breadcrumb trail*, not authority. See note below. |
+| – | **docs/memory/YYYY-MM-DD.md** | *Breadcrumb trail*, not authority. See note below. |
 
 ### DECISIONS.md is overlay, not override
 
@@ -132,7 +132,7 @@ A `DECISIONS.md` entry doesn't override a higher-level doc — it documents an e
 
 Don't hide contradictions in DECISIONS.md. If you find one, surface it.
 
-### memory/YYYY-MM-DD.md is breadcrumb, not authority
+### docs/memory/YYYY-MM-DD.md is breadcrumb, not authority
 
 Memory entries describe *what was happening on a given day*. They never override a doc. If memory says "Round B done" and PROJECT_STRUCTURE doesn't reflect Round B's new directory, PROJECT_STRUCTURE needs update — not memory.
 

@@ -15,6 +15,8 @@ OpenCode supports two ways to define a custom agent — pick one:
 1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body is the system prompt. Cleanest path for long prompts like MODE.md.
 2. **JSON config** — `opencode.json` (project) or `~/.config/opencode/opencode.json` (global), under the `agent` key. Supports `{file:...}` references so you don't need to inline MODE.md.
 
+OpenCode can also read `AGENTS.md` from the project root. Use that for project-specific conventions and tool parity; use the dedicated `sdi` agent when you want explicit agent selection, prompt isolation, and permission defaults for SDI implementation sessions.
+
 Two scopes:
 
 - **Project** — `.opencode/agents/sdi.md` or `.opencode/opencode.json`

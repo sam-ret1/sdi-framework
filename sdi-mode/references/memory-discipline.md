@@ -4,7 +4,7 @@ Spec-driven projects accumulate two distinct kinds of knowledge during implement
 
 1. **Atemporal decisions** — non-obvious choices that hold until something changes them (library X over Y, deferred feature, accepted trade-off). These live in `DECISIONS.md`, append-only, numbered.
 
-2. **Datable session memory** — what was actually worked on, when, blockers active, next step, open questions still pending. These live in dated files under `memory/`, indexed by `MEMORY.md`.
+2. **Datable session memory** — what was actually worked on, when, blockers active, next step, open questions still pending. These live in dated files under `docs/memory/`, indexed by `docs/MEMORY.md`.
 
 Mixing both into a single `DECISIONS.md` is a common failure pattern: the file becomes 80% "what we were doing" and 20% real decisions, and neither is searchable. Splitting them keeps each file useful.
 
@@ -20,7 +20,7 @@ docs/
     └── ...
 ```
 
-`memory/` and `MEMORY.md` live alongside other docs under `docs/`. If `DECISIONS.md` is at the repo root in your project, keep `MEMORY.md` and `memory/` next to it for symmetry.
+`docs/memory/` and `docs/MEMORY.md` are the default. If a project deliberately keeps canonical docs at the repo root, keep `MEMORY.md` and `memory/` next to `DECISIONS.md` for symmetry.
 
 ## What goes in `DECISIONS.md`
 
@@ -34,7 +34,7 @@ docs/
 
 **Atemporal.** A DECISIONS entry stands until explicitly superseded by a later entry. It does not date with time alone.
 
-## What goes in `memory/YYYY-MM-DD.md`
+## What goes in `docs/memory/YYYY-MM-DD.md`
 
 A daily memory file captures the **state** of work on that day:
 
@@ -82,14 +82,14 @@ Checkpoint 3 review, then propose Round C (UI for Sources + Leads list).
 
 Length: 30–80 lines per day. Longer means you're putting decisions in here that should be in DECISIONS.md.
 
-## What goes in `MEMORY.md`
+## What goes in `docs/MEMORY.md`
 
 A flat **index** of dated entries. One line per file, ~150 chars max. Newest at the top.
 
 ```markdown
 # MEMORY
 
-Index of `memory/` daily entries. Newest first.
+Index of `docs/memory/` daily entries. Newest first. Links inside `docs/MEMORY.md` are relative to `docs/`, so they point to dated files like `memory/2026-04-26.md`.
 
 - [2026-04-26](memory/2026-04-26.md) — Round B closed; Round C UI started; pricing copy still pending from PO
 - [2026-04-25](memory/2026-04-25.md) — Round B opened, Sources CRUD + tests; DECISIONS #28-#31 written
@@ -97,7 +97,7 @@ Index of `memory/` daily entries. Newest first.
 - [2026-04-23](memory/2026-04-23.md) — Phase 0 scaffolding closed; AGENTS.md initial fill-in
 ```
 
-`MEMORY.md` itself stays under ~200 lines (with truncation when older entries roll off into archives if needed). It's a finder, not the full content.
+`docs/MEMORY.md` itself stays under ~200 lines (with truncation when older entries roll off into archives if needed). It's a finder, not the full content.
 
 ## When to write a memory entry
 
@@ -131,7 +131,7 @@ Memory is the **breadcrumb trail**, not the canonical record.
 
 ## Reading memory
 
-When picking up a project after a break, read `MEMORY.md` index first, then the most recent 2–3 daily entries. This re-establishes context faster than re-reading the full implementation plan, because memory captures *where things actually are*, not where the plan said they'd be.
+When picking up a project after a break, read `docs/MEMORY.md` index first, then the most recent 2–3 daily entries. This re-establishes context faster than re-reading the full implementation plan, because memory captures *where things actually are*, not where the plan said they'd be.
 
 When auditing whether the plan still matches reality, scan the past week of memory entries for `Notable observations` — those often surface drift that hasn't yet hit DECISIONS.md.
 
@@ -141,14 +141,14 @@ At phase close, sweep memory:
 
 - Are there `Open questions` from earlier days still pending? Either answer them now or convert to a Phase N+1 carry-over note in the plan.
 - Are there `Notable observations` that became real (a suspected bug confirmed, a follow-up turned into work)? Convert to DECISIONS or to a plan revision note.
-- Should the older daily files be archived? If the `memory/` directory has more than a few months of entries, consider archiving older years into `memory/archive/YYYY/`. Only do this when it's actively cluttering navigation.
+- Should the older daily files be archived? If the `docs/memory/` directory has more than a few months of entries, consider archiving older years into `docs/memory/archive/YYYY/`. Only do this when it's actively cluttering navigation.
 
 ## Why this discipline matters
 
 **Atemporal vs datable** is a real distinction:
 
 - A reviewer reading `DECISIONS.md` 6 months from now wants to find "why did we choose Inngest over Temporal?" — they don't want to wade through "Tuesday, started Round B."
-- A new contributor reading `MEMORY.md` wants to know what was actually happening last week, not search through 60 atemporal entries hoping the breadcrumb is in there.
+- A new contributor reading `docs/MEMORY.md` wants to know what was actually happening last week, not search through 60 atemporal entries hoping the breadcrumb is in there.
 - A user resuming after vacation wants to read the most recent 3 daily entries and instantly know what's next, what's blocked, what's pending — not infer it from the union of plan + decisions.
 
 Without the split, both surfaces degrade. With it, both stay useful.

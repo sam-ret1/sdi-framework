@@ -77,7 +77,7 @@ If you want to split MODE.md across multiple rule files for clarity or to stay w
 
 - `.clinerules/sdi-discipline.md` — the 4 core rules + the 8-step loop (~80 lines)
 - `.clinerules/sdi-decisions.md` — DECISIONS.md format and rules (~40 lines)
-- `.clinerules/sdi-memory.md` — memory/ format and rules (~40 lines)
+- `.clinerules/sdi-memory.md` — docs/memory format and rules (~40 lines)
 - `.clinerules/sdi-references.md` — list of references in `sdi-framework/sdi-mode/references/` to load on demand
 
 Cline merges all of these on every request, so functionally the result is identical to one big file.

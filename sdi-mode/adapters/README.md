@@ -8,7 +8,7 @@
 
 | Tool | Adapter | Discipline carrier | Format |
 |---|---|---|---|
-| Claude Code | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` (with `CLAUDE.md` pointer) | Markdown at repo root |
+| Claude Code | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` (imported by `CLAUDE.md`) | Markdown at repo root |
 | Codex | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` | Markdown at repo root |
 | Roo Code | [`roocode.md`](roocode.md) | Custom mode in `.roomodes` | YAML (or JSON) |
 | Kilo Code | [`kilocode.md`](kilocode.md) | Agent in `.kilo/agents/sdi.md` (or `kilo.jsonc`) | Markdown + frontmatter (or JSON) |
@@ -19,22 +19,22 @@
 
 ## Which adapter to use
 
-- **Claude Code or Codex:** copy [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) and [`claudecode-codex/CLAUDE.md`](claudecode-codex/CLAUDE.md) (Claude Code only) into the root of your project. Customize the placeholders for your project's type, stack, and conventions. The discipline loads automatically every session.
+- **Claude Code or Codex:** copy [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) and [`claudecode-codex/CLAUDE.md`](claudecode-codex/CLAUDE.md) (Claude Code only) into the root of your project. `CLAUDE.md` imports `AGENTS.md`; Codex reads `AGENTS.md` natively. Customize the placeholders for your project's type, stack, and conventions. The discipline loads automatically every session.
 
 - **Roo Code:** follow [`roocode.md`](roocode.md) to register `sdi-mode` as a custom mode in `.roomodes` (YAML preferred). After setup, switch to the mode for implementation work.
 
-- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Define an agent as `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or as a JSON entry under the `agent` key in `kilo.jsonc`.
+- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Kilo can read `AGENTS.md`, but a dedicated agent in `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or `kilo.jsonc` is still useful for explicit agent selection and permissions.
 
-- **OpenCode:** follow [`opencode.md`](opencode.md). Define an agent as `.opencode/agents/sdi.md` or in `opencode.json`. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste.
+- **OpenCode:** follow [`opencode.md`](opencode.md). OpenCode can read `AGENTS.md`, but a dedicated agent as `.opencode/agents/sdi.md` or in `opencode.json` is useful for explicit agent selection, prompt isolation, and permissions. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste.
 
 - **Cursor:** follow [`cursor.md`](cursor.md). Add `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`. The rule loads on every chat — no mode picker.
 
 - **Cline:** follow [`cline.md`](cline.md). Add `.clinerules/sdi-mode.md`. Cline auto-merges all rule files in the directory; no frontmatter needed for unconditional always-on.
 
-- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `activation: always_on`.
+- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `trigger: always_on`.
 
 - **Other tools (Continue, Aider, GitHub Copilot Chat, Cody, etc.):** use Claude Code/Codex's `AGENTS.md` template as a starting point — most modern coding tools respect either `AGENTS.md` or a tool-specific `*.md` file. Quick adaptations:
-  - **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or define a custom mode with `systemMessage` in `.continue/config.yaml`.
+  - **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or reference it from `.continue/config.yaml` via `rules`.
   - **GitHub Copilot Chat** — copy MODE.md as `.github/copilot-instructions.md` (loaded automatically).
   - **Aider** — save MODE.md as `CONVENTIONS.md` and reference it via `read:` in `.aider.conf.yml`.
 
@@ -42,7 +42,7 @@
 
 **Always loaded** (system prompt / project root file):
 - The 8-step discipline
-- The 3 core rules (audit-first, stop-and-review, DECISIONS.md)
+- The 4 core rules (audit-first, stop-and-review, DECISIONS.md + memory, document precedence)
 - "What this mode is not" (not reviewer, not auto-approver, not speculation engine)
 - Tone guidelines
 

@@ -68,7 +68,7 @@ Rename the existing file to `<name>.legacy.md` (or `<name>.original.md`). Genera
 1. Skill renames `docs/ROADMAP.md` → `docs/ROADMAP.legacy.md`.
 2. Skill generates fresh `docs/ROADMAP.md` from the framework template.
 3. Skill adds a one-line note at the top of the new file: *"Predecessor preserved at [`ROADMAP.legacy.md`](./ROADMAP.legacy.md). Reference for historical context; not the source of truth."*
-4. Skill mentions the legacy file in `MEMORY.md` today's entry.
+4. Skill mentions the legacy file in today's `docs/memory/YYYY-MM-DD.md` entry.
 
 **When:**
 - Existing file is in a fundamentally incompatible format (e.g. ROADMAP that's actually a Trello CSV export, ARCHITECTURE that's a 3000-line wiki dump)
@@ -313,7 +313,7 @@ When generating in Phase 2, apply the chosen strategy:
 1. Rename existing: `git mv docs/ROADMAP.md docs/ROADMAP.legacy.md` (or filesystem rename if not git).
 2. Generate the canonical fresh version per `artifact-generation-rules.md`.
 3. Add note at top of new file: *"Predecessor preserved at [`ROADMAP.legacy.md`](./ROADMAP.legacy.md). Reference for historical context; not the source of truth."*
-4. Mention the legacy file in `memory/today.md`.
+4. Mention the legacy file in `docs/memory/YYYY-MM-DD.md`.
 
 ### For Strategy D (skip)
 
@@ -337,6 +337,6 @@ If a previous convert2sdi run already overwrote things (because the older versio
 1. `git log --diff-filter=M -- docs/PRD.md` to find pre-convert2sdi version.
 2. Restore the pre-existing version: `git show HEAD~N:docs/PRD.md > docs/PRD.md.recovered`.
 3. Re-run convert2sdi with the corrected handling.
-4. The recovery is logged in `memory/today.md` for traceability.
+4. The recovery is logged in `docs/memory/YYYY-MM-DD.md` for traceability.
 
 This is the framework's "we don't lose user content" guarantee. If anything goes wrong, git is the safety net.

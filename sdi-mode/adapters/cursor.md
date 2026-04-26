@@ -88,7 +88,7 @@ This rule loads only when the agent is editing a matching file, reinforcing the 
 
 - `sdi-discipline.mdc` (always apply) — the 4 core rules + the 8-step loop
 - `sdi-decisions.mdc` (always apply) — DECISIONS.md format and rules
-- `sdi-memory.mdc` (always apply) — memory/ format and rules
+- `sdi-memory.mdc` (always apply) — docs/memory format and rules
 - `sdi-on-demand.mdc` (manual / @-mention) — the references list with paths to load on demand
 
 A single `sdi-mode.mdc` is fine for most projects; the split helps when you want to maintain different sections independently.

@@ -87,7 +87,7 @@ After the plan is generated, add the row to AGENTS.md `Work tracker`:
 | [name] | [type] | pending — plan generated | YYYY-MM-DD | docs/IMPLEMENTATION_PLAN_[name].md |
 ```
 
-Update today's `memory/YYYY-MM-DD.md` to mention the plan was generated and the user is about to start work.
+Update today's `docs/memory/YYYY-MM-DD.md` to mention the plan was generated and the user is about to start work.
 
 ## Handoff to sdi-mode
 
@@ -160,4 +160,4 @@ Sometimes the user runs convert2sdi to "set up the framework" but doesn't have a
 
 > "No concrete work item right now, so I won't generate a plan. When you know what's next (feature, fix, migration, etc.), use the `mvp-architect` skill Phase E to generate the plan. AGENTS.md, DECISIONS, and MEMORY are already in place to receive the work when it arrives."
 
-Then close the convert2sdi run with a partial completion note in `memory/today.md`.
+Then close the convert2sdi run with a partial completion note in `docs/memory/YYYY-MM-DD.md`.

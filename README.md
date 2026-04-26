@@ -138,15 +138,20 @@ The skills live in your Claude Code skills directory:
 
 Copy the `mvp-architect/` and `convert2sdi/` directories from this repo to one of those locations.
 
-For execution discipline, copy `sdi-mode/adapters/claudecode-codex/AGENTS.md` and `CLAUDE.md` to the root of any project where you want SDI mode active.
+For execution discipline, copy `sdi-mode/adapters/claudecode-codex/AGENTS.md` and `CLAUDE.md` to the root of any project where you want SDI mode active. `CLAUDE.md` imports `AGENTS.md` so Claude Code loads the same discipline Codex reads natively.
 
 ### Codex
 
-Codex reads `AGENTS.md` natively from the project root. Copy `sdi-mode/adapters/claudecode-codex/AGENTS.md` to the root of your project.
+Codex reads `AGENTS.md` natively from the project root. Copy `sdi-mode/adapters/claudecode-codex/AGENTS.md` to the root of your project for the SDI execution discipline.
 
-The skills (`mvp-architect`, `convert2sdi`) don't apply directly — Codex doesn't have the skills system. Use them instead by running them in a Claude Code session, then move the generated artifacts to your Codex project. The AGENTS.md from this framework will then carry the SDI discipline in Codex sessions.
+Codex also supports skills with the same `SKILL.md` format as Claude Code, but with a different discovery path:
 
-### Roo Code / Kilo Code / OpenCode (custom-mode tools)
+- **Project-scoped:** `.codex/skills/mvp-architect/` and `.codex/skills/convert2sdi/`
+- **User-scoped (global):** `$CODEX_HOME/skills/mvp-architect/` and `$CODEX_HOME/skills/convert2sdi/` (defaults to `~/.codex/skills/...`)
+
+Copy the `mvp-architect/` and `convert2sdi/` directories from this repo to one of those locations. The `SKILL.md` frontmatter (`name`, `description`) is identical between Claude Code and Codex, so the framework's skills drop in directly. Restart Codex after adding skills so they're picked up.
+
+### Roo Code / Kilo Code / OpenCode (custom-mode / agent tools)
 
 These tools support custom modes / agents. Configure `sdi-mode` per the adapter for your tool:
 
@@ -154,7 +159,7 @@ These tools support custom modes / agents. Configure `sdi-mode` per the adapter 
 - Kilo Code: [`sdi-mode/adapters/kilocode.md`](sdi-mode/adapters/kilocode.md) — agent in `.kilo/agents/sdi.md`
 - OpenCode: [`sdi-mode/adapters/opencode.md`](sdi-mode/adapters/opencode.md) — agent in `.opencode/agents/sdi.md` (or `opencode.json` with `{file:...}` reference)
 
-The setup is similar across the three: define an agent/mode whose system prompt is `sdi-mode/MODE.md`, configure file restrictions on canonical artifacts, smoke-test.
+The setup is similar across the three: define an agent/mode whose system prompt is `sdi-mode/MODE.md`, configure file restrictions on canonical artifacts, smoke-test. Keep `AGENTS.md` as the portable project convention file where the tool supports it; the dedicated mode/agent is still useful for explicit selection, prompt isolation, and permissions.
 
 ### Cursor / Cline / Windsurf (rules-based tools)
 
@@ -162,17 +167,17 @@ These tools don't have custom modes but read project rule files. Configure `sdi-
 
 - Cursor: [`sdi-mode/adapters/cursor.md`](sdi-mode/adapters/cursor.md) — `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`
 - Cline: [`sdi-mode/adapters/cline.md`](sdi-mode/adapters/cline.md) — `.clinerules/sdi-mode.md`
-- Windsurf: [`sdi-mode/adapters/windsurf.md`](sdi-mode/adapters/windsurf.md) — `.windsurf/rules/sdi-mode.md` with `activation: always_on`
+- Windsurf: [`sdi-mode/adapters/windsurf.md`](sdi-mode/adapters/windsurf.md) — `.windsurf/rules/sdi-mode.md` with `trigger: always_on`
 
-### Planning skills with non-Claude-Code tools
+### Planning skills with tools that lack a skills system
 
-The skills (`mvp-architect`, `convert2sdi`) require Claude Code's skills system. For tools that don't have skills, run planning in a separate Claude Code session and bring the generated artifacts back into your primary tool. The AGENTS.md / rule file then carries the SDI discipline during implementation.
+Claude Code and Codex both support `SKILL.md`-based skills (different paths — see above — but identical format). For tools that don't have a skills system (Roo Code, Kilo Code, OpenCode, Cursor, Cline, Windsurf, etc.), run `mvp-architect` / `convert2sdi` in a separate Claude Code or Codex session and bring the generated artifacts back into your primary tool. The AGENTS.md / rule file then carries the SDI discipline during implementation.
 
 ### Other tools (Continue, Aider, GitHub Copilot Chat, Cody…)
 
 Most modern coding agents respect either `AGENTS.md` at the repo root or a tool-specific rules file. Use the AGENTS.md template as a starting point and adapt to the tool's expected format. Quick recipes:
 
-- **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or define a custom mode in `.continue/config.yaml` with MODE.md as `systemMessage`.
+- **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or reference it from `.continue/config.yaml` via `rules`.
 - **GitHub Copilot Chat** — copy MODE.md content as `.github/copilot-instructions.md` (loaded automatically).
 - **Aider** — save MODE.md as `CONVENTIONS.md` and reference it via `read:` in `.aider.conf.yml`.
 
@@ -205,9 +210,9 @@ These are non-negotiable. They live in `sdi-mode/MODE.md` and propagate to every
 
 2. **Stop at explicit checkpoints with binary gate checklists.** Don't execute a whole phase end-to-end silently. Each phase has 2–5 natural checkpoints; every gate must pass before the round closes. Faking ticks is worse than failing them.
 
-3. **Maintain `DECISIONS.md` (atemporal) and `memory/` (datable) as you go.** "Why did we pick this?" goes in DECISIONS — numbered, append-only. "What happened today / what's blocked / what's next" goes in `memory/YYYY-MM-DD.md`. Don't conflate.
+3. **Maintain `docs/DECISIONS.md` (atemporal) and `docs/memory/` (datable) as you go.** "Why did we pick this?" goes in DECISIONS — numbered, append-only. "What happened today / what's blocked / what's next" goes in `docs/memory/YYYY-MM-DD.md`. Don't conflate.
 
-4. **Respect document precedence.** When two docs disagree: live repo state > AGENTS.md > PRD > ARCHITECTURE > ROADMAP > PROJECT_STRUCTURE > IMPLEMENTATION_PLAN > DESIGN_SYSTEM > README. Lower doc gets a revision note. DECISIONS.md is overlay (patches), not authority. memory/ is breadcrumb, never source of truth.
+4. **Respect document precedence.** When two docs disagree: live repo state > AGENTS.md > PRD > ARCHITECTURE > ROADMAP > PROJECT_STRUCTURE > IMPLEMENTATION_PLAN > DESIGN_SYSTEM > README. Lower doc gets a revision note. DECISIONS.md is overlay (patches), not authority. `docs/memory/` is breadcrumb, never source of truth.
 
 ---
 
@@ -240,7 +245,7 @@ sdi-framework/
 │           └── ai.md                     (AI/LLM cross-cutting)
 │
 ├── convert2sdi/                          ← skill: adopt on legacy projects
-│   ├── SKILL.md                          (3-phase flow + Phase 1.5 conditional)
+│   ├── SKILL.md                          (Phase 0/1/1.5/2/3 adoption flow)
 │   └── references/                       (auto-audit, triage, artifact handling…)
 │
 └── sdi-mode/                             ← custom mode: execution discipline
@@ -253,7 +258,7 @@ sdi-framework/
         ├── opencode.md
         └── claudecode-codex/
             ├── AGENTS.md                 (template — copy to project root)
-            └── CLAUDE.md                 (template — points to AGENTS.md)
+            └── CLAUDE.md                 (template — imports AGENTS.md)
 ```
 
 ---

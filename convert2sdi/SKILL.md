@@ -31,7 +31,7 @@ When information is missing:
 
 The goal is a working framework setup in <30 minutes of user time, not a perfect retrospective.
 
-## The flow — 3 phases (+ Phase 1.5 when applicable)
+## The flow — Phase 0/1/2/3 (+ Phase 1.5 when applicable)
 
 ### Phase 0 — Auto-audit (no user input)
 
@@ -95,7 +95,7 @@ Read `references/artifact-generation-rules.md` and `references/confidence-flags.
 - **ARCHITECTURE.md** (mixed) — §Stack and §Critical flows extracted from code; §Type-specific appendix populated as far as code reveals; §Trade-offs as placeholder.
 - **DESIGN_SYSTEM.md** (medium, only if UI) — extracted tokens and components; aesthetic intent left as placeholder.
 - **DECISIONS.md** (seed, 3–5 entries) — obvious patterns detected (e.g. "uses Drizzle ORM", "monorepo with pnpm workspaces"). Marked `Source: code analysis — confirm rationale with team`.
-- **MEMORY.md + memory/today.md** (fresh) — index empty except for today's entry, which describes the framework setup itself.
+- **docs/MEMORY.md + docs/memory/YYYY-MM-DD.md** (fresh) — index empty except for today's entry, which describes the framework setup itself.
 - **PRD.md** (thin by design) — `Current state` (extracted from code/README) + `Out of scope` placeholder.
 - **ROADMAP.md** (optional) — only if Q4 = "discrete phases planned" and the user has visibility into future work; otherwise minimal note pointing to Phase E of `mvp-architect` for forward planning.
 

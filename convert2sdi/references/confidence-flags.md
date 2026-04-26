@@ -122,8 +122,8 @@ After convert2sdi runs, every generated artifact should have a flag at the top (
 - PROJECT_STRUCTURE.md — flag at top
 - ARCHITECTURE.md — flag at top, plus per-section flags
 - DECISIONS.md — entries individually marked with `Source: code analysis — confirm rationale with team`
-- MEMORY.md — no flag (memory is always datable)
-- memory/today.md — no flag (memory is always datable)
+- docs/MEMORY.md — no flag (memory is always datable)
+- docs/memory/YYYY-MM-DD.md — no flag (memory is always datable)
 - PRD.md — flag at top, plus low-confidence flags on Goals/Users sections
 - ROADMAP.md — flag at top (low confidence if generated empty)
 - DESIGN_SYSTEM.md (if present) — flag at top

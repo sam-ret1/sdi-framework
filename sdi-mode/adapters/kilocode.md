@@ -15,6 +15,8 @@ Kilo Code (originally a Roo Code fork) has converged on an OpenCode-compatible *
 1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body becomes the system prompt. Cleanest because there's no escaping.
 2. **JSON config** — `kilo.jsonc` at project root or `.kilo/kilo.jsonc` (the latter has priority if both exist).
 
+Kilo can also read `AGENTS.md` from the project root. Use that for project-specific conventions and tool parity; use the dedicated `sdi` agent when you want explicit agent selection, prompt isolation, and permission defaults for SDI implementation sessions.
+
 Two scopes:
 
 - **Project** — `.kilo/agents/sdi.md` or `kilo.jsonc` / `.kilo/kilo.jsonc` at project root.

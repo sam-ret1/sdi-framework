@@ -146,21 +146,21 @@ Bad seed candidates (don't seed these — they require real reasoning):
 - Naming conventions
 - File-organization patterns
 
-### `MEMORY.md` + `memory/today.md` — FRESH
+### `docs/MEMORY.md` + `docs/memory/YYYY-MM-DD.md` — FRESH
 
 **No file flag** — memory is always datable.
 
-`MEMORY.md`:
+`docs/MEMORY.md`:
 
 ```markdown
 # MEMORY
 
-Index of `memory/` daily entries. Newest first.
+Index of `docs/memory/` daily entries. Newest first.
 
-- [YYYY-MM-DD](memory/YYYY-MM-DD.md) — Framework setup via convert2sdi; first work item plan generated
+- [2026-04-26](memory/2026-04-26.md) — Framework setup via convert2sdi; first work item plan generated
 ```
 
-`memory/YYYY-MM-DD.md` (today):
+`docs/memory/YYYY-MM-DD.md` (today):
 
 ```markdown
 # Memory — YYYY-MM-DD

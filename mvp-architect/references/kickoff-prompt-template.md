@@ -4,7 +4,7 @@ At the end of Phase C, the user takes the spec bundle and hands it to a coding a
 
 ## Path A — Claude Code / Codex
 
-Used when the project has `AGENTS.md` (and `CLAUDE.md` if Claude Code) at the repo root, generated from the bundle. The discipline (audit-first, stop-and-review, DECISIONS.md, round reports) loads automatically because the agent reads `AGENTS.md` (Codex) or `CLAUDE.md` (Claude Code, which forwards to AGENTS.md) on session start.
+Used when the project has `AGENTS.md` (and `CLAUDE.md` if Claude Code) at the repo root, generated from the bundle. The discipline (audit-first, stop-and-review, DECISIONS.md, round reports) loads automatically because Codex reads `AGENTS.md` natively and Claude Code imports it through `CLAUDE.md` with `@AGENTS.md`.
 
 Paste at the start of the user's first session:
 
@@ -33,7 +33,7 @@ Substitute `[Phase 1 / <slug>]` with whichever naming applies — `PHASE_N` for 
 
 ## Path B — Roo Code / Kilo Code / OpenCode
 
-Used when the project relies on a configured `sdi-mode` custom mode rather than `AGENTS.md`. The custom mode is set up beforehand following `sdi-mode/adapters/{tool}.md`.
+Used when the project relies on a configured `sdi-mode` custom mode/agent rather than only `AGENTS.md`. The custom mode is set up beforehand following `sdi-mode/adapters/{tool}.md`; keep `AGENTS.md` too when the tool supports it, so project conventions stay portable.
 
 Paste at the start of the user's first session, with `sdi-mode` active:
 
@@ -86,7 +86,7 @@ Propose the first deliverable of this round and stop for review.
 
 ## How to adapt
 
-- If the user uses a coding agent not listed here (Cursor, Continue, Cody, Aider, etc.), adapt phrasing but keep the ground rules intact: read first, audit before code, stop at checkpoints, DECISIONS.md, repo wins. If the tool supports a `.cursorrules`/`.continuerc`/etc. file, consider porting AGENTS.md content to that format.
+- If the user uses a coding agent not listed here (Cursor, Continue, Cody, Aider, etc.), adapt phrasing but keep the ground rules intact: read first, audit before code, stop at checkpoints, DECISIONS.md, repo wins. If the tool supports a rules file or directory (for example `.cursorrules` or `.continue/rules/`), consider porting AGENTS.md content to that format.
 - If the project doesn't have a UI, skip the DESIGN_SYSTEM reference.
 - If the user wants to start from a phase other than Phase 1 (e.g. continuing an existing project), use the "Starting Phase N" variation.
 
@@ -99,7 +99,7 @@ Propose the first deliverable of this round and stop for review.
 - **Normalize DECISIONS.md.** Makes the paper trail a default, not an afterthought.
 - **Set tone for revision notes.** Plans evolve; the agent knows how to mark that.
 
-The two paths differ only in *how* the discipline gets loaded (AGENTS.md vs. mode system prompt). The behaviors expected from the agent are identical.
+The two paths differ only in *how* the discipline gets loaded (`AGENTS.md` import/native read vs. mode/agent system prompt). The behaviors expected from the agent are identical.
 
 ## When NOT to use the kickoff prompt
 
