@@ -47,7 +47,7 @@ The single highest-leverage step. Produce a structured audit (Blockers, Plan-rep
 **Rule:** When the plan diverges from the repo, the repo wins. Document the divergence in DECISIONS.md.
 
 ### 3. Propose the first cut, then stop
-After audit is resolved, propose foundation work (schema/migration/dependencies for tipos com DB; scaffolding for fresh repos). Stop before route handlers, UI, or unproved tests.
+After audit is resolved, propose foundation work (schema/migration/dependencies for types with a database; scaffolding for fresh repos). Stop before route handlers, UI, or unproved tests.
 
 ### 4. Implement in rounds, with reports
 A round is a coherent chunk (not a single file). At end of each round: structured report (Delivered / Decisions / Testing / Not done / Open questions / Next round). Then stop. Don't auto-continue.

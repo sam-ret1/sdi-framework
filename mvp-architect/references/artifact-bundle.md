@@ -75,7 +75,7 @@ Default to **English** for artifacts even if the conversation is in another lang
 - Coding agents (Claude Code, Codex, Roo Code, etc.) are measurably stronger on English-aligned docs.
 - Future collaborators may not share the user's language.
 
-Say so when announcing artifacts: "Vou gerar em inglês porque [reasons]. Se preferir em português, só avisar."
+Say so when announcing artifacts: "Generating artifacts in English because [reasons]. If you prefer another language, say so."
 
 ## Scope of applicability check
 

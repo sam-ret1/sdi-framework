@@ -1,6 +1,6 @@
 # Triage questions (Phase 1)
 
-Exactly 5 questions. Each accepts **"não sei / pular"** as a valid answer with a defined skip behavior. Do not ask follow-ups.
+Exactly 5 questions. Each accepts **"don't know / skip"** as a valid answer with a defined skip behavior. Do not ask follow-ups.
 
 The audit ran in Phase 0 and produced a discovery report. These questions confirm or correct the report's findings.
 
@@ -13,9 +13,9 @@ Batch all 5 in one message, OR ask one at a time if the user prefers (some users
 ### Q1 — Project type
 
 ```
-**Q1.** O auto-audit detectou tipo: **[Type detected]** (confiança: [high/medium/low]).
+**Q1.** Auto-audit detected type: **[Type detected]** (confidence: [high/medium/low]).
 
-Confirma? Se errado, qual dos 8 tipos é correto?
+Confirm? If wrong, which of the 8 types is correct?
 1. Web app SaaS multi-tenant
 2. Landing page / marketing site
 3. Dashboard / admin / internal tool
@@ -24,8 +24,8 @@ Confirma? Se errado, qual dos 8 tipos é correto?
 6. Data pipeline / scraper + reports
 7. AI agent / MCP server / chatbot
 8. Integration / automation workflow
-9. Outro — descreva
-0. Não sei / pular
+9. Other — describe
+0. Don't know / skip
 ```
 
 **Skip behavior (0):** Keep the auto-detected type with a low-confidence flag in AGENTS.md. The framework still works; user can correct later by editing AGENTS.md.
@@ -33,24 +33,24 @@ Confirma? Se errado, qual dos 8 tipos é correto?
 ### Q2 — AI modifier
 
 ```
-**Q2.** Auto-audit detectou AI modifier: **[yes/no]** ([signals if yes]).
+**Q2.** Auto-audit detected AI modifier: **[yes/no]** ([signals if yes]).
 
-Tem componente significativo de LLM/IA no produto? sim / não / não sei
+Does the product have a significant LLM/AI component? yes / no / don't know
 ```
 
-**Skip behavior (não sei):** Use the auto-detected value. If signals were present, mark as "yes (auto-detected)"; if not, mark as "no (auto-detected)". The user can flip this later.
+**Skip behavior (don't know):** Use the auto-detected value. If signals were present, mark as "yes (auto-detected)"; if not, mark as "no (auto-detected)". The user can flip this later.
 
 ### Q3 — Project stage
 
 ```
-**Q3.** Auto-audit sugere estágio: **[stage]** ([N] indicadores de produção detectados).
+**Q3.** Auto-audit suggests stage: **[stage]** ([N] production indicators detected).
 
-Em qual estágio está o projeto?
-(a) Greenfield / MVP em construção (sem usuários reais)
-(b) MVP lançado, primeiros usuários
-(c) Produção madura, vários clientes ativos
-(d) Manutenção / poucas mudanças, evoluindo lentamente
-(e) Não sei / pular
+What stage is the project in?
+(a) Greenfield / MVP under construction (no real users)
+(b) MVP launched, first users
+(c) Mature production, several active customers
+(d) Maintenance / few changes, evolving slowly
+(e) Don't know / skip
 ```
 
 **Skip behavior (e):** Use the auto-detected stage. If 3+ production indicators were detected, treat as `mature-production` and emit the `Production constraints` section in AGENTS.md (the indicators justify it even without confirmation). If 0–2 indicators, mark stage as "unknown" and skip the production section — user can add later.
@@ -58,12 +58,12 @@ Em qual estágio está o projeto?
 ### Q4 — Work cadence
 
 ```
-**Q4.** Como o trabalho é organizado hoje?
-(a) Fases discretas planejadas (Phase 1, 2, 3...)
-(b) Features contínuas (sem fases rígidas, vai escopando uma a uma)
-(c) Maioria manutenção e fixes (poucas features novas)
-(d) Misto
-(e) Não sei / pular
+**Q4.** How is the work organized today?
+(a) Discrete planned phases (Phase 1, 2, 3...)
+(b) Continuous features (no rigid phases, scoping one at a time)
+(c) Mostly maintenance and fixes (few new features)
+(d) Mixed
+(e) Don't know / skip
 ```
 
 **Skip behavior (e):** Mark as `mixed`. The framework supports both — naming will be decided per work item in Phase 3 and subsequent Phase E runs.
@@ -71,51 +71,51 @@ Em qual estágio está o projeto?
 ### Q5 — Anything material I missed
 
 ```
-**Q5.** Tem algo crítico do projeto que esse audit não pegaria? Por exemplo:
-- Clientes específicos com contratos / SLAs
-- Restrições de compliance (GDPR, LGPD, HIPAA, SOC2)
-- Deadlines comerciais / regulatórios
-- Estrutura de on-call / runbook em ferramenta externa
-- Decisões arquitetônicas tomadas off-repo (em Slack, Notion, etc.)
-- Incidentes recentes que ainda informam decisões
+**Q5.** Is there anything critical about the project this audit wouldn't catch? For example:
+- Specific customers with contracts / SLAs
+- Compliance constraints (GDPR, LGPD, HIPAA, SOC2)
+- Commercial / regulatory deadlines
+- On-call structure / runbook in an external tool
+- Architectural decisions made off-repo (in Slack, Notion, etc.)
+- Recent incidents that still inform decisions
 
-Qualquer coisa relevante? (responda livre, ou "nada" / "não sei")
+Anything relevant? (free-form answer, or "nothing" / "don't know")
 ```
 
-**Skip behavior ("nada" or "não sei"):** Leave the `Critical context` section in AGENTS.md as a placeholder with a `> Source: best-effort placeholder — populate as you learn the project` flag. User adds context as it surfaces.
+**Skip behavior ("nothing" or "don't know"):** Leave the `Critical context` section in AGENTS.md as a placeholder with a `> Source: best-effort placeholder — populate as you learn the project` flag. User adds context as it surfaces.
 
 ## After Q5
 
 Confirm understanding briefly:
 
-> "Setup confirmado:
-> - Tipo: [X]
+> "Setup confirmed:
+> - Type: [X]
 > - AI modifier: [yes/no]
 > - Stage: [stage]
 > - Cadence: [cadence]
-> - Critical context: [summary or 'pendente']
+> - Critical context: [summary or 'pending']
 >
-> Vou gerar os artefatos agora. Demora ~1-2 minutos."
+> Generating artifacts now. Takes ~1-2 minutes."
 
 Then proceed to Phase 2.
 
 ## Rules
 
 - **Never ask follow-ups beyond these 5.** If the user asked you to elaborate, fine — answer their question, but don't proactively add Q6.
-- **Never push back on "não sei".** Each skip behavior is defined; just apply it and move on.
+- **Never push back on "don't know".** Each skip behavior is defined; just apply it and move on.
 - **Don't repeat the audit.** The user has already seen the discovery report. Reference it, don't re-show.
 - **Order can be reordered** if the user starts answering Q3 before Q1 — adapt. The order above is a suggestion, not a script.
-- **Language follows user's lead.** PT-BR if user is in Portuguese; EN if in English.
+- **Conversational language.** Render the questions and confirmation in the user's language (see `SKILL.md` §Tone). Source text is English; the assistant translates at runtime.
 
 ## What NOT to ask in Phase 1
 
 The temptation will be to interrogate. Resist:
 
-- ❌ "Por que você escolheu Drizzle ao invés de Prisma?"
-- ❌ "Quais são os usuários do produto?"
-- ❌ "Qual o roadmap dos próximos 6 meses?"
-- ❌ "Quais decisões arquitetônicas mais importantes nessa codebase?"
-- ❌ "Como funciona o fluxo de signup?"
+- ❌ "Why did you choose Drizzle instead of Prisma?"
+- ❌ "Who are the product's users?"
+- ❌ "What's the roadmap for the next 6 months?"
+- ❌ "Which architectural decisions matter most in this codebase?"
+- ❌ "How does the signup flow work?"
 
 Reasons not to ask:
 - The first three are the user's job to fill in (or not) over time. Asking front-loads work.

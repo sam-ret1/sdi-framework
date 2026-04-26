@@ -61,7 +61,7 @@ That's your own scaffolding — it's not proof the user has the same picture. Ge
 
 When signals are green, announce the transition explicitly:
 
-> "Escopo está fechado nos eixos críticos — multi-tenancy, stack, flows principais, integrações, roles, out-of-scope. Vou gerar o bundle de artefatos agora."
+> "Scope is locked on the critical axes — multi-tenancy, stack, primary flows, integrations, roles, out-of-scope. Generating the artifact bundle now."
 
 This does three things:
 1. Gives the user a last chance to say "wait, actually I wanted X different."

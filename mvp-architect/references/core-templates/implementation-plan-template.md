@@ -2,7 +2,7 @@
 
 This is the most prescriptive artifact. The coding agent consumes it directly. Ambiguity here causes rework; over-specification here is fine.
 
-This template covers **universal sections**. Type-specific sections (database changes for tipos com DB, API contracts for HTTP services, scraping passes for data pipelines, prompt/tool design for agents) live in `project-types/{type}/` and are inserted at the marked locations below.
+This template covers **universal sections**. Type-specific sections (database changes for types with a database, API contracts for HTTP services, scraping passes for data pipelines, prompt/tool design for agents) live in `project-types/{type}/` and are inserted at the marked locations below.
 
 ## Naming convention
 

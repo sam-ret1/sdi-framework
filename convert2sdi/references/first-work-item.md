@@ -18,18 +18,18 @@ Phase 3 bridges this. It's a specialized variant of Phase E that knows:
 After Phase 2 is complete, ask:
 
 ```
-**Phase 3 — primeiro work item.**
+**Phase 3 — first work item.**
 
-Que tipo de trabalho é o próximo concreto?
-(a) Feature nova
+What's the next concrete work?
+(a) New feature
 (b) Bugfix / hotfix
-(c) Migração / refactor estruturado
+(c) Migration / structured refactor
 (d) Performance / observability pass
-(e) Manutenção (tarefas de upkeep, dependency updates, etc.)
-(f) Outro — descreva
+(e) Maintenance (upkeep tasks, dependency updates, etc.)
+(f) Other — describe
 
-E qual o nome curto (slug ou Phase N) que você quer pra esse plano?
-Ex: `billing-portal-fix`, `q1-perf-pass`, `customer-x-bug`, `Phase 1`, etc.
+And what short name (slug or Phase N) do you want for this plan?
+E.g.: `billing-portal-fix`, `q1-perf-pass`, `customer-x-bug`, `Phase 1`, etc.
 ```
 
 The user answers. From there:
@@ -38,7 +38,7 @@ The user answers. From there:
 
 | User's answer | Suggested name |
 |---|---|
-| (c) Migration / refactor estruturado, AND user gave a "Phase N" style name | `IMPLEMENTATION_PLAN_PHASE_N.md` |
+| (c) Migration / structured refactor, AND user gave a "Phase N" style name | `IMPLEMENTATION_PLAN_PHASE_N.md` |
 | (c) Migration / refactor without phase numbering | `IMPLEMENTATION_PLAN_<slug>.md` (e.g. `IMPLEMENTATION_PLAN_auth-refactor.md`) |
 | (a) (b) (d) (e) (f) | `IMPLEMENTATION_PLAN_<slug>.md` |
 
@@ -73,7 +73,7 @@ For the rest of the plan (§1 Scope, §2+ type-specific, §10 Acceptance Criteri
 - "Which files/areas of the repo does this touch?"
 - "Any specific approach you want — or open?"
 
-Keep questions concrete. Aim for 2–4 questions max. Each accepts "não sei — proponha você" — in that case, propose with rationale and let the user accept or revise.
+Keep questions concrete. Aim for 2–4 questions max. Each accepts "don't know — you propose" — in that case, propose with rationale and let the user accept or revise.
 
 ## Plan length
 
@@ -96,11 +96,11 @@ After plan generation, instruct the user how to start. Pick the right tool:
 ### Path A — Claude Code / Codex
 
 ```
-Plano gerado em `docs/IMPLEMENTATION_PLAN_[name].md`.
+Plan generated at `docs/IMPLEMENTATION_PLAN_[name].md`.
 
-AGENTS.md já está no root do projeto, então a disciplina SDI carrega automaticamente em qualquer nova sessão.
+AGENTS.md is already at the project root, so the SDI discipline loads automatically in any new session.
 
-Para iniciar, abra Claude Code (ou Codex) na pasta do projeto e cole:
+To start, open Claude Code (or Codex) in the project folder and paste:
 
 > Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
 >
@@ -123,14 +123,14 @@ Para iniciar, abra Claude Code (ou Codex) na pasta do projeto e cole:
 ### Path B — Roo Code / Kilo Code / OpenCode
 
 ```
-Plano gerado em `docs/IMPLEMENTATION_PLAN_[name].md`.
+Plan generated at `docs/IMPLEMENTATION_PLAN_[name].md`.
 
-Antes de iniciar, configure o `sdi-mode` na sua ferramenta seguindo o adapter:
+Before starting, configure `sdi-mode` in your tool following the adapter:
 - Roo Code: `sdi-framework/sdi-mode/adapters/roocode.md`
 - Kilo Code: `sdi-framework/sdi-mode/adapters/kilocode.md`
 - OpenCode: `sdi-framework/sdi-mode/adapters/opencode.md`
 
-Com o modo ativo, cole:
+With the mode active, paste:
 
 > Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
 >
@@ -143,9 +143,9 @@ Com o modo ativo, cole:
 
 After the plan is delivered and the handoff instructions are given:
 
-> "**Setup completo.** O projeto está sob o framework forge.
+> "**Setup complete.** The project is now under the framework.
 >
-> Próximos work items: depois desse fechar, **não** rode convert2sdi de novo. Use Phase E da skill `mvp-architect` (basta dizer "fase X fechou — vamos planejar a próxima" ou similar). Phase E lê o estado atual do repo + DECISIONS + memory e gera o próximo plano sem refazer todo o discovery."
+> Next work items: after this one closes, **don't** run convert2sdi again. Use Phase E of the `mvp-architect` skill (just say "phase X closed — let's plan the next" or similar). Phase E reads the current repo state + DECISIONS + memory and generates the next plan without redoing the full discovery."
 
 ## What NOT to do in Phase 3
 
@@ -158,6 +158,6 @@ After the plan is delivered and the handoff instructions are given:
 
 Sometimes the user runs convert2sdi to "set up the framework" but doesn't have a concrete next thing to work on yet. That's fine. In that case, skip the plan generation:
 
-> "Sem work item concreto agora, não vou gerar plano. Quando você souber o que vem a seguir (feature, fix, migração, etc.), use a skill `mvp-architect` Phase E pra gerar o plano. AGENTS.md, DECISIONS, MEMORY já estão prontos pra receber o trabalho quando ele vier."
+> "No concrete work item right now, so I won't generate a plan. When you know what's next (feature, fix, migration, etc.), use the `mvp-architect` skill Phase E to generate the plan. AGENTS.md, DECISIONS, and MEMORY are already in place to receive the work when it arrives."
 
 Then close the convert2sdi run with a partial completion note in `memory/today.md`.

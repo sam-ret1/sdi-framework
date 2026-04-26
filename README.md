@@ -98,7 +98,7 @@ End of Phase 1: housekeeping
 convert2sdi Phase 0 — auto-audit (no questions)
     │
     ▼
-convert2sdi Phase 1 — ≤5 triage questions ("não sei" always accepted)
+convert2sdi Phase 1 — ≤5 triage questions ("don't know" always accepted)
     │
     ▼
 convert2sdi Phase 1.5 — existing artifact handling (only if pre-existing
@@ -146,21 +146,35 @@ Codex reads `AGENTS.md` natively from the project root. Copy `sdi-mode/adapters/
 
 The skills (`mvp-architect`, `convert2sdi`) don't apply directly — Codex doesn't have the skills system. Use them instead by running them in a Claude Code session, then move the generated artifacts to your Codex project. The AGENTS.md from this framework will then carry the SDI discipline in Codex sessions.
 
-### Roo Code / Kilo Code / OpenCode
+### Roo Code / Kilo Code / OpenCode (custom-mode tools)
 
-These tools don't have native skills but do support custom modes. Configure `sdi-mode` per the adapter for your tool:
+These tools support custom modes / agents. Configure `sdi-mode` per the adapter for your tool:
 
-- Roo Code: [`sdi-mode/adapters/roocode.md`](sdi-mode/adapters/roocode.md)
-- Kilo Code: [`sdi-mode/adapters/kilocode.md`](sdi-mode/adapters/kilocode.md)
-- OpenCode: [`sdi-mode/adapters/opencode.md`](sdi-mode/adapters/opencode.md)
+- Roo Code: [`sdi-mode/adapters/roocode.md`](sdi-mode/adapters/roocode.md) — custom mode in `.roomodes` (YAML preferred)
+- Kilo Code: [`sdi-mode/adapters/kilocode.md`](sdi-mode/adapters/kilocode.md) — agent in `.kilo/agents/sdi.md`
+- OpenCode: [`sdi-mode/adapters/opencode.md`](sdi-mode/adapters/opencode.md) — agent in `.opencode/agents/sdi.md` (or `opencode.json` with `{file:...}` reference)
 
-The setup is similar across the three: paste `sdi-mode/MODE.md` into the mode's role/system-prompt, configure file restrictions on canonical artifacts, smoke-test.
+The setup is similar across the three: define an agent/mode whose system prompt is `sdi-mode/MODE.md`, configure file restrictions on canonical artifacts, smoke-test.
 
-For planning (mvp-architect, convert2sdi), use a separate Claude Code session and bring the resulting artifacts back into your Roo/Kilo/OpenCode workspace.
+### Cursor / Cline / Windsurf (rules-based tools)
 
-### Other tools (Cursor, Continue, Cody, Aider…)
+These tools don't have custom modes but read project rule files. Configure `sdi-mode` as an always-applied rule:
 
-Most modern coding agents respect either `AGENTS.md` or a tool-specific rules file (`.cursorrules`, `.continuerc`, etc.). Use the AGENTS.md template as a starting point and adapt to the tool's expected format.
+- Cursor: [`sdi-mode/adapters/cursor.md`](sdi-mode/adapters/cursor.md) — `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`
+- Cline: [`sdi-mode/adapters/cline.md`](sdi-mode/adapters/cline.md) — `.clinerules/sdi-mode.md`
+- Windsurf: [`sdi-mode/adapters/windsurf.md`](sdi-mode/adapters/windsurf.md) — `.windsurf/rules/sdi-mode.md` with `activation: always_on`
+
+### Planning skills with non-Claude-Code tools
+
+The skills (`mvp-architect`, `convert2sdi`) require Claude Code's skills system. For tools that don't have skills, run planning in a separate Claude Code session and bring the generated artifacts back into your primary tool. The AGENTS.md / rule file then carries the SDI discipline during implementation.
+
+### Other tools (Continue, Aider, GitHub Copilot Chat, Cody…)
+
+Most modern coding agents respect either `AGENTS.md` at the repo root or a tool-specific rules file. Use the AGENTS.md template as a starting point and adapt to the tool's expected format. Quick recipes:
+
+- **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or define a custom mode in `.continue/config.yaml` with MODE.md as `systemMessage`.
+- **GitHub Copilot Chat** — copy MODE.md content as `.github/copilot-instructions.md` (loaded automatically).
+- **Aider** — save MODE.md as `CONVENTIONS.md` and reference it via `read:` in `.aider.conf.yml`.
 
 ---
 
@@ -264,7 +278,9 @@ The four core disciplines (audit-first, gates, DECISIONS+memory split, document 
 
 ## Language
 
-Artifacts default to **English** (better alignment with code, easier i18n later, stronger model performance). Conversation can be in **PT-BR** (or other) — the framework is bilingual at the conversational layer. If you prefer artifacts in another language, just ask the skill at Phase C.
+Source files (skills, mode, references, templates) are authored in **English**. Generated artifacts (PRD, ARCHITECTURE, etc.) also default to English — better alignment with code, easier i18n later, stronger model performance.
+
+At runtime, the skills mirror the user's conversational language: if you start in Portuguese, the skill replies in Portuguese; if you start in English, English. If you want generated artifacts in a non-English language, ask the skill at Phase C.
 
 ---
 

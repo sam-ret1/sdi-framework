@@ -59,7 +59,7 @@ Read `references/audit-first-protocol.md` for the audit report format and common
 
 ### Step 3: Propose the first cut with a clear stop-and-review
 
-After the audit is resolved, propose the first concrete deliverable — usually foundation work (schema + migration + dependencies for tipos com DB; project scaffolding for fresh repos; provider wrappers + initial prompts for AI agents; trigger handlers + first integration wrapper for workflows). Stop before any of:
+After the audit is resolved, propose the first concrete deliverable — usually foundation work (schema + migration + dependencies for types with a database; project scaffolding for fresh repos; provider wrappers + initial prompts for AI agents; trigger handlers + first integration wrapper for workflows). Stop before any of:
 
 - Writing route handlers, API endpoints, or business logic
 - Writing UI

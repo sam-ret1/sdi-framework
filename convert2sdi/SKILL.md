@@ -1,6 +1,6 @@
 ---
 name: convert2sdi
-description: Adopt the sdi-framework workflow on a project that already has code — without refounding it. Generates the artifact bundle (AGENTS.md, PROJECT_STRUCTURE, ARCHITECTURE, DECISIONS seed, MEMORY init, PRD/ROADMAP placeholders, first IMPLEMENTATION_PLAN) by auto-auditing the repo and asking ≤5 focused questions. Accepts "não sei" on every question — the framework operates with thin artifacts and fills them in over time. For projects in production, emits a `Production constraints` section in AGENTS.md so sdi-mode behaves safely against live systems. Use when the user says "tenho um projeto já em andamento e quero usar o framework", "vou assumir esse repo legacy", "preciso criar AGENTS.md aqui", "esse projeto não nasceu com mvp-architect mas quero pôr no padrão", or any variant where the project has existing code and the user wants to adopt the SDI discipline going forward. Use as the entry skill for ANY project not started via `mvp-architect` Phase 0–C.
+description: Adopt the sdi-framework workflow on a project that already has code — without refounding it. Auto-audits the repo, asks ≤5 focused questions (each accepts "don't know"), then generates the artifact bundle: AGENTS.md, PROJECT_STRUCTURE, ARCHITECTURE, DECISIONS seed, MEMORY init, PRD/ROADMAP placeholders, first IMPLEMENTATION_PLAN. For projects in production, emits a `Production constraints` section in AGENTS.md so sdi-mode behaves safely against live systems. Use when the user says "I have a project already in progress and want to use the framework", "taking over this legacy repo", "need to create AGENTS.md here", or any variant where the project has existing code and the user wants to adopt the SDI discipline going forward. Entry skill for ANY project not started via `mvp-architect` Phase 0–C.
 ---
 
 # convert2sdi
@@ -26,7 +26,7 @@ This skill exists because the user's primary need is *operational* — get the p
 
 When information is missing:
 1. Try to detect from code automatically (best effort).
-2. If detection fails, ask the user — but accept "não sei / pular" without follow-up.
+2. If detection fails, ask the user — but accept "don't know / skip" without follow-up.
 3. If both fail, mark the artifact section with a confidence flag and move on.
 
 The goal is a working framework setup in <30 minutes of user time, not a perfect retrospective.
@@ -51,7 +51,7 @@ Output: discovery report shown to user as a structured summary, with confidence 
 
 ### Phase 1 — Quick triage (≤5 questions)
 
-Read `references/triage-questions.md`. Ask the 5 questions in one batch (or one at a time if the user prefers). **Every question accepts "não sei / pular" with a defined skip behavior.**
+Read `references/triage-questions.md`. Ask the 5 questions in one batch (or one at a time if the user prefers). **Every question accepts "don't know / skip" with a defined skip behavior.**
 
 The 5 questions cover:
 
@@ -92,7 +92,7 @@ Read `references/artifact-generation-rules.md` and `references/confidence-flags.
 
 - **AGENTS.md** (rich) — stack, conventions, document map, work tracker (empty), `Production constraints` section if stage = production (template at `references/production-constraints-template.md`).
 - **PROJECT_STRUCTURE.md** (rich) — documents the repo as it actually is.
-- **ARCHITECTURE.md** (mixed) — §Stack and §Critical flows extracted from code; §Type-specific appendix preenched as far as code reveals; §Trade-offs as placeholder.
+- **ARCHITECTURE.md** (mixed) — §Stack and §Critical flows extracted from code; §Type-specific appendix populated as far as code reveals; §Trade-offs as placeholder.
 - **DESIGN_SYSTEM.md** (medium, only if UI) — extracted tokens and components; aesthetic intent left as placeholder.
 - **DECISIONS.md** (seed, 3–5 entries) — obvious patterns detected (e.g. "uses Drizzle ORM", "monorepo with pnpm workspaces"). Marked `Source: code analysis — confirm rationale with team`.
 - **MEMORY.md + memory/today.md** (fresh) — index empty except for today's entry, which describes the framework setup itself.
@@ -124,14 +124,14 @@ After generation, instruct the user how to load `sdi-mode`:
 
 Closing message:
 
-> "Setup completo. O projeto está sob o framework. Para o próximo trabalho após esse plano fechar, use Phase E da skill `mvp-architect` (não rode `convert2sdi` de novo — é one-shot)."
+> "Setup complete. The project is now under the framework. For the next work item after this plan closes, use Phase E of the `mvp-architect` skill (don't run `convert2sdi` again — it's one-shot)."
 
 ## Tone
 
-- **Matter-of-fact, no interrogation.** Each question is one ask, accepting "não sei" gracefully.
+- **Matter-of-fact, no interrogation.** Each question is one ask, accepting "don't know" gracefully.
 - **No apologetics for thin artifacts.** Mark them clearly and move on. The framework is forward-looking.
 - **No surprise edits to code.** This skill never modifies source files. It only generates docs.
-- **Brazilian Portuguese accepted** when the user starts in Portuguese. Artifacts default to English (per the framework convention) unless the user requests PT-BR.
+- **Conversational language.** Reply in the user's conversational language. The English message templates in this skill and its references are authoring shells — render them in the user's language when speaking to them. Generated artifacts still default to English (per the framework convention) unless the user asks otherwise.
 
 ## What this skill is NOT
 

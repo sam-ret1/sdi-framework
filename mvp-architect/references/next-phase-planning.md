@@ -9,7 +9,7 @@ This is **not** Phase C. Phase C generates the full bundle (PRD, ARCHITECTURE, R
 Strong signals — proactive offer or user-initiated:
 
 - The current `IMPLEMENTATION_PLAN_*` has had its end-of-phase housekeeping done (per SDI mode Step 8): all gates green, AC mapped to evidence, AGENTS.md tracker updated.
-- The user says: "fase X fechou — vamos planejar a próxima", "qual o próximo plano?", "vamos escopo a feature [Y]", "vamos planejar a manutenção do [W]".
+- The user says: "phase X closed — let's plan the next", "what's the next plan?", "let's scope feature [Y]", "let's plan maintenance for [W]".
 - ROADMAP.md indicates the next phase and its pre-requisites are met.
 
 Soft signals — Phase E may be appropriate but verify with user first:
@@ -99,7 +99,7 @@ After the plan is generated, the user starts implementation. Provide the kickoff
 
 Closing message pattern:
 
-> "Plano gerado em `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. Para iniciar, use o kickoff prompt apropriado para sua ferramenta (Path A se Claude Code/Codex, Path B para Roo/Kilo/OpenCode). Quando precisar de review durante a execução, volte aqui — Phase D."
+> "Plan generated at `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. To start, use the kickoff prompt for your tool (Path A for Claude Code/Codex, Path B for Roo/Kilo/OpenCode). When you need review during execution, come back here — Phase D."
 
 ## Common failure modes
 

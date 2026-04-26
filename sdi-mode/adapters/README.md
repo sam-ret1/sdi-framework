@@ -10,21 +10,33 @@
 |---|---|---|---|
 | Claude Code | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` (with `CLAUDE.md` pointer) | Markdown at repo root |
 | Codex | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` | Markdown at repo root |
-| Roo Code | [`roocode.md`](roocode.md) | Custom mode in `.roomodes` | JSON config |
-| Kilo Code | [`kilocode.md`](kilocode.md) | Custom mode | Tool-native config |
-| OpenCode | [`opencode.md`](opencode.md) | Custom mode | Tool-native config |
+| Roo Code | [`roocode.md`](roocode.md) | Custom mode in `.roomodes` | YAML (or JSON) |
+| Kilo Code | [`kilocode.md`](kilocode.md) | Agent in `.kilo/agents/sdi.md` (or `kilo.jsonc`) | Markdown + frontmatter (or JSON) |
+| OpenCode | [`opencode.md`](opencode.md) | Agent in `.opencode/agents/sdi.md` (or `opencode.json`) | Markdown + frontmatter (or JSON) |
+| Cursor | [`cursor.md`](cursor.md) | Project Rule in `.cursor/rules/sdi-mode.mdc` | Markdown + frontmatter |
+| Cline | [`cline.md`](cline.md) | Workspace rule in `.clinerules/sdi-mode.md` | Markdown |
+| Windsurf | [`windsurf.md`](windsurf.md) | Workspace rule in `.windsurf/rules/sdi-mode.md` | Markdown + frontmatter |
 
 ## Which adapter to use
 
 - **Claude Code or Codex:** copy [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) and [`claudecode-codex/CLAUDE.md`](claudecode-codex/CLAUDE.md) (Claude Code only) into the root of your project. Customize the placeholders for your project's type, stack, and conventions. The discipline loads automatically every session.
 
-- **Roo Code:** follow [`roocode.md`](roocode.md) to register `sdi-mode` as a custom mode using the `.roomodes` config. After setup, switch to the mode for any implementation work.
+- **Roo Code:** follow [`roocode.md`](roocode.md) to register `sdi-mode` as a custom mode in `.roomodes` (YAML preferred). After setup, switch to the mode for implementation work.
 
-- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Same idea, Kilo's mode format.
+- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Define an agent as `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or as a JSON entry under the `agent` key in `kilo.jsonc`.
 
-- **OpenCode:** follow [`opencode.md`](opencode.md). Same idea, OpenCode's mode format.
+- **OpenCode:** follow [`opencode.md`](opencode.md). Define an agent as `.opencode/agents/sdi.md` or in `opencode.json`. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste.
 
-- **Other tools (Cursor, Continue, Aider, Cody, etc.):** use Claude Code/Codex's `AGENTS.md` template as a starting point — most modern coding tools respect either `AGENTS.md` or a tool-specific `*.md` file. Adapt the file name and add tool-specific tweaks.
+- **Cursor:** follow [`cursor.md`](cursor.md). Add `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`. The rule loads on every chat — no mode picker.
+
+- **Cline:** follow [`cline.md`](cline.md). Add `.clinerules/sdi-mode.md`. Cline auto-merges all rule files in the directory; no frontmatter needed for unconditional always-on.
+
+- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `activation: always_on`.
+
+- **Other tools (Continue, Aider, GitHub Copilot Chat, Cody, etc.):** use Claude Code/Codex's `AGENTS.md` template as a starting point — most modern coding tools respect either `AGENTS.md` or a tool-specific `*.md` file. Quick adaptations:
+  - **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or define a custom mode with `systemMessage` in `.continue/config.yaml`.
+  - **GitHub Copilot Chat** — copy MODE.md as `.github/copilot-instructions.md` (loaded automatically).
+  - **Aider** — save MODE.md as `CONVENTIONS.md` and reference it via `read:` in `.aider.conf.yml`.
 
 ## What gets loaded vs what gets read on demand
 

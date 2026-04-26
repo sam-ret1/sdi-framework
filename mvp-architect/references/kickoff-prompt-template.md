@@ -24,7 +24,7 @@ Then audit the plan against the actual repo state. Produce an audit report cover
 - Open questions for me
 - Aligned / no action items
 
-After the audit, propose the first deliverable — usually [foundation: schema/migration/dependencies for tipos com DB; project scaffolding for fresh repos] — and stop for review. Don't start on subsequent scope items until I approve the foundation.
+After the audit, propose the first deliverable — usually [foundation: schema/migration/dependencies for types with a database; project scaffolding for fresh repos] — and stop for review. Don't start on subsequent scope items until I approve the foundation.
 ```
 
 This prompt is short because `AGENTS.md` already carries the SDI discipline (the 8 steps, the not-rules, the tone). The kickoff just signals "we're starting this work item — proceed with audit."

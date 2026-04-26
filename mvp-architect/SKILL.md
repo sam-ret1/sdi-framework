@@ -1,6 +1,6 @@
 ---
 name: mvp-architect
-description: Guide a product from rough concept to spec bundle (PRD, ARCHITECTURE, ROADMAP, PROJECT_STRUCTURE, DESIGN_SYSTEM if UI, IMPLEMENTATION_PLAN, AGENTS.md), and accompany the user during implementation as consultative reviewer (Phase D) and next-phase planner (Phase E). Works across 8 project types — web SaaS multi-tenant, landing pages, dashboards, web APIs, mobile apps, data pipelines/scrapers, AI agents/MCP servers, integration/automation workflows. Use whenever a user arrives with an idea ("I have an idea for...", "I want to build...", "let's plan a project") OR asks for review of work already in progress ("agent delivered round N — opina", "audit do plano deu esses achados", "essa decisão faz sentido?") OR asks to plan the next work item after a phase closes ("fase X fechou — vamos planejar a próxima", "qual o próximo plano", "vamos escopo a feature Y"). Use from the very first vague message during scoping; for review-only or next-phase-planning entries, skip Phase 0/A/B/C and go directly to Phase D or Phase E.
+description: Plan products from rough concept to a spec bundle (PRD, ARCHITECTURE, ROADMAP, PROJECT_STRUCTURE, DESIGN_SYSTEM if UI, IMPLEMENTATION_PLAN, AGENTS.md), then accompany implementation as consultative reviewer (Phase D) and next-phase planner (Phase E). Covers 8 project types: web SaaS multi-tenant, landing pages, dashboards, web APIs, mobile apps, data pipelines, AI agents/MCP servers, automation workflows. Use when a user arrives with an idea ("I have an idea for...", "let's plan a project"), asks for review of in-progress work ("agent delivered round N — your opinion", "does this decision make sense?"), or asks to plan the next work item after a phase closes ("phase X closed — let's plan the next", "let's scope feature Y"). For review-only or next-phase-planning entries, skip Phase 0/A/B/C and go directly to Phase D or E.
 ---
 
 # MVP Architect
@@ -20,13 +20,13 @@ The skill works across multiple project types via a Phase 0 router: web SaaS mul
 - "Coding agent proposed this plan / this audit — does it look right?"
 - "Agent delivered round N, here's the summary — any concerns?"
 - "Agent is asking X or Y — which do you recommend?"
-- "Tem algum problema com essa decisão / esse approach?"
+- "Any problem with this decision / this approach?"
 - The user is mid-implementation and just needs another pair of eyes.
 
 **For next-phase planning (skip directly to Phase E):**
-- "Fase X fechou — vamos planejar a fase Y / a próxima feature".
-- "Qual o próximo plano de implementação?"
-- "Vamos escopo a feature [Z] / a manutenção do [W]".
+- "Phase X closed — let's plan phase Y / the next feature".
+- "What's the next implementation plan?"
+- "Let's scope feature [Z] / maintenance for [W]".
 - The current `IMPLEMENTATION_PLAN_*` is closed (or about to close) and the user needs the next one.
 
 When entering directly into Phase D or Phase E, do not run Phase 0/A/B/C — the project already exists, the discovery work is done, and re-doing it wastes time. Read the existing artifacts to load context, then operate per the relevant phase below.
@@ -67,37 +67,35 @@ Don't re-run Phase A/B/C just because a new phase is starting — Phase E is for
 
 Before any open discovery, fix the project type. Ask once, with concrete options:
 
-> Antes das perguntas de discovery, em qual destas categorias seu projeto se encaixa? Vou puxar o playbook certo:
+> Before the discovery questions, which of these categories does your project fit? I'll pull the right playbook:
 >
-> 1. **Web app SaaS multi-tenant** (signup, multi-org, billing futuro)
-> 2. **Landing page / site institucional** (foco em conversão e SEO)
-> 3. **Dashboard / admin / internal tool** (visualização de dados, ops)
-> 4. **Web API / backend service** (sem UI — REST/GraphQL/webhooks)
-> 5. **Mobile app** (React Native, Flutter, ou nativo)
-> 6. **Data pipeline / scraper + relatórios** (ingestão e entrega automatizada)
+> 1. **Web app SaaS multi-tenant** (signup, multi-org, future billing)
+> 2. **Landing page / marketing site** (focus on conversion and SEO)
+> 3. **Dashboard / admin / internal tool** (data viz, ops)
+> 4. **Web API / backend service** (no UI — REST/GraphQL/webhooks)
+> 5. **Mobile app** (React Native, Flutter, or native)
+> 6. **Data pipeline / scraper + reports** (ingestion and automated delivery)
 > 7. **AI agent / MCP server / chatbot** (LLM-driven)
-> 8. **Integration / automation workflow** (n8n/Zapier-style ou Inngest/Temporal)
-> 9. **Outro** — descreva e eu adapto
+> 8. **Integration / automation workflow** (n8n/Zapier-style or Inngest/Temporal)
+> 9. **Other** — describe and I'll adapt
 >
-> Você pode responder só o número.
-
-Adapt to user language (English/Portuguese match user's lead).
+> You can reply with just the number.
 
 After the type is chosen, ask the AI modifier toggle:
 
-> Tem componente significativo de LLM/IA no produto (chat, classificação, geração, agente)? Sim/não.
+> Does the product have a significant LLM/AI component (chat, classification, generation, agent)? Yes/no.
 
 If type = `ai-agent` (option 7), the AI modifier is implicitly active — don't re-ask.
 
-If user picks "Outro" (option 9): listen, then either map to the closest existing type or proceed adapting (announce the limitation explicitly).
+If user picks "Other" (option 9): listen, then either map to the closest existing type or proceed adapting (announce the limitation explicitly).
 
 ### Phase A — Initial reaction and first thematic questions
 
 When the user describes their idea (after Phase 0), do three things in the first reply:
 
-1. **Summarize what you heard in one line.** Confirm the product in a way they'd recognize ("um motor de pré-qualificação por voz + CRM de funil"). This catches misunderstandings upfront and shows you're listening.
+1. **Summarize what you heard in one line.** Confirm the product in a way they'd recognize ("a voice-based pre-qualification engine + funnel CRM"). This catches misunderstandings upfront and shows you're listening.
 2. **Identify the critical decision axes.** Don't ask every possible question — identify the 6–10 that, once answered, would unlock the rest. The axes come from a combination of `references/discovery-themes.md` (universal) + `references/project-types/{type}/discovery.md` (type-specific) + `references/modifiers/ai.md` (if AI is in scope).
-3. **Ask grouped by theme, not as a flat list.** Group perguntas relacionadas (all integration questions together, all multi-tenancy questions together, etc.). Don't ask more than 2–3 questions per theme at once.
+3. **Ask grouped by theme, not as a flat list.** Group related questions (all integration questions together, all multi-tenancy questions together, etc.). Don't ask more than 2–3 questions per theme at once.
 
 Load these references in this order:
 - `references/discovery-themes.md` — universal themes
@@ -134,7 +132,7 @@ Signs you're ready:
 - User is saying "let's build this" not "what if we...".
 - You could write the PRD summary paragraph from memory and it would be correct.
 
-When those signs are there, **announce the transition**: "Escopo está fechado nos eixos críticos. Vou gerar o bundle de artefatos." Then produce all artifacts in a single response.
+When those signs are there, **announce the transition**: "Scope is locked on the critical axes. Generating the artifact bundle now." Then produce all artifacts in a single response.
 
 Read `references/when-to-generate.md` for more detailed signals and common false positives (things that feel like readiness but aren't).
 
@@ -174,9 +172,9 @@ Read `references/review-support-patterns.md` for common review scenarios and res
 Phase D and Phase E loop together throughout implementation. When the current work item closes (or is closing) and the user asks to plan the next one, you switch from review (passive) to generation (active) — focused, narrow, and grounded in the real state of the repo.
 
 **Trigger phrases:**
-- "Fase 1 fechou — vamos planejar a fase 2"
-- "Qual o próximo plano de implementação?"
-- "Vamos escopo a feature [X]" / "Vamos planejar a manutenção do [Y]"
+- "Phase 1 closed — let's plan phase 2"
+- "What's the next implementation plan?"
+- "Let's scope feature [X]" / "Let's plan maintenance for [Y]"
 - After end-of-phase housekeeping is done and the user doesn't say what's next — you can proactively offer Phase E.
 
 **Shape of the phase (full detail in `references/next-phase-planning.md`):**
@@ -196,7 +194,7 @@ Phase E is intentionally lighter than Phase C — most of the context already li
 - **Direct, low on hedging.** The user is a technical decision-maker. They want your position, not a list of "on one hand / on the other hand" without a conclusion. Have a recommendation; give it; be ready to defend or revise.
 - **Specific over generic.** "Use Inngest because durable execution + native retry scheduling matches our 10min/30min pattern" is useful. "Use a job queue" is not.
 - **Comfortable saying 'I don't know, let me search'.** For current state of tools, libraries, APIs, search before answering. Your training data is stale for fast-moving spaces.
-- **Brazilian Portuguese is fine** if the user starts in Portuguese. Keep artifacts in English by default (better alignment with code, easier i18n later), but say so and offer to switch if asked.
+- **Conversational language.** Reply in the user's conversational language. The English message templates in this skill and its references are authoring shells — render them in the user's language when speaking to them. Generated artifacts default to English (better alignment with code, easier i18n later); say so and offer to switch if the user asks.
 
 ## What not to do
 

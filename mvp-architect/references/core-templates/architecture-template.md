@@ -2,7 +2,7 @@
 
 The ARCHITECTURE doc operationalizes the PRD. Stack, flows, security, observability, trade-offs. It's the reference doc the coding agent returns to most often outside of the per-phase implementation plans.
 
-This template covers **universal sections** that apply to any project type. The `project-types/{type}/architecture-appendix.md` companion file fills in type-specific concerns: data model + persistence patterns for tipos com DB, multi-tenancy + RLS for SaaS, ingestion pipelines for data products, agent loop patterns for AI agents, etc.
+This template covers **universal sections** that apply to any project type. The `project-types/{type}/architecture-appendix.md` companion file fills in type-specific concerns: data model + persistence patterns for types with a database, multi-tenancy + RLS for SaaS, ingestion pipelines for data products, agent loop patterns for AI agents, etc.
 
 When generating ARCHITECTURE.md, **merge the core sections below with the appendix sections from the chosen type**. Numbering is suggested but adjust as needed — the goal is one coherent doc, not two stitched together.
 

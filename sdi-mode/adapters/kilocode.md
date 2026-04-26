@@ -1,64 +1,96 @@
 # Kilo Code — SDI Mode adapter
 
-This guide shows how to install `sdi-mode` as a custom mode in Kilo Code.
+This guide shows how to install `sdi-mode` as a custom agent (Kilo's term for a custom mode) in Kilo Code.
 
 ## Prerequisites
 
 - Kilo Code installed
-- This `sdi-framework/` repo cloned or accessible (you'll copy [`MODE.md`](../MODE.md) content into the mode config)
+- This `sdi-framework/` repo cloned or accessible (you'll reference [`MODE.md`](../MODE.md) from the agent file)
 - A project where you want SDI mode active
 
 ## What you're configuring
 
-Kilo Code (a Roo Code fork) uses a similar custom-mode model. Modes live in workspace or global config and define:
+Kilo Code (originally a Roo Code fork) has converged on an OpenCode-compatible **agent** model. There are two ways to define an agent — pick one:
 
-- Slug + display name
-- System prompt / role definition (this is where MODE.md goes)
-- Tool / file-edit restrictions
-- Model selection
+1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body becomes the system prompt. Cleanest because there's no escaping.
+2. **JSON config** — `kilo.jsonc` at project root or `.kilo/kilo.jsonc` (the latter has priority if both exist).
 
-## Step 1 — Open Kilo Code custom modes config
+Two scopes:
 
-Depending on Kilo Code version, custom modes are defined in:
+- **Project** — `.kilo/agents/sdi.md` or `kilo.jsonc` / `.kilo/kilo.jsonc` at project root.
+- **Global** — `~/.config/kilo/agent/sdi.md` or `~/.config/kilo/kilo.jsonc`. (On Windows: `C:\Users\<user>\.config\kilo\...`)
 
-- `.kilocode/modes.json` (workspace-scoped) — preferred for project-specific
-- Global settings via the Kilo Code UI — for a mode you want everywhere
+## Approach A — Markdown agent file (recommended)
 
-Create or open the relevant file.
+Create `.kilo/agents/sdi.md` in your project (or `~/.config/kilo/agent/sdi.md` for global):
 
-## Step 2 — Add the SDI mode
+```markdown
+---
+description: Spec-Driven Implementation discipline. Use after planning is complete.
+mode: primary
+color: "#3b82f6"
+permission:
+  edit:
+    "docs/PRD.md": deny
+    "docs/ARCHITECTURE.md": deny
+    "docs/ROADMAP.md": deny
+    "*": allow
+  bash: ask
+---
 
-```json
+<paste the full contents of sdi-framework/sdi-mode/MODE.md here>
+```
+
+The body of the file (everything after the closing `---`) becomes the system prompt. Markdown formatting is preserved.
+
+**Frontmatter fields used here:**
+
+| Field | Purpose |
+|---|---|
+| `description` | Shown in the agent picker |
+| `mode` | `primary` (selectable as the active agent) / `subagent` / `all` |
+| `color` | UI color in agent picker (hex or named keyword) |
+| `permission.edit` | Per-glob file-edit restrictions; `deny` blocks the listed canonical artifacts |
+| `permission.bash` | `allow` / `ask` / `deny` for shell commands |
+
+Other available frontmatter fields: `model`, `temperature`, `top_p`, `steps`, `hidden`, `disable`. See Kilo's docs for the complete list.
+
+## Approach B — JSON config (`kilo.jsonc`)
+
+If you prefer keeping all agents in one config file, create `.kilo/kilo.jsonc` (or `kilo.jsonc` at project root):
+
+```jsonc
 {
-  "customModes": [
-    {
-      "slug": "sdi",
-      "name": "SDI — Implementation",
-      "roleDefinition": "<paste the contents of sdi-framework/sdi-mode/MODE.md here>",
-      "groups": [
-        "read",
-        ["edit", { "fileRegex": "^(?!docs/(PRD|ARCHITECTURE|ROADMAP)\\.md$).*", "description": "PRD/ARCHITECTURE/ROADMAP edited only via revision notes" }],
-        "command"
-      ]
+  "agent": {
+    "sdi": {
+      "description": "Spec-Driven Implementation discipline. Use after planning is complete.",
+      "mode": "primary",
+      "color": "#3b82f6",
+      "prompt": "<JSON-escaped contents of MODE.md, OR a {file:./path/to/MODE.md} reference if your version supports it>",
+      "permission": {
+        "edit": {
+          "docs/PRD.md": "deny",
+          "docs/ARCHITECTURE.md": "deny",
+          "docs/ROADMAP.md": "deny",
+          "*": "allow"
+        },
+        "bash": "ask"
+      }
     }
-  ]
+  }
 }
 ```
 
-Same JSON-string caveat as Roo Code: newlines in `roleDefinition` need escaping, or use a file-loading feature if your Kilo Code version supports it.
+**Caveat:** the `prompt` field needs JSON-escaped newlines (`\n`). For long content like MODE.md, the markdown agent file approach (A) is much easier — that's why it's recommended.
 
-## Step 3 — Paste MODE.md content
+## Step 2 — Activate
 
-Open [`MODE.md`](../MODE.md). Copy its full content into the `roleDefinition` field. Make sure the markdown formatting survives (escape only what JSON requires).
+1. Reload Kilo Code (or restart) so the agent config is picked up.
+2. Open Kilo's agent/mode selector.
+3. Choose `sdi`.
+4. Verify the agent badge shows it's active.
 
-## Step 4 — Activate
-
-1. Reload the workspace (or restart Kilo Code) so the mode config is picked up.
-2. Open Kilo Code's mode selector.
-3. Choose `SDI — Implementation`.
-4. Verify mode is active.
-
-## Step 5 — Smoke test
+## Step 3 — Smoke test
 
 Ask:
 
@@ -66,34 +98,32 @@ Ask:
 
 Expected: Read → Audit → Propose → Implement in rounds → Tests alongside → DECISIONS.md → Revision notes → End-of-phase housekeeping.
 
-## Tips
-
-- **Updates to MODE.md:** re-paste when this framework updates MODE.md, then reload.
-- **Per-project vs global:** projects in early phases benefit from local `.kilocode/modes.json` (specific to one stack); global settings are convenient when SDI is your default discipline across all projects.
-- **Mode-switch ritual:** when leaving implementation for scoping, switch out of SDI mode. The discipline is for execution work, not exploratory thinking.
+If the agent improvises:
+- Verify the agent file path (`.kilo/agents/sdi.md` or the JSON config path) is correct
+- Check that the markdown body / `prompt` field actually contains MODE.md content (not truncated)
+- Confirm `sdi` is the selected agent (not the default)
 
 ## File restrictions
 
-Same recommendation as Roo Code: prevent silent rewrites of PRD / ARCHITECTURE / ROADMAP. Use:
+The `permission.edit` block enforces the framework's "PRD/ARCHITECTURE/ROADMAP edit only via revision notes" rule as a hard fence. The system prompt's discipline is the soft fence — both reinforce the same behavior.
 
-```json
-"fileRegex": "^(?!docs/(PRD|ARCHITECTURE|ROADMAP)\\.md$).*"
+To also block `IMPLEMENTATION_PLAN_*.md` from full rewrites:
+
+```yaml
+permission:
+  edit:
+    "docs/PRD.md": deny
+    "docs/ARCHITECTURE.md": deny
+    "docs/ROADMAP.md": deny
+    "docs/IMPLEMENTATION_PLAN_*.md": ask
+    "*": allow
 ```
 
-Or, stricter (also blocks `IMPLEMENTATION_PLAN_*` edits — both `PHASE_N` and `<slug>` variants):
+Glob `*` matches the slug or `PHASE_N` part. `ask` requires explicit user approval per edit, which suits "revision notes only" semantics — the agent has to surface what it's about to change.
 
-```json
-"fileRegex": "^(?!docs/(PRD|ARCHITECTURE|ROADMAP|IMPLEMENTATION_PLAN_[\\w-]+)\\.md$).*"
-```
+## Tips
 
-Choose based on how strict you want the soft-vs-hard fence balance.
-
-## Differences from Roo Code
-
-If you've used Roo Code's `.roomodes`, Kilo Code is largely the same model with cosmetic differences:
-
-- File location may differ (`.kilocode/` vs `.roomodes`)
-- UI flow for mode selection may differ slightly
-- Some advanced features (tool restrictions beyond file-edit) may differ
-
-The core idea — "paste MODE.md as roleDefinition, set file restrictions, smoke test" — is identical.
+- **Markdown approach scales.** When you add `mvp-architect` / `convert2sdi` style agents later, define them as additional `.kilo/agents/*.md` files — same pattern, different `description` and frontmatter.
+- **Global vs project:** per-project `.kilo/agents/sdi.md` travels with the repo. Global `~/.config/kilo/agent/sdi.md` is convenient when SDI is your default discipline everywhere.
+- **Updating MODE.md:** with the markdown approach, just re-paste the body. With the JSON approach, re-escape the string. Either way, reload Kilo afterward.
+- **Configuration precedence (lowest → highest):** built-in defaults → global config → project `kilo.jsonc` → `.kilo/agents/*.md` files. Project markdown agents win over JSON config; useful if you keep a global JSON baseline and override per-project.
