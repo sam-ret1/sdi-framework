@@ -32,7 +32,7 @@ Different tools carry the SDI discipline differently:
 |---|---|
 | Claude Code | `sdi-mode` skill; `CLAUDE.md` imports `AGENTS.md` for project facts |
 | Codex | `sdi-mode` skill; Codex reads `AGENTS.md` natively for project facts |
-| Roo Code / Kilo Code / OpenCode | Custom mode/agent `sdi-mode` configured per `sdi-mode/adapters/{tool}.md`; Kilo/OpenCode may also read `AGENTS.md` directly for project facts |
+| Roo Code / Kilo Code / OpenCode | Custom mode/agent `sdi-mode` configured per `installation-guides/{tool}.md`; Kilo/OpenCode may also read `AGENTS.md` directly for project facts |
 
 If the `sdi-mode` skill or configured custom mode is not active, the SDI discipline isn't loaded. Ask the user to invoke/activate it before proceeding. If `AGENTS.md` is missing, the project fact sheet is missing; route the user to `convert-to-sdi` for an existing repo or `mvp-architect` for a greenfield bundle.
 

@@ -81,17 +81,17 @@ Codex reads `AGENTS.md` natively from the project root once it's generated. Rest
 
 ### Roo Code, Kilo Code, OpenCode
 
-These tools support custom modes / agents. Configure `sdi-mode` per the relevant adapter:
+These tools support custom modes / agents. Configure `sdi-mode` per the relevant installation guide:
 
-- Roo Code: [`sdi-mode/adapters/roocode.md`](sdi-mode/adapters/roocode.md) for `.roomodes` (system prompt = body of `sdi-mode/SKILL.md`).
-- Kilo Code: [`sdi-mode/adapters/kilocode.md`](sdi-mode/adapters/kilocode.md) for `.kilo/agents/sdi.md` or `kilo.jsonc`.
-- OpenCode: [`sdi-mode/adapters/opencode.md`](sdi-mode/adapters/opencode.md) for `.opencode/agents/sdi.md` or `opencode.json` (supports `{file:./.../sdi-mode/SKILL.md}` for live updates).
+- Roo Code: [`installation-guides/roocode.md`](installation-guides/roocode.md) for `.roomodes` (system prompt = body of `sdi-mode/SKILL.md`).
+- Kilo Code: [`installation-guides/kilocode.md`](installation-guides/kilocode.md) for `.kilo/agents/sdi.md` or `kilo.jsonc`.
+- OpenCode: [`installation-guides/opencode.md`](installation-guides/opencode.md) for `.opencode/agents/sdi.md` or `opencode.json` (supports `{file:./.../sdi-mode/SKILL.md}` for live updates).
 
-Recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026, so treat that adapter as support for existing Roo users rather than the default for new long-lived projects.
+Recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026, so treat that guide as support for existing Roo users rather than the default for new long-lived projects.
 
 For the planning skills (`mvp-architect`, `convert-to-sdi`) on these tools, use each tool's native skill / agent / command system. Add `mvp-architect/SKILL.md` and `convert-to-sdi/SKILL.md` as tool-specific skills, or adapt their contents into the closest equivalent. Keep the names `mvp-architect` and `convert-to-sdi` so project instructions and docs stay portable.
 
-> **`SKILL.md` frontmatter for non-skill tools:** the `---`-delimited block at the top of `sdi-mode/SKILL.md` is metadata used by skill discovery in Claude Code / Codex. When pasting into a Roo / Kilo / OpenCode mode prompt, start at the first heading (`# SDI Mode — Spec-Driven Implementation`). Each adapter doc spells this out.
+> **`SKILL.md` frontmatter for non-skill tools:** the `---`-delimited block at the top of `sdi-mode/SKILL.md` is metadata used by skill discovery in Claude Code / Codex. When pasting into a Roo / Kilo / OpenCode mode prompt, start at the first heading (`# SDI Mode — Spec-Driven Implementation`). Each installation guide spells this out.
 
 ### Tools not listed here
 
@@ -180,14 +180,14 @@ sdi-framework/
       revision-notes-format.md
       round-report-template.md
       stop-and-review-patterns.md
-    adapters/
-      README.md
-      claudecode-codex/
-        AGENTS.md
-        CLAUDE.md
-      kilocode.md
-      opencode.md
-      roocode.md
+  installation-guides/
+    README.md
+    claudecode-codex/
+      AGENTS.md
+      CLAUDE.md
+    kilocode.md
+    opencode.md
+    roocode.md
 ```
 
 ## What SDI Is Not
@@ -210,7 +210,7 @@ Issues and PRs are welcome. Useful areas include:
 
 - New project types, such as browser extensions, CLI tools, ML pipelines, or embedded projects.
 - New modifiers beyond `ai.md`.
-- Adapter improvements for the supported tools.
+- Installation-guide improvements for the supported tools.
 - Documentation corrections and examples.
 
 Contributions should follow the framework's own discipline: plan, audit, implement in reviewable rounds, and record decisions when they matter.

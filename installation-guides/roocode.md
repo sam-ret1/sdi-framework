@@ -1,13 +1,13 @@
-# Roo Code — SDI Mode adapter
+# Roo Code — SDI Mode Installation Guide
 
 This guide shows how to install `sdi-mode` as a custom mode in Roo Code so the implementation discipline loads on every session.
 
-> **Status note (April 2026):** recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026. Keep this adapter for existing Roo projects, but prefer another maintained adapter for new long-lived setups.
+> **Status note (April 2026):** recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026. Keep this guide for existing Roo projects, but prefer another maintained tool for new long-lived setups.
 
 ## Prerequisites
 
 - Roo Code installed (VSCode extension)
-- This `sdi-framework/` repo cloned somewhere accessible (you'll copy the body of [`SKILL.md`](../SKILL.md) into the mode config)
+- This `sdi-framework/` repo cloned somewhere accessible (you'll copy the body of [`SKILL.md`](../sdi-mode/SKILL.md) into the mode config)
 - A project where you want SDI mode active
 
 ## What you're configuring

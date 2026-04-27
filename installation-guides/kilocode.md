@@ -1,11 +1,11 @@
-# Kilo Code — SDI Mode adapter
+# Kilo Code — SDI Mode Installation Guide
 
 This guide shows how to install `sdi-mode` as a custom agent in Kilo Code.
 
 ## Prerequisites
 
 - Kilo Code installed
-- This `sdi-framework/` repo cloned or accessible (you'll copy the body of [`SKILL.md`](../SKILL.md) into the agent file)
+- This `sdi-framework/` repo cloned or accessible (you'll copy the body of [`SKILL.md`](../sdi-mode/SKILL.md) into the agent file)
 - A project where you want SDI mode active
 
 ## What you're configuring

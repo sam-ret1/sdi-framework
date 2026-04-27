@@ -123,7 +123,7 @@ To start, paste:
 
 When generating the user-facing kickoff, drop the line that doesn't match their tool. If they haven't said which tool, leave both lines so they can pick, or ask before generating.
 
-For tool-specific setup (installing the `sdi-mode` skill or registering the custom mode), point the user to the relevant adapter in their local copy of `sdi-framework/sdi-mode/adapters/`.
+For tool-specific setup (installing the `sdi-mode` skill or registering the custom mode), point the user to the relevant guide in their local copy of `sdi-framework/installation-guides/`.
 
 ## Closing message
 

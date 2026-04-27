@@ -120,7 +120,7 @@ The plan's §0 Pre-requisites lists the **current production state as the founda
 
 After generation, instruct the user how to load `sdi-mode`:
 - Claude Code / Codex: install the `sdi-mode` skill under the tool's skills path (alongside `mvp-architect` and `convert-to-sdi`) if it isn't there yet. AGENTS.md (project facts) is already at repo root. Paste the kickoff prompt to start the work item — the `sdi-mode` skill auto-invokes from there.
-- Roo Code / Kilo Code / OpenCode: configure the `sdi-mode` custom mode following the appropriate adapter in your local copy of `sdi-framework/`. Once active, paste the kickoff prompt.
+- Roo Code / Kilo Code / OpenCode: configure the `sdi-mode` custom mode following the appropriate guide in your local copy of `sdi-framework/installation-guides/`. Once active, paste the kickoff prompt.
 
 Closing message:
 

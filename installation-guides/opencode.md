@@ -1,4 +1,4 @@
-# OpenCode — SDI Mode adapter
+# OpenCode — SDI Mode Installation Guide
 
 This guide shows how to install `sdi-mode` as a custom agent in OpenCode (sst/opencode).
 
