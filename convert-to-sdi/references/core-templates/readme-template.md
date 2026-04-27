@@ -44,7 +44,7 @@ Full rationale lives in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 The SDI discipline loads from the `sdi-mode` skill (Claude Code / Codex) or the configured `sdi-mode` custom mode (Roo Code / Kilo Code / OpenCode). `AGENTS.md` carries only project facts — it does not carry discipline.
 
 - **Claude Code / Codex.** Install the `sdi-mode` skill (alongside `mvp-architect` and `convert-to-sdi`) under the tool's skills path. The skill auto-invokes when you start implementation work. `AGENTS.md` is already at the repo root; Codex reads it natively, and Claude Code imports it via a one-line `CLAUDE.md`. Paste the kickoff prompt from the current `IMPLEMENTATION_PLAN_*.md` to start the work item.
-- **Roo Code / Kilo Code / OpenCode.** Configure the `sdi-mode` custom mode/agent following the appropriate guide in `installation-guides/`. Once active, paste the kickoff prompt from the current `IMPLEMENTATION_PLAN_*.md` to start the work item.
+- **Roo Code / Kilo Code / OpenCode.** Configure the `sdi-mode` custom mode/agent following the appropriate guide in your local copy of `sdi-framework/installation-guides/`. Once active, paste the kickoff prompt from the current `IMPLEMENTATION_PLAN_*.md` to start the work item.
 
 ## Open questions deferred to production
 

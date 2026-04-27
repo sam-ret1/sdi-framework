@@ -159,7 +159,18 @@ When those signs are there, **announce the transition**: "Scope is locked on the
 
 Read `references/when-to-generate.md` for more detailed signals and common false positives (things that feel like readiness but aren't).
 
-Read `references/artifact-bundle.md` for the canonical set of artifacts, their order, and how they relate. Then read the individual templates (`references/core-templates/*-template.md` for universal cores, `references/project-types/{type}/*-template.md` and `*-appendix.md` for type-specific content) as you fill each one in.
+Read `references/artifact-bundle.md` for the canonical set of artifacts, their order, and how they relate. Then load templates narrowly as you generate each artifact:
+
+- PRD → `references/core-templates/prd-template.md`
+- ARCHITECTURE → `references/core-templates/architecture-template.md` + `references/project-types/{type}/architecture-appendix.md`
+- ROADMAP → `references/core-templates/roadmap-template.md`
+- PROJECT_STRUCTURE → `references/project-types/{type}/project-structure-template.md`
+- DESIGN_SYSTEM → `references/project-types/{type}/design-system-template.md` only for UI-bearing types (web-saas, landing-page, dashboard, mobile, or ai-agent with UI)
+- IMPLEMENTATION_PLAN → `references/core-templates/implementation-plan-template.md` + only the type references needed for the work item, starting with `references/project-types/{type}/architecture-appendix.md`
+- AGENTS.md → `references/agents-template.md`
+- README → `references/core-templates/readme-template.md`
+
+Do not load all templates up front; load the next file only when you are about to generate that artifact.
 
 The artifacts merge **core templates + type appendices** into single coherent documents (one ARCHITECTURE.md, one PROJECT_STRUCTURE.md, etc.), not stitched two-doc affairs. The README is the index. Every doc has a clear purpose and doesn't duplicate another.
 

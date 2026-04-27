@@ -59,7 +59,10 @@ Explicitly NOT installing:
  - ai-agent: Prompts, tools, model config, eval suites, guardrails
  - automation-workflow: Triggers, steps, retries, idempotency keys, observability hooks
 
-Load `project-types/{type}/` references for the canonical sub-section structure for the chosen type.]
+Load only the type references needed for this work item:
+- Always start with `project-types/{type}/architecture-appendix.md` for the type-specific implementation concerns.
+- If the work item changes repo layout or conventions, also consult `project-types/{type}/project-structure-template.md`.
+- If the work item adds or changes UI, also consult `project-types/{type}/design-system-template.md` (UI-bearing types only).]
 
 ## 3. [Domain-specific algorithm or verification]
 

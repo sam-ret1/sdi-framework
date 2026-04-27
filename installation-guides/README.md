@@ -44,12 +44,12 @@ Planning skills (`mvp-architect` and `convert-to-sdi`) install through the same 
 - Tone guidelines
 
 **Read on demand** (referenced when relevant):
-- `references/audit-first-protocol.md` — when running an audit
-- `references/round-report-template.md` — when writing a round report
-- `references/decisions-log-format.md` — when adding a DECISIONS.md entry
-- `references/revision-notes-format.md` — when revising a plan
-- `references/stop-and-review-patterns.md` — when planning checkpoints
-- `references/expected-artifacts.md` — when assessing handoff completeness
+- `../sdi-mode/references/audit-first-protocol.md` — when running an audit
+- `../sdi-mode/references/round-report-template.md` — when writing a round report
+- `../sdi-mode/references/decisions-log-format.md` — when adding a DECISIONS.md entry
+- `../sdi-mode/references/revision-notes-format.md` — when revising a plan
+- `../sdi-mode/references/stop-and-review-patterns.md` — when planning checkpoints
+- `../sdi-mode/references/expected-artifacts.md` — when assessing handoff completeness
 
 This split keeps the always-loaded surface lean while making detail available when needed. For Claude Code / Codex, the `references/` directory is part of the skill bundle and is loaded by the skill on demand. For Roo / Kilo / OpenCode, the `references/` files are read from the cloned `sdi-framework/` directory by the agent.
 
