@@ -2,6 +2,8 @@
 
 This guide shows how to install `sdi-mode` as a custom mode in Roo Code so the implementation discipline loads on every session.
 
+> **Status note (April 2026):** Roo Code's own docs announce that Roo Code products are scheduled to shut down on May 15, 2026. Keep this adapter for existing Roo projects, but prefer another maintained adapter for new long-lived setups.
+
 ## Prerequisites
 
 - Roo Code installed (VSCode extension)
@@ -96,6 +98,12 @@ If the agent improvises, re-check that:
 - The mode is selected (not "Code" or default)
 - `roleDefinition` actually contains MODE.md content (not truncated)
 
+## Planning skills
+
+If your Roo Code build exposes native Agent Skills / `SKILL.md` support, install `mvp-architect` and `convert-to-sdi` through that skill system and copy each whole skill directory from this repo, preserving `SKILL.md` and `references/`.
+
+If your installed Roo version only exposes custom modes and rules, keep planning inside Roo by adapting each planning skill into a dedicated custom mode or mode-specific rule. The important constraint is the same: planning should run in the tool the user is actually using, not in a separate Claude Code or Codex session.
+
 ## File restrictions detail
 
 The `groups` `edit` entry uses a regex to prevent silent rewrites of PRD/ARCHITECTURE/ROADMAP. The discipline allows revision notes (small additions at the top) but not full rewrites. Roo's regex restriction is the hard fence; the system prompt is the soft fence. Both reinforce the same rule.
@@ -119,4 +127,4 @@ The `[\w-]+` matches `PHASE_1`, `PHASE_2`, `billing-portal`, `q1-perf-pass`, etc
 
 - **Updating MODE.md:** when this framework updates `MODE.md`, re-paste into `.roomodes` (or update the global YAML) and reload the workspace.
 - **One mode per workspace** is fine — no need to nest sdi-mode inside other modes.
-- **Mode-switch ritual:** when leaving implementation for scoping, switch out of SDI mode (use Roo's default Code mode or a `mvp-architect` equivalent). SDI mode's discipline is for execution, not exploratory thinking.
+- **Mode-switch ritual:** when leaving implementation for scoping, switch out of SDI mode and use the native `mvp-architect` / `convert-to-sdi` skill or equivalent planning mode. SDI mode's discipline is for execution, not exploratory thinking.

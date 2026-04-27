@@ -1,6 +1,6 @@
 # Cline — SDI Mode adapter
 
-This guide shows how to install `sdi-mode` as a project rule in Cline so the implementation discipline loads on every chat in the project.
+This guide shows how to install `sdi-mode` as a project rule in Cline so the implementation discipline loads on every chat in the project. Cline also supports native `SKILL.md` skills; use those for `mvp-architect` and `convert-to-sdi` planning.
 
 ## Prerequisites
 
@@ -12,14 +12,16 @@ This guide shows how to install `sdi-mode` as a project rule in Cline so the imp
 
 Cline doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead, it has **rules**: markdown files in a `.clinerules/` directory that Cline merges into the agent's context on every request.
 
+Cline also recognizes other rule formats, including `AGENTS.md`, `.cursorrules`, and `.windsurfrules`. For SDI, `.clinerules/sdi-mode.md` is still the clearest project-native carrier because it appears in Cline's rules panel and can be toggled.
+
 Two scopes:
 
 - **Workspace rules** — `.clinerules/` directory at the project root. Travels with the repo.
-- **Global rules** — Cline's global rules folder (`~/Documents/Cline/Rules/` on macOS/Linux, similar on Windows). Available across all projects.
+- **Global rules** — Cline's global rules folder (`Documents\Cline\Rules` on Windows, `~/Documents/Cline/Rules` on macOS/Linux). Available across all projects.
 
 When both exist, Cline combines them, and **workspace rules take precedence on conflict**.
 
-Cline processes all `.md` and `.txt` files inside the rules directory and combines them into a unified rule set. Practical performance starts to degrade past ~300 lines per file; aim for <150 for reliable rule adherence.
+Cline processes all `.md` and `.txt` files inside the rules directory and combines them into a unified rule set. Keep rule files focused; split large policies into smaller topic files when they start consuming too much context.
 
 ## Step 1 — Create the rules directory
 
@@ -41,7 +43,18 @@ Create `.clinerules/sdi-mode.md`:
 
 No frontmatter needed for unconditional always-loaded rules. The whole file is merged into Cline's context on every request.
 
-> **MODE.md is ~190 lines** — within Cline's safe range. If you find Cline's rule adherence weakening, see "Splitting the discipline" below.
+> **MODE.md is ~190 lines.** If you find Cline's rule adherence weakening, see "Splitting the discipline" below.
+
+## Planning skills
+
+Enable Skills in Cline's settings if your build requires it, then install the planning skills natively:
+
+- Project scope: `.cline/skills/mvp-architect/SKILL.md` and `.cline/skills/convert-to-sdi/SKILL.md`
+- Global scope: `~/.cline/skills/mvp-architect/SKILL.md` and `~/.cline/skills/convert-to-sdi/SKILL.md`
+
+Cline also supports project skills under `.clinerules/skills/` and can discover Claude-compatible `.claude/skills/`. Copy each whole skill directory from this repo, preserving its `SKILL.md` and `references/` folder.
+
+Use the skills for planning and review (`mvp-architect`, `convert-to-sdi`). Use `.clinerules/sdi-mode.md` for implementation discipline once a plan exists.
 
 ## Step 3 — Activate
 
@@ -73,7 +86,7 @@ Cline doesn't support per-file edit restrictions at the rule level. The framewor
 
 ## Splitting the discipline (optional)
 
-If you want to split MODE.md across multiple rule files for clarity or to stay well below the ~150-line guidance, one possible split:
+If you want to split MODE.md across multiple rule files for clarity, one possible split:
 
 - `.clinerules/sdi-discipline.md` — the 4 core rules + the 8-step loop (~80 lines)
 - `.clinerules/sdi-decisions.md` — DECISIONS.md format and rules (~40 lines)
@@ -91,4 +104,4 @@ Cline supports YAML frontmatter on rules for conditional activation. If you want
 - **Workspace `.clinerules/` is the right default** because the discipline ties to projects that have the SDI artifact bundle. A bare project (script, prototype) shouldn't carry SDI overhead.
 - **Global rules folder** is useful for rules you want everywhere (e.g., personal coding preferences). Avoid putting sdi-mode there unless every project you work on is under the framework.
 - **Updating MODE.md:** when this framework updates `MODE.md`, re-paste the body of `.clinerules/sdi-mode.md`. Cline doesn't support file-includes in rules.
-- **Plays well with `AGENTS.md`:** Cline reads `AGENTS.md` at the repo root in addition to `.clinerules/`. If you've already copied [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md), Cline will also pick it up — both will load. The duplication is harmless because both carry the same discipline.
+- **Plays well with `AGENTS.md`:** Cline reads `AGENTS.md` at the repo root in addition to `.clinerules/`. If you've already copied [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md), Cline will also pick it up. Prefer keeping one as the concise project convention file and the other as the Cline-native SDI rule, so they reinforce rather than drift.

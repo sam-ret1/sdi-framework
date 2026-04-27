@@ -2,6 +2,8 @@
 
 `sdi-mode` is the implementation discipline (defined in [`MODE.md`](../MODE.md)). The adapters in this folder show how to load that discipline into specific coding-agent tools.
 
+Planning is separate: install `mvp-architect` and `convert-to-sdi` through each tool's native `SKILL.md`, skill, agent, command, or rule system. Do not run planning in a different tool just to bring artifacts back.
+
 **Source of truth:** [`../MODE.md`](../MODE.md). Adapters reference it; they don't duplicate it.
 
 ## Tool matrix
@@ -17,21 +19,23 @@
 | Cline | [`cline.md`](cline.md) | Workspace rule in `.clinerules/sdi-mode.md` | Markdown |
 | Windsurf | [`windsurf.md`](windsurf.md) | Workspace rule in `.windsurf/rules/sdi-mode.md` | Markdown + frontmatter |
 
+> **Roo Code status:** Roo Code's docs announce a product shutdown on May 15, 2026. The Roo adapter remains for existing projects, but it should not be the default recommendation for new long-lived SDI setups.
+
 ## Which adapter to use
 
 - **Claude Code or Codex:** copy [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) and [`claudecode-codex/CLAUDE.md`](claudecode-codex/CLAUDE.md) (Claude Code only) into the root of your project. `CLAUDE.md` imports `AGENTS.md`; Codex reads `AGENTS.md` natively. Customize the placeholders for your project's type, stack, and conventions. The discipline loads automatically every session.
 
 - **Roo Code:** follow [`roocode.md`](roocode.md) to register `sdi-mode` as a custom mode in `.roomodes` (YAML preferred). After setup, switch to the mode for implementation work.
 
-- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Kilo can read `AGENTS.md`, but a dedicated agent in `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or `kilo.jsonc` is still useful for explicit agent selection and permissions.
+- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Kilo can read `AGENTS.md`, but a dedicated agent in `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or `kilo.jsonc` is still useful for explicit agent selection and permissions. Install planning skills under `.kilo/skills/` or another Kilo-supported skills path.
 
-- **OpenCode:** follow [`opencode.md`](opencode.md). OpenCode can read `AGENTS.md`, but a dedicated agent as `.opencode/agents/sdi.md` or in `opencode.json` is useful for explicit agent selection, prompt isolation, and permissions. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste.
+- **OpenCode:** follow [`opencode.md`](opencode.md). OpenCode can read `AGENTS.md`, but a dedicated agent as `.opencode/agents/sdi.md` or in `opencode.json` is useful for explicit agent selection, prompt isolation, and permissions. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste. Install planning skills under `.opencode/skills/` or another OpenCode-supported skills path.
 
-- **Cursor:** follow [`cursor.md`](cursor.md). Add `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`. The rule loads on every chat — no mode picker.
+- **Cursor:** follow [`cursor.md`](cursor.md). Add `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`. The rule loads on every chat — no mode picker. Use Cursor Agent Skills if available in your installed build; otherwise adapt planning skills as manual Project Rules.
 
-- **Cline:** follow [`cline.md`](cline.md). Add `.clinerules/sdi-mode.md`. Cline auto-merges all rule files in the directory; no frontmatter needed for unconditional always-on.
+- **Cline:** follow [`cline.md`](cline.md). Add `.clinerules/sdi-mode.md`. Cline auto-merges all rule files in the directory; no frontmatter needed for unconditional always-on. Install planning skills under `.cline/skills/` or another Cline-supported skills path.
 
-- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `trigger: always_on`.
+- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `trigger: always_on`. Install planning skills under `.windsurf/skills/` or another Windsurf-supported skills path.
 
 - **Other tools (Continue, Aider, GitHub Copilot Chat, Cody, etc.):** use Claude Code/Codex's `AGENTS.md` template as a starting point — most modern coding tools respect either `AGENTS.md` or a tool-specific `*.md` file. Quick adaptations:
   - **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or reference it from `.continue/config.yaml` via `rules`.

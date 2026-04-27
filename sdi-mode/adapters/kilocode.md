@@ -1,6 +1,6 @@
 # Kilo Code — SDI Mode adapter
 
-This guide shows how to install `sdi-mode` as a custom agent (Kilo's term for a custom mode) in Kilo Code.
+This guide shows how to install `sdi-mode` as a custom agent in Kilo Code.
 
 ## Prerequisites
 
@@ -10,17 +10,19 @@ This guide shows how to install `sdi-mode` as a custom agent (Kilo's term for a 
 
 ## What you're configuring
 
-Kilo Code (originally a Roo Code fork) has converged on an OpenCode-compatible **agent** model. There are two ways to define an agent — pick one:
+Kilo Code supports custom agents and native `SKILL.md` skills. Use the agent for `sdi-mode` implementation sessions, and use skills for `mvp-architect` / `convert-to-sdi` planning.
+
+There are two ways to define the `sdi` implementation agent — pick one:
 
 1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body becomes the system prompt. Cleanest because there's no escaping.
-2. **JSON config** — `kilo.jsonc` at project root or `.kilo/kilo.jsonc` (the latter has priority if both exist).
+2. **JSON config** — `kilo.jsonc` at project root.
 
 Kilo can also read `AGENTS.md` from the project root. Use that for project-specific conventions and tool parity; use the dedicated `sdi` agent when you want explicit agent selection, prompt isolation, and permission defaults for SDI implementation sessions.
 
-Two scopes:
+Agent scopes:
 
-- **Project** — `.kilo/agents/sdi.md` or `kilo.jsonc` / `.kilo/kilo.jsonc` at project root.
-- **Global** — `~/.config/kilo/agent/sdi.md` or `~/.config/kilo/kilo.jsonc`. (On Windows: `C:\Users\<user>\.config\kilo\...`)
+- **Project** — `.kilo/agents/sdi.md` or project-root `kilo.jsonc`.
+- **Global** — `~/.config/kilo/agent/sdi.md` or `~/.config/kilo/kilo.jsonc`. Some Kilo versions also accept `~/.config/kilo/agents/`. (On Windows: `C:\Users\<user>\.config\kilo\...`)
 
 ## Approach A — Markdown agent file (recommended)
 
@@ -59,7 +61,7 @@ Other available frontmatter fields: `model`, `temperature`, `top_p`, `steps`, `h
 
 ## Approach B — JSON config (`kilo.jsonc`)
 
-If you prefer keeping all agents in one config file, create `.kilo/kilo.jsonc` (or `kilo.jsonc` at project root):
+If you prefer keeping all agents in one config file, create `kilo.jsonc` at the project root:
 
 ```jsonc
 {
@@ -84,6 +86,17 @@ If you prefer keeping all agents in one config file, create `.kilo/kilo.jsonc` (
 ```
 
 **Caveat:** the `prompt` field needs JSON-escaped newlines (`\n`). For long content like MODE.md, the markdown agent file approach (A) is much easier — that's why it's recommended.
+
+## Planning skills
+
+Install `mvp-architect` and `convert-to-sdi` as native Kilo skills:
+
+- Project scope: `.kilo/skills/mvp-architect/SKILL.md` and `.kilo/skills/convert-to-sdi/SKILL.md`
+- Global scope: `~/.kilo/skills/mvp-architect/SKILL.md` and `~/.kilo/skills/convert-to-sdi/SKILL.md`
+
+The Kilo CLI also supports compatibility directories such as `.claude/skills/` and `.agents/skills/`. Copy each whole skill directory from this repo, preserving its `SKILL.md` and `references/` folder.
+
+If you are on the legacy VS Code extension path, older docs may refer to `.kilocode/skills/` and mode-specific folders such as `skills-code/`. Prefer `.kilo/skills/` for current Kilo unless your installed version documents otherwise.
 
 ## Step 2 — Activate
 
@@ -125,7 +138,7 @@ Glob `*` matches the slug or `PHASE_N` part. `ask` requires explicit user approv
 
 ## Tips
 
-- **Markdown approach scales.** When you add `mvp-architect` / `convert-to-sdi` style agents later, define them as additional `.kilo/agents/*.md` files — same pattern, different `description` and frontmatter.
+- **Planning vs implementation.** Keep `mvp-architect` and `convert-to-sdi` as skills, not primary implementation agents. Use the `sdi` agent only once a plan exists and code is being written.
 - **Global vs project:** per-project `.kilo/agents/sdi.md` travels with the repo. Global `~/.config/kilo/agent/sdi.md` is convenient when SDI is your default discipline everywhere.
 - **Updating MODE.md:** with the markdown approach, just re-paste the body. With the JSON approach, re-escape the string. Either way, reload Kilo afterward.
-- **Configuration precedence (lowest → highest):** built-in defaults → global config → project `kilo.jsonc` → `.kilo/agents/*.md` files. Project markdown agents win over JSON config; useful if you keep a global JSON baseline and override per-project.
+- **Configuration precedence (lowest → highest):** built-in defaults → global config → project `kilo.jsonc` → `.kilo/agents/*.md` files → environment overrides. Project markdown agents win over JSON config; useful if you keep a global JSON baseline and override per-project.

@@ -10,16 +10,18 @@ This guide shows how to install `sdi-mode` as an always-applied rule in Cursor s
 
 ## What you're configuring
 
-Cursor doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead, it has **Project Rules**: markdown files under `.cursor/rules/` that are loaded into the agent's context based on frontmatter. Cursor supports four rule types:
+Cursor doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead, it has **Project Rules**: markdown files under `.cursor/rules/` that are loaded into the agent's context based on frontmatter. Cursor also reads root-level `AGENTS.md` as a simple project-instructions file.
+
+Cursor supports four project rule types:
 
 | Type | Frontmatter | Loaded |
 |---|---|---|
-| **Always Apply** | `alwaysApply: true` | Every chat in the project |
-| **Apply Intelligently** | `alwaysApply: false` + `description` | When the agent decides it's relevant |
-| **Apply to Specific Files** | `globs: [...]` | When edited files match the glob |
-| **Manual** | (any) | Only when @-mentioned in chat |
+| **Always** | `alwaysApply: true` | Every chat in the project |
+| **Auto Attached** | `globs: [...]` | When matching files are referenced |
+| **Agent Requested** | `alwaysApply: false` + `description` | When the agent decides it's relevant |
+| **Manual** | (any) | Only when explicitly mentioned with `@ruleName` |
 
-For sdi-mode, **Always Apply** is the right choice — the discipline must be active for every implementation chat.
+For sdi-mode, **Always** is the right choice — the discipline must be active for every implementation chat.
 
 The legacy single-file `.cursorrules` at project root still works for backward compatibility, but Cursor recommends migrating to `.cursor/rules/*.mdc`.
 
@@ -47,6 +49,17 @@ If you're on an older Cursor version or want a single-file approach, create `.cu
 ```
 
 No frontmatter; Cursor reads the whole file for every chat. Simpler but less flexible (no scoping, no companion rules per file pattern).
+
+## Planning skills
+
+Use Cursor's native Agent Skills feature if it is available in your installed build. Install `mvp-architect` and `convert-to-sdi` as skills through Cursor's Skills UI or the skill directory Cursor documents for your version, preserving each skill's `SKILL.md` and `references/` folder.
+
+If your Cursor build does not expose Agent Skills yet, keep planning inside Cursor by adapting each `SKILL.md` as a Manual Project Rule:
+
+- `.cursor/rules/mvp-architect.mdc`
+- `.cursor/rules/convert-to-sdi.mdc`
+
+Set `alwaysApply: false`, provide a clear `description`, paste the skill body, and invoke it explicitly with `@mvp-architect` or `@convert-to-sdi`. Do not move planning to a separate tool just to run SDI.
 
 ## Step 2 — Activate
 
@@ -97,4 +110,4 @@ A single `sdi-mode.mdc` is fine for most projects; the split helps when you want
 
 - **Updating MODE.md:** when this framework updates `MODE.md`, re-paste the body of `.cursor/rules/sdi-mode.mdc`. Cursor doesn't currently support file-include in `.mdc`, so this is a copy step.
 - **Project vs user scope:** `.cursor/rules/` is project-scoped (travels with the repo). Cursor also supports user-level rules in Settings → Rules → User Rules, useful when you want SDI mode active across all projects.
-- **Plays well with `AGENTS.md`:** Cursor reads `AGENTS.md` at the repo root in addition to `.cursor/rules/`. If you've already copied [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) for Claude Code/Codex compatibility, Cursor will also pick it up — your `.cursor/rules/sdi-mode.mdc` and `AGENTS.md` will both load. This is fine; the duplication is harmless because both carry the same discipline.
+- **Plays well with `AGENTS.md`:** Cursor reads `AGENTS.md` at the repo root in addition to `.cursor/rules/`. If you've already copied [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) for Claude Code/Codex compatibility, Cursor will also pick it up. Prefer keeping one as the concise project convention file and the other as the Cursor-native SDI rule, so they reinforce rather than drift.

@@ -1,6 +1,6 @@
 # Windsurf — SDI Mode adapter
 
-This guide shows how to install `sdi-mode` as a workspace rule in Windsurf so the implementation discipline loads in Cascade on every chat in the project.
+This guide shows how to install `sdi-mode` as a workspace rule in Windsurf so the implementation discipline loads in Cascade on every chat in the project. Windsurf also supports native `SKILL.md` skills; use those for `mvp-architect` and `convert-to-sdi` planning.
 
 ## Prerequisites
 
@@ -10,12 +10,12 @@ This guide shows how to install `sdi-mode` as a workspace rule in Windsurf so th
 
 ## What you're configuring
 
-Windsurf doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead, Cascade (Windsurf's agent) reads **rules** from markdown files. Two scopes:
+Windsurf doesn't have "custom modes" in the Roo/Kilo/OpenCode sense — instead, Cascade reads **rules** from markdown files. Two scopes:
 
 - **Workspace rules** — `.windsurf/rules/*.md` at the project root. Travels with the repo.
-- **Global rules** — `global_rules.md` managed via the "Manage memories" menu (or edited as a file in Cascade's config directory). Active across all workspaces.
+- **Global rules** — `~/.codeium/windsurf/memories/global_rules.md`, usually managed through the "Manage memories" / rules UI. Active across all workspaces.
 
-Conflict resolution: workspace rules take precedence over global rules. Within each scope, `always_on` rules load with highest priority and other trigger modes follow.
+Windsurf also reads `AGENTS.md` through the same rules engine: a root-level `AGENTS.md` is always on, and nested `AGENTS.md` files apply by directory. For SDI, `.windsurf/rules/sdi-mode.md` is still useful because it gives you Windsurf-native activation metadata.
 
 ## Step 1 — Create the rules directory
 
@@ -77,6 +77,17 @@ If SDI is your default discipline across many projects, add it to `global_rules.
 
 Workspace rules will still take precedence for any project that has its own `.windsurf/rules/sdi-mode.md`, so this works as a baseline that per-project rules can refine.
 
+## Planning skills
+
+Install `mvp-architect` and `convert-to-sdi` as native Windsurf skills:
+
+- Project scope: `.windsurf/skills/mvp-architect/SKILL.md` and `.windsurf/skills/convert-to-sdi/SKILL.md`
+- Global scope: `~/.codeium/windsurf/skills/mvp-architect/SKILL.md` and `~/.codeium/windsurf/skills/convert-to-sdi/SKILL.md`
+
+Windsurf also discovers cross-agent skills in `.agents/skills/` and `~/.agents/skills/`. If Claude Code config reading is enabled, it can scan `.claude/skills/` and `~/.claude/skills/` too. Copy each whole skill directory from this repo, preserving its `SKILL.md` and `references/` folder.
+
+Use the skills for planning and review. Use `.windsurf/rules/sdi-mode.md` for implementation discipline once a plan exists.
+
 ## File restrictions
 
 Windsurf rules don't have a hard-fence file-edit restriction. The framework's "PRD/ARCHITECTURE/ROADMAP edit only via revision notes" rule is enforced via the system prompt (soft fence).
@@ -85,7 +96,7 @@ For a stricter Cascade setup, configure Cascade's auto-edit settings to require 
 
 ## Token budget note
 
-Windsurf has a rule budget — rules that don't fit are silently dropped. If MODE.md (~190 lines) plus your other workspace/global rules exceeds the budget, Windsurf will drop something.
+Windsurf has a rule budget. Workspace rule files are limited in size, and global rules have a smaller limit. If MODE.md plus your other workspace/global rules exceeds the available budget, Cascade may omit or truncate some rule content.
 
 If that becomes an issue, split MODE.md into multiple rule files and let `description` + `model_decision` triggers pull in only what's relevant per chat. Possible split:
 
