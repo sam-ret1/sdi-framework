@@ -1,19 +1,20 @@
 # Kickoff Prompt Template
 
-At the end of Phase C, the user takes the spec bundle and hands it to a coding agent. The kickoff sets the tone for how the agent operates. There are **two paths** depending on the tool — pick the one matching the user's setup, or generate both if unclear.
+At the end of Phase C the user takes the spec bundle and hands it to a coding agent. The kickoff prompt sets the tone: read first, audit before code, stop at checkpoints. There is **one consolidated template**, with a single conditional line for how `sdi-mode` is loaded — as a skill (Claude Code / Codex) or as a custom mode (Roo Code / Kilo Code / OpenCode).
 
-## Path A — Claude Code / Codex
+## The template
 
-Used when the project has `AGENTS.md` (and `CLAUDE.md` if Claude Code) at the repo root, generated from the bundle. The discipline (audit-first, stop-and-review, DECISIONS.md, round reports) loads automatically because Codex reads `AGENTS.md` natively and Claude Code imports it through `CLAUDE.md` with `@AGENTS.md`.
-
-Paste at the start of the user's first session:
+Paste this at the start of the user's first implementation session, replacing the placeholders.
 
 ```
 Implementing [Phase 1 / <slug>] of this project per docs/IMPLEMENTATION_PLAN_[PHASE_1 | <slug>].md.
 
+[For Claude Code / Codex:] Use the `sdi-mode` skill for this work.
+[For Roo Code / Kilo Code / OpenCode:] Activate the `sdi-mode` custom mode for this work.
+
 Read in this order before writing any code:
 1. README.md to get context.
-2. AGENTS.md (already loaded as context, but verify the conventions).
+2. AGENTS.md (project facts — stack, doc map, conventions, work tracker).
 3. docs/IMPLEMENTATION_PLAN_[PHASE_1 | <slug>].md fully.
 4. docs/PROJECT_STRUCTURE.md for conventions.
 5. docs/ARCHITECTURE.md — at minimum the type-specific section and the critical flows.
@@ -27,29 +28,17 @@ Then audit the plan against the actual repo state. Produce an audit report cover
 After the audit, propose the first deliverable — usually [foundation: schema/migration/dependencies for types with a database; project scaffolding for fresh repos] — and stop for review. Don't start on subsequent scope items until I approve the foundation.
 ```
 
-This prompt is short because `AGENTS.md` already carries the SDI discipline (the 8 steps, the not-rules, the tone). The kickoff just signals "we're starting this work item — proceed with audit."
+The prompt is short because the SDI discipline (8-step loop, audit-first, stop-and-review, DECISIONS, memory, document precedence, tone) is loaded by the `sdi-mode` skill or custom mode. The kickoff just signals "we're starting this work item — proceed with audit".
 
-Substitute `[Phase 1 / <slug>]` with whichever naming applies — `PHASE_N` for discrete phases (greenfield/migrations) or `<slug>` for free-form work (features/maintenance in ongoing projects).
+Substitute `[Phase 1 / <slug>]` with whichever naming applies — `PHASE_N` for discrete phases (greenfield/migrations) or `<slug>` for free-form work (features/maintenance in ongoing projects). Drop the line that doesn't match the user's tool.
 
-## Path B — Roo Code / Kilo Code / OpenCode
+## When generating the kickoff for a specific user
 
-Used when the project relies on a configured `sdi-mode` custom mode/agent rather than only `AGENTS.md`. The custom mode is set up beforehand following `sdi-mode/adapters/{tool}.md`; keep `AGENTS.md` too when the tool supports it, so project conventions stay portable.
+The Phase C output to the user includes the kickoff prompt with the right line picked, not both. Decide based on what the user said about their tool:
 
-Paste at the start of the user's first session, with `sdi-mode` active:
-
-```
-Implementing [Phase 1 / <slug>] of this project per docs/IMPLEMENTATION_PLAN_[PHASE_1 | <slug>].md.
-
-Read in this order before writing any code:
-1. README.md to get context.
-2. docs/IMPLEMENTATION_PLAN_[PHASE_1 | <slug>].md fully.
-3. docs/PROJECT_STRUCTURE.md for conventions.
-4. docs/ARCHITECTURE.md — at minimum the type-specific section and the critical flows.
-
-You are operating under SDI mode discipline (loaded as your system prompt). Audit the plan against the actual repo state and produce an audit report. After the audit, propose the first deliverable and stop for review.
-```
-
-This prompt is also short because the `sdi-mode` system prompt (from `MODE.md`) already carries the discipline.
+- User mentioned Claude Code or Codex → keep the **skill** line.
+- User mentioned Roo, Kilo, or OpenCode → keep the **custom mode** line.
+- User didn't say → present both inline (so they can pick) or ask which they're using before generating the final prompt.
 
 ## Variations for mid-project prompts
 
@@ -59,6 +48,9 @@ This prompt is also short because the `sdi-mode` system prompt (from `MODE.md`) 
 Phase N-1 is shipped (see DECISIONS.md and PROJECT_STRUCTURE.md for what was delivered).
 
 Now implementing Phase N per docs/IMPLEMENTATION_PLAN_PHASE_N.md.
+
+[For Claude Code / Codex:] Use the `sdi-mode` skill for this work.
+[For Roo Code / Kilo Code / OpenCode:] Activate the `sdi-mode` custom mode for this work.
 
 Follow the same SDI discipline as Phase 1:
 1. Read the plan fully.
@@ -76,6 +68,9 @@ Start with the audit.
 ```
 Continuing [Phase N / <slug>] from where we stopped. Last round delivered [X]; next suggested round is [Y].
 
+[For Claude Code / Codex:] Use the `sdi-mode` skill (it should already be loaded if you're in the same session — re-invoke if needed).
+[For Roo Code / Kilo Code / OpenCode:] Stay in the `sdi-mode` custom mode.
+
 Before starting, verify:
 - Round [X] is fully merged and tests are green.
 - Audit state from the start of the phase is still valid (no new divergences).
@@ -83,12 +78,6 @@ Before starting, verify:
 
 Propose the first deliverable of this round and stop for review.
 ```
-
-## How to adapt
-
-- If the user uses a coding agent not listed here (Cursor, Continue, Cody, Aider, etc.), adapt phrasing but keep the ground rules intact: read first, audit before code, stop at checkpoints, DECISIONS.md, repo wins. If the tool supports a rules file or directory (for example `.cursorrules` or `.continue/rules/`), consider porting AGENTS.md content to that format.
-- If the project doesn't have a UI, skip the DESIGN_SYSTEM reference.
-- If the user wants to start from a phase other than Phase 1 (e.g. continuing an existing project), use the "Starting Phase N" variation.
 
 ## What the prompts do
 
@@ -99,7 +88,7 @@ Propose the first deliverable of this round and stop for review.
 - **Normalize DECISIONS.md.** Makes the paper trail a default, not an afterthought.
 - **Set tone for revision notes.** Plans evolve; the agent knows how to mark that.
 
-The two paths differ only in *how* the discipline gets loaded (`AGENTS.md` import/native read vs. mode/agent system prompt). The behaviors expected from the agent are identical.
+The skill / custom-mode mechanism differs per tool, but the behaviors expected from the agent are identical.
 
 ## When NOT to use the kickoff prompt
 

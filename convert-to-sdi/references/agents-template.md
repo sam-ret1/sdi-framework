@@ -1,3 +1,16 @@
+# AGENTS.md template (project facts only)
+
+This is the canonical template the skill uses in Phase 2 to generate the project's `AGENTS.md` (or to merge into an existing `AGENTS.md` per the Strategy B procedure in `existing-artifact-handling.md`). The skill copies this content into the project's repo root and customizes the placeholders with the project's type, stack, and conventions detected during the auto-audit and triage.
+
+Keep this template in sync with the equivalent file in `mvp-architect/references/agents-template.md`. Both skills carry their own copy on purpose: each skill is self-contained so it can run on platforms without the full framework cloned locally.
+
+The template generates a **fact sheet** for the SDI workflow. Discipline rules (audit, checkpoints, tone, document precedence) live in the `sdi-mode` skill (Claude Code / Codex) or the configured custom mode (Roo / Kilo / OpenCode), not in `AGENTS.md`. When generating, never inject behavioral instructions into `AGENTS.md`.
+
+---
+
+## Template — copy everything below this line into the project's `AGENTS.md`
+
+```markdown
 # AGENTS.md
 
 > Project-specific **fact sheet** for the SDI workflow. Read by Codex natively at the start of every session and imported by Claude Code via `CLAUDE.md`.
@@ -75,3 +88,36 @@ Two rules:
 
 1. Edit only project facts. If you find yourself writing behavioral instructions ("the agent should...", "always do X before Y"), stop — that belongs in the `sdi-mode` skill/mode, not here.
 2. Propose updates explicitly; don't silently mutate. The user reviews and approves changes.
+```
+
+## Companion: `CLAUDE.md` (Claude Code only)
+
+When generating for a project that targets Claude Code, also create `CLAUDE.md` at the repo root with a single line:
+
+```markdown
+@AGENTS.md
+```
+
+This makes Claude Code import `AGENTS.md` on every session, the same way Codex reads `AGENTS.md` natively. No further content goes in `CLAUDE.md`.
+
+## What to fill in vs leave as placeholder
+
+When `mvp-architect` Phase C generates this:
+
+- **Fill in confidently** (Phase B answers settled them): `Type`, `AI/LLM modifier`, `Primary deployment target`, the high-level `Stack`.
+- **Leave as placeholder for the implementation agent to discover**: `Stack details` subsection (specific helper names, schema directories, test runners), `File / directory conventions`, `Convention exceptions`. These are project-specific and emerge during the first audit and rounds. The implementation agent (running under `sdi-mode`) is responsible for proposing additions; the user approves.
+- **Leave empty rows in `Work tracker`** beyond the current phase. Each new `IMPLEMENTATION_PLAN_*.md` adds a row.
+
+When `convert-to-sdi` Phase 2 generates this from an existing repo:
+
+- **Fill in from the auto-audit** (Phase 0): everything detectable — type, stack, deployment target, doc map paths.
+- **Fill in from triage answers** (Phase 1): AI modifier flag, project stage notes (informs `Convention exceptions`).
+- **Pre-populate `Stack details`** with whatever the audit detected (e.g., test runner detected from package.json scripts).
+- **Pre-populate `Work tracker`** with a single retroactive row marking the existing project state ("converted to SDI on YYYY-MM-DD; first work item TBD").
+
+## Anti-patterns — never do these when generating `AGENTS.md`
+
+- **Do not** copy in any of the SDI discipline (8 steps, the 4 rules, "stop at checkpoints", "audit before coding"). That belongs in `sdi-mode`.
+- **Do not** include "you are the implementation agent" or any identity statement. The skill/mode handles identity when active.
+- **Do not** include "what this mode is not", "tone", or "document precedence" sections. Those live in `sdi-mode`.
+- **Do not** remove the "Edit only project facts" rubric at the top — it is the guardrail that keeps this template clean over time.

@@ -30,7 +30,7 @@ The existing file already does its job. Don't touch the content. Add a small hea
 
 **Pattern:**
 ```markdown
-> **Framework:** This project uses the sdi-framework workflow. See `AGENTS.md` (root) for operating discipline. This document predates the framework adoption and is preserved as-is.
+> **Framework:** This project uses the sdi-framework workflow. See `AGENTS.md` (root) for project facts and invoke/activate `sdi-mode` for the operating discipline. This document predates the framework adoption and is preserved as-is.
 
 [existing content unchanged]
 ```
@@ -108,7 +108,7 @@ Skill applies these defaults; user can override per-file in Phase 1.5.
 | Artifact | If exists, default strategy | Conditions for override |
 |---|---|---|
 | `README.md` | **A** (preserve + framework header) | B if it lacks stack table + doc links AND user wants alignment |
-| `AGENTS.md` | **A** if SDI-formatted; **B** if framework-aware but partial | C if user wants fresh |
+| `AGENTS.md` | **B** (merge in place — preserve project facts, drop any embedded discipline) — see "AGENTS.md merge handling" below | A if already matches the current `agents-template.md` exactly; C only if the existing file is unrecoverable |
 | `PROJECT_STRUCTURE.md` | **B** (existing as basis, add canonical sections) | A if already canonical |
 | `ARCHITECTURE.md` | **B** (merge with type appendix sections) | C if outdated >1 year or wiki-style |
 | `PRD.md` | **B** (preserve content, fit into canonical sections) | D if PRD lives in Notion/Confluence |
@@ -118,9 +118,39 @@ Skill applies these defaults; user can override per-file in Phase 1.5.
 | `docs/decisions/` or `docs/adr/` (ADR folder) | **Special — see ADR handling below** | |
 | `CHANGELOG.md` | **A** (preserve; signals are channeled to AGENTS production-indicators section) | never overwrite |
 | Custom `docs/` files (runbooks, post-mortems, internal wiki pages) | **A** (preserve all; reference where relevant from AGENTS doc map) | |
-| `.cursorrules`, `.continuerc`, `.windsurfrules`, IDE-specific rule files | **A** (preserve; surface as "alternative discipline carriers" in AGENTS) | propose deprecation if redundant with AGENTS |
 
 **Default safety bias:** when in doubt, prefer A or B over C. C is destructive of organization (renames file). D is conservative but creates external dependency.
+
+## AGENTS.md merge handling (specific Strategy B procedure)
+
+`AGENTS.md` always defaults to Strategy B because the canonical template is a strict **fact sheet** — it contains stack, doc map, conventions, and a work tracker, and **never** carries discipline (audit steps, checkpoint behavior, tone, document precedence). The discipline lives in the `sdi-mode` skill (Claude Code / Codex) or the configured custom mode (Roo / Kilo / OpenCode) and propagates from there.
+
+Any existing `AGENTS.md` is therefore either: (a) already a fact sheet and mostly compatible, (b) framework-aware but contains discipline-style instructions that should be removed, or (c) ad-hoc but with valuable project facts that should be preserved. Strategy B handles all three.
+
+**Procedure:**
+
+1. **Read** the existing `AGENTS.md`.
+2. **Classify each section/paragraph** into one of three buckets:
+   - **Project fact** (stack details, file/directory conventions, helper names, schema directory paths, test runners, deployment target, doc map entries, work tracker rows, AI/LLM modifier flag, type identifier) → **preserve verbatim into the matching section of the canonical template**.
+   - **Discipline rule** (anything imperative about the agent's behavior: "always audit before coding", "stop at checkpoints", "the agent should…", "tone: concise", "document precedence: X > Y", lists of "what this mode is not", "when in doubt: stop and ask") → **drop**. The canonical template has the rubric "Edit only project facts; never inject discipline rules" at the top, with examples; the discipline these instructions are trying to encode lives in the `sdi-mode` skill/mode.
+   - **Ambiguous** (mixes a fact and an instruction, or a project-specific exception phrased as an instruction) → flag for the user. Examples: "Tests: use vitest. Always run lint before commit." → split into a fact ("Test runner: vitest") and a discipline instruction (drop or surface as a question to the user about whether it belongs in their lint hooks rather than `AGENTS.md`).
+3. **Construct the new `AGENTS.md`** from the canonical template (loaded from `references/agents-template.md`), filling in:
+   - The `Project context` block with values detected by Phase 0 + confirmed by Phase 1 + values pulled from buckets above.
+   - The `Document map` reflecting actual `docs/` content (including any custom files preserved per the matrix).
+   - `Project-specific conventions > Stack details / File / directory conventions / Convention exceptions` populated with everything bucket-classified as "fact".
+   - The `Work tracker` with a single retroactive row marking the conversion ("Converted to SDI on YYYY-MM-DD; first work item TBD").
+   - Any external artifact references (Strategy D outcomes for other artifacts) appended as an `External artifact references` block.
+4. **Show a three-way diff to the user**:
+   - **Preserved** — sections/lines copied verbatim from the existing file (which canonical section each landed in).
+   - **Dropped** — discipline-style instructions removed, with a one-line reason each (e.g., "removed 'always audit before coding' — the discipline now lives in the `sdi-mode` skill/mode").
+   - **Added** — new sections from the canonical template that the existing file didn't have (e.g., the rubric at the top, the work tracker, the operating-context block).
+5. **Wait for user approval.** They can: accept, edit specific sections, or veto a drop (if a "discipline" line was actually a project-specific exception they want preserved as a fact — in which case rephrase as a fact).
+6. **Write the new `AGENTS.md`** only after explicit approval. The original is not preserved as a `.legacy.md` (Strategy C territory) unless the user requests it; the diff shown in step 4 is the audit trail.
+
+**When this procedure does NOT apply:**
+
+- The existing `AGENTS.md` is already byte-identical to the current canonical template (no changes since framework v0). → Strategy A.
+- The existing file is unintelligible (binary, machine-generated noise, broken markdown). → Strategy C (rename to `AGENTS.legacy.md`, generate fresh).
 
 ## ADR handling (special case)
 
@@ -234,9 +264,9 @@ To decide between A (preserve) and B (convert in place), the skill checks **form
 **Incompatible**: aesthetic intent prose without tokens.
 
 ### `AGENTS.md`
-**Compatible** if has SDI 8-step discipline reference + project context + work tracker.
-**Partially compatible**: framework-aware (mentions SDI or has tracker) but missing pieces.
-**Incompatible**: not framework-aware, or different agent-rules style.
+**Compatible** if it matches the current facts-only shape: project context + document map + project-specific conventions + work tracker, with no embedded discipline rules.
+**Partially compatible**: framework-aware (mentions SDI or has tracker) but missing pieces, or contains residual discipline that must be stripped during Strategy B.
+**Incompatible**: not framework-aware, different agent-rules style, or mostly behavioral instructions with few recoverable project facts.
 
 ### `DECISIONS.md` (single file)
 **Compatible** if has numbered entries with Context/Decision/Rationale or close.

@@ -56,7 +56,7 @@ For each, record `present: yes/no` and `compatibility: compatible / partially-co
 
 - `README.md` — at root
 - `PRD.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `PROJECT_STRUCTURE.md`, `DESIGN_SYSTEM.md`, `DECISIONS.md` — at root or in `docs/`
-- `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.continuerc`, `.windsurfrules` — at root
+- `AGENTS.md`, `CLAUDE.md` — at root
 - `CHANGELOG.md` — at root
 - `docs/decisions/` or `docs/adr/` — ADR folder (count files; check if `0001-...md` numbering)
 - `docs/runbooks/`, `docs/onboarding/`, etc. — custom doc folders (just inventory)
@@ -74,16 +74,16 @@ For canonical artifacts, after reading the file, classify compatibility per the 
 | `ROADMAP.md` | phases/cycles/quarters with deliverables + acceptance criteria | phases without AC | pure backlog list, Trello/CSV export, no sequence |
 | `PROJECT_STRUCTURE.md` | directory tree + conventions section | one of two | prose without structure |
 | `DESIGN_SYSTEM.md` | tokens (color/typography/spacing) + 2+ of {layout, motion, a11y, components} | tokens only | aesthetic prose without tokens |
-| `AGENTS.md` | SDI 8-step + project context + work tracker | framework-aware but missing pieces | not framework-aware |
+| `AGENTS.md` | project context + document map + work tracker, with no embedded discipline (no 8-step list, no tone/precedence/checkpoint instructions) | framework-aware but missing pieces, or contains residual discipline that needs to be stripped | not framework-aware |
 | `DECISIONS.md` (single file) | numbered entries with Context/Decision/Rationale | entries with format variance | prose without entries |
 
-For non-canonical artifacts (CHANGELOG, runbooks, IDE rule files, custom `docs/*.md`), compatibility is `n/a` — they're preserved unconditionally per Strategy A.
+For non-canonical artifacts (CHANGELOG, runbooks, custom `docs/*.md`), compatibility is `n/a` — they're preserved unconditionally per Strategy A.
 
 ### Don't overwrite checks
 
 Hard rules even before Phase 1.5:
 
-- If `AGENTS.md` already exists with **compatible** SDI structure → propose **skipping** convert-to-sdi entirely (project is already framework-adopted; only update if structure has drifted).
+- If `AGENTS.md` already exists with **compatible** structure (facts-only, matches the canonical template) → propose **skipping** convert-to-sdi entirely (project is already framework-adopted; only update if structure has drifted).
 - If any canonical artifact is **compatible** → default to Strategy A (preserve + framework header) in the matrix.
 - Never silently overwrite. **Always** route through Phase 1.5 if any canonical artifact is detected.
 
@@ -108,7 +108,6 @@ Add a section to the discovery report (per `auto-audit-checklist.md` §"Discover
 
 - `CHANGELOG.md` — preserved as-is (production indicator)
 - `docs/runbooks/` (3 files) — custom; preserved + linkable in AGENTS doc map
-- `.cursorrules` — IDE rules; will be flagged for review during Phase 1.5
 ```
 
 This section triggers Phase 1.5 (the existing-artifact-triage phase) when any canonical artifact has compatibility `partially compatible` or `incompatible`, or when ADR folders exist, or when external-tool integrations are suspected. If everything is `compatible` or absent, the skill skips Phase 1.5 and goes straight to Phase 2.
@@ -185,7 +184,6 @@ After running the audit, produce a structured report shown to the user:
 - docs/ folder with [N] files (will be preserved)
 - CHANGELOG.md (5 entries spanning 8 months — production indicator)
 - AGENTS.md: not present
-- .cursorrules: not present
 
 ## Production indicators
 **Stage suggestion: mature-production** (3 strong signals)

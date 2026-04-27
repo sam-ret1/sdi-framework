@@ -119,8 +119,8 @@ Generate the corresponding `IMPLEMENTATION_PLAN_*.md`:
 The plan's §0 Pre-requisites lists the **current production state as the foundation** — not "Phase N-1 delivered". The plan is grounded in the live repo.
 
 After generation, instruct the user how to load `sdi-mode`:
-- Claude Code / Codex: AGENTS.md is already at repo root; paste the kickoff prompt.
-- Roo Code / Kilo Code / OpenCode: configure the custom mode per `sdi-framework/sdi-mode/adapters/{tool}.md`, then paste the kickoff prompt.
+- Claude Code / Codex: install the `sdi-mode` skill under the tool's skills path (alongside `mvp-architect` and `convert-to-sdi`) if it isn't there yet. AGENTS.md (project facts) is already at repo root. Paste the kickoff prompt to start the work item — the `sdi-mode` skill auto-invokes from there.
+- Roo Code / Kilo Code / OpenCode: configure the `sdi-mode` custom mode following the appropriate adapter in your local copy of `sdi-framework/`. Once active, paste the kickoff prompt.
 
 Closing message:
 
@@ -160,5 +160,9 @@ Load these as needed:
 - `references/existing-artifact-handling.md` — Phase 1.5: matrix + 4 strategies (A/B/C/D) for existing PRD/ARCHITECTURE/ROADMAP/etc. + ADR special handling
 - `references/confidence-flags.md` — how to mark thin sections in artifacts
 - `references/artifact-generation-rules.md` — Phase 2: per-artifact rules and confidence levels
+- `references/agents-template.md` — canonical AGENTS.md template (project facts only) used by Phase 2
 - `references/production-constraints-template.md` — section emitted in AGENTS.md when stage = production
+- `references/core-templates/` — universal templates duplicated from `mvp-architect` so this skill is self-contained: `architecture-template.md`, `implementation-plan-template.md`, `prd-template.md`, `readme-template.md`, `roadmap-template.md`
+- `references/project-types/{type}/` — type-specific templates (8 types: ai-agent, api-service, automation-workflow, dashboard, data-pipeline, landing-page, mobile, web-saas) — each carries `architecture-appendix.md`, `project-structure-template.md`, and `design-system-template.md` (UI types only)
+- `references/modifiers/ai.md` — AI/LLM cross-cutting sections, applied when the AI modifier is active
 - `references/first-work-item.md` — Phase 3: handoff to sdi-mode

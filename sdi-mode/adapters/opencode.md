@@ -14,8 +14,8 @@ OpenCode supports custom agents and native `SKILL.md` skills. Use the agent for 
 
 There are two ways to define the `sdi` implementation agent — pick one:
 
-1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body is the system prompt. Cleanest path for long prompts like MODE.md.
-2. **JSON config** — `opencode.json` at the project root or `~/.config/opencode/opencode.json` globally, under the `agent` key. Supports `{file:...}` references so you don't need to inline MODE.md.
+1. **Markdown agent file** (recommended) — a `.md` file with YAML frontmatter; the body is the system prompt. Cleanest path for long prompts like SKILL.md.
+2. **JSON config** — `opencode.json` at the project root or `~/.config/opencode/opencode.json` globally, under the `agent` key. Supports `{file:...}` references so you don't need to inline SKILL.md.
 
 OpenCode can also read `AGENTS.md` from the project root. Use that for project-specific conventions and tool parity; use the dedicated `sdi` agent when you want explicit agent selection, prompt isolation, and permission defaults for SDI implementation sessions.
 
@@ -50,7 +50,7 @@ permission:
   webfetch: ask
 ---
 
-<paste the full contents of sdi-framework/sdi-mode/MODE.md here>
+<paste the body of sdi-framework/sdi-mode/SKILL.md here — start at "# SDI Mode — Spec-Driven Implementation" and skip the YAML frontmatter at the top of SKILL.md (that block is skill-discovery metadata, not part of the system prompt)>
 ```
 
 The body is the system prompt. Markdown formatting is preserved verbatim.
@@ -70,9 +70,11 @@ Other available fields: `model`, `temperature`, `top_p`, `steps`, `hidden`, `dis
 
 > **Note on file-edit restrictions.** OpenCode supports glob-based `permission.edit` rules. The example above lets normal edits proceed, but requires approval before any write to canonical SDI artifacts that should only receive revision notes or housekeeping updates. For a stricter setup, change those `ask` entries to `deny`.
 
+> **About the SKILL.md frontmatter:** the `---`-delimited block at the top of `SKILL.md` (with `name:` and `description:`) is metadata used by skill discovery in Claude Code / Codex. It is **not** part of the SDI discipline and should not be pasted into the agent prompt. Approach A: start your paste at the first heading (`# SDI Mode — Spec-Driven Implementation`). Approach B: the `{file:...}` reference loads the whole file as-is, but OpenCode treats the leading frontmatter as content; if it interferes with your prompt, strip the frontmatter from a copy of `SKILL.md` and point `{file:...}` at the stripped copy.
+
 ## Approach B — JSON config (with `{file:...}` reference)
 
-This is the cleanest way to avoid copying MODE.md content. Create or edit `opencode.json` at the project root:
+This is the cleanest way to avoid copying SKILL.md content. Create or edit `opencode.json` at the project root:
 
 ```json
 {
@@ -81,7 +83,7 @@ This is the cleanest way to avoid copying MODE.md content. Create or edit `openc
       "description": "Spec-Driven Implementation discipline. Use after planning is complete.",
       "mode": "primary",
       "color": "#3b82f6",
-      "prompt": "{file:./sdi-framework/sdi-mode/MODE.md}",
+      "prompt": "{file:./sdi-framework/sdi-mode/SKILL.md}",
       "permission": {
         "edit": {
           "*": "allow",
@@ -103,9 +105,9 @@ This is the cleanest way to avoid copying MODE.md content. Create or edit `openc
 }
 ```
 
-The `{file:...}` syntax loads the prompt from disk at config-parse time. Path is relative to the config file location. **This means MODE.md updates are picked up automatically on the next OpenCode reload — no re-paste required.**
+The `{file:...}` syntax loads the prompt from disk at config-parse time. Path is relative to the config file location. **This means SKILL.md updates are picked up automatically on the next OpenCode reload — no re-paste required.**
 
-If you don't have `sdi-framework/` cloned inside your project, point the path at wherever you keep the repo, e.g. `{file:/Users/me/repos/sdi-framework/sdi-mode/MODE.md}` (absolute) or `{file:../sdi-framework/sdi-mode/MODE.md}` (relative).
+If you don't have `sdi-framework/` cloned inside your project, point the path at wherever you keep the repo, e.g. `{file:/Users/me/repos/sdi-framework/sdi-mode/SKILL.md}` (absolute) or `{file:../sdi-framework/sdi-mode/SKILL.md}` (relative).
 
 For a global config, use `~/.config/opencode/opencode.json` with the same `agent.sdi` schema.
 
@@ -153,7 +155,7 @@ If the agent improvises:
 
 ## Tips
 
-- **`{file:...}` is a killer feature.** With Approach B, MODE.md updates flow through automatically — no copy-paste cycle. This is the recommended setup if you have `sdi-framework/` checked out as a sibling or sub-directory of your project.
+- **`{file:...}` is a killer feature.** With Approach B, SKILL.md updates flow through automatically — no copy-paste cycle. This is the recommended setup if you have `sdi-framework/` checked out as a sibling or sub-directory of your project.
 - **Planning vs implementation.** Keep `mvp-architect` and `convert-to-sdi` as skills, not primary implementation agents. Use the `sdi` agent only once a plan exists and code is being written.
-- **Updating MODE.md:** Approach A → re-paste the body and reload. Approach B → no action; reload picks up the new file content.
+- **Updating SKILL.md:** Approach A → re-paste the body and reload. Approach B → no action; reload picks up the new file content.
 - **Permission tuning:** `bash: { "*": "ask" }` is the safest default. As trust grows on a project, you can add `"npm test": "allow"`, `"npm run *": "allow"`, etc.

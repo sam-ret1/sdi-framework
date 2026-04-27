@@ -9,6 +9,31 @@ This skill captures a way of going from a rough product idea to a spec bundle a 
 
 The skill works across multiple project types via a Phase 0 router: web SaaS multi-tenant, landing pages, dashboards, web APIs, mobile apps, data pipelines, AI agents/MCP servers, integration/automation workflows. An optional AI/LLM modifier supplements any project type with cross-cutting LLM concerns (prompts, eval, cost, guardrails).
 
+## Intent triage (run this first)
+
+This skill has three distinct entry modes (initial scoping, consultative review, next-phase planning). Pick the mode from the user's first message **only when it is unambiguous**. When in doubt, ask once.
+
+**Unambiguous — go straight to the right phase, do not ask:**
+- Phase 0/A signals — "I have an idea for X", "want to start a project", "help me scope a product", "need a PRD for Y", "we want to build Z from scratch".
+- Phase D signals — "review this audit/plan/round report", "the coding agent proposed X, does it look right?", "is this decision risky?", "any problem with this approach?", any other "second pair of eyes" framing.
+- Phase E signals — "Phase N closed, let's plan the next phase", "scope feature X", "plan maintenance for Y", "what's the next implementation plan?".
+
+**Ambiguous — ask explicitly before starting any phase:**
+
+If the user's message does not clearly match one of the three modes (e.g. they just said "use mvp-architect" or "I need help with my project"), reply with:
+
+> Before we start, which of these matches what you need?
+>
+> 1. **Start a new project** — go from a rough idea to a spec bundle (PRD, ARCHITECTURE, ROADMAP, IMPLEMENTATION_PLAN, AGENTS.md). For greenfield work.
+> 2. **Review work in progress** — second pair of eyes on a coding agent's audit, plan, round report, or proposed decision. For mid-implementation projects.
+> 3. **Plan the next work item** — generate the next `IMPLEMENTATION_PLAN_*.md` after a phase or feature closes. For ongoing projects.
+>
+> Reply with just the number.
+
+After the user answers, route to Phase 0/A (option 1), Phase D (option 2), or Phase E (option 3).
+
+When entering Phase D or Phase E, do not run Phase 0/A/B/C — the project already exists, the discovery work is done, and re-running it wastes time. Read the existing artifacts to load context, then operate per the relevant phase below.
+
 ## When to use
 
 **For initial scoping (Phase 0 → A → B → C):**
@@ -28,8 +53,6 @@ The skill works across multiple project types via a Phase 0 router: web SaaS mul
 - "What's the next implementation plan?"
 - "Let's scope feature [Z] / maintenance for [W]".
 - The current `IMPLEMENTATION_PLAN_*` is closed (or about to close) and the user needs the next one.
-
-When entering directly into Phase D or Phase E, do not run Phase 0/A/B/C — the project already exists, the discovery work is done, and re-doing it wastes time. Read the existing artifacts to load context, then operate per the relevant phase below.
 
 ## Scope of applicability
 
@@ -142,9 +165,9 @@ The artifacts merge **core templates + type appendices** into single coherent do
 
 End the bundle with two outputs:
 
-1. The **AGENTS.md** for the project root, generated from the template at `sdi-mode/adapters/claudecode-codex/AGENTS.md` and customized with the project's type, stack, and conventions decided in Phase B. This file carries the implementation discipline so the coding agent (Claude Code, Codex) operates correctly from day one.
+1. The **AGENTS.md** for the project root, generated from the template in `references/agents-template.md` and customized with the project's type, stack, and conventions decided in Phase B. This file carries only project facts (stack, doc map, conventions, work tracker) — it does **not** carry the SDI discipline. The discipline lives in the `sdi-mode` skill (Claude Code / Codex) or the configured `sdi-mode` custom mode (Roo Code / Kilo Code / OpenCode). Never inject behavioral instructions into the generated `AGENTS.md`. For Claude Code projects, also generate a one-line `CLAUDE.md` with `@AGENTS.md`.
 
-2. The **kickoff prompt** for the user to paste into their coding agent when they start implementation. Read `references/kickoff-prompt-template.md`. The kickoff prompt has two paths — Path A (Claude Code/Codex with AGENTS.md) and Path B (Roo Code/Kilo Code/OpenCode with sdi-mode); generate the relevant one based on the tool the user mentions, or both if they haven't said.
+2. The **kickoff prompt** for the user to paste into their coding agent when they start implementation. Read `references/kickoff-prompt-template.md` for the consolidated template (one shape, with a single conditional line for "skill" vs "custom mode" depending on the tool).
 
 ### Phase D — Consultative review (during implementation)
 
@@ -224,5 +247,6 @@ Load these as needed (don't preemptively read all of them):
 - `references/project-types/{type}/project-structure-template.md` — repo layout per type
 - `references/project-types/{type}/design-system-template.md` — visual language (only types with UI)
 - `references/kickoff-prompt-template.md` — prompt the user pastes into the coding agent
+- `references/agents-template.md` — canonical AGENTS.md template (project facts only) used by Phase C
 - `references/review-support-patterns.md` — patterns for Phase D consultative review
 - `references/next-phase-planning.md` — full protocol for Phase E (planning subsequent work items)

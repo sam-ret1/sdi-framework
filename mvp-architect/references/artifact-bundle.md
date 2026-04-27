@@ -22,7 +22,7 @@ The standard set of artifacts produced at the end of Phase C. Each has a specifi
 
    **ROADMAP coupling:** `ROADMAP.md` uses "Phase 0/1/2..." structure and is generated when a project has discrete planned phases. Continuous-feature or maintenance-mode projects may skip ROADMAP entirely or keep it minimal — work items are scoped one at a time via Phase E.
 
-8. **AGENTS.md** *(at repo root, not in `docs/`)* — operating discipline for the coding agent during implementation. Generated from the template at `sdi-mode/adapters/claudecode-codex/AGENTS.md` and customized with the project's type, AI modifier flag, stack, and known conventions. For Claude Code / Codex this is the primary discipline anchor. For Roo Code / Kilo Code / OpenCode users, the equivalent is the `sdi-mode` custom mode configured per `sdi-mode/adapters/{tool}.md`; AGENTS.md still gets generated for documentation parity.
+8. **AGENTS.md** *(at repo root, not in `docs/`)* — project-specific **fact sheet** for the SDI workflow. Generated from the template in `references/agents-template.md` and customized with the project's type, AI modifier flag, stack, and known conventions. Carries only project facts (stack, doc map, conventions, work tracker) — **never** the SDI discipline itself. The discipline lives in the `sdi-mode` skill (Claude Code / Codex) or the configured `sdi-mode` custom mode (Roo Code / Kilo Code / OpenCode). For Claude Code projects, also generate a one-line `CLAUDE.md` with `@AGENTS.md` so Claude Code imports the fact sheet on every session (Codex reads `AGENTS.md` natively).
 
 ## Conditional generation
 
@@ -50,7 +50,7 @@ README is last because it's an index — it can't index documents that don't exi
 - **PROJECT_STRUCTURE** tells the coding agent where things live. Used by every subsequent plan.
 - **DESIGN_SYSTEM** is consumed by UI-producing tasks; non-UI phases can ignore it.
 - **IMPLEMENTATION_PLAN_PHASE_1** is the first "how" doc. Subsequent phases get their own plans later, not all at once.
-- **AGENTS.md** sits at repo root and is the discipline carrier — it tells the coding agent how to operate, where to find docs, and what conventions to follow. It evolves as the project proceeds (the coding agent enriches it with discovered repo conventions).
+- **AGENTS.md** sits at repo root and is the project fact sheet — it tells the coding agent the project's stack, where to find docs, what conventions apply, and which work items are tracked. It evolves as the project proceeds (the coding agent enriches it with discovered repo conventions). The discipline (how to operate) lives in the `sdi-mode` skill or custom mode, not in `AGENTS.md`.
 - **README** indexes everything for human readers.
 
 ## What NOT to include in the bundle
@@ -91,7 +91,7 @@ The artifacts are decision records, not encyclopedias. Rules of thumb:
 - **PROJECT_STRUCTURE**: ~250–450 lines (varies by type — landing pages tighter, web SaaS larger).
 - **DESIGN_SYSTEM**: ~250–400 lines.
 - **IMPLEMENTATION_PLAN_PHASE_1**: ~400–600 lines. This one is the most prescriptive; being longer is OK.
-- **AGENTS.md**: ~150–250 lines. Operating discipline + project-specific conventions.
+- **AGENTS.md**: ~80–160 lines. Project facts only (type, stack, doc map, conventions, work tracker).
 - **README**: ~30–80 lines. Strictly an index.
 
 If you're trending past these, ask yourself what can be cut. Over-long docs are ignored.
@@ -101,7 +101,7 @@ If you're trending past these, ask yourself what can be cut. Over-long docs are 
 After the last artifact is generated, give the user:
 
 1. **One-paragraph recap** of what was generated and how to read it.
-2. **How to use with the coding agent** — point to the kickoff prompt template, with both Path A (AGENTS.md for Claude Code/Codex) and Path B (custom mode for Roo/Kilo/OpenCode) explained.
+2. **How to use with the coding agent** — point to the kickoff prompt template (`references/kickoff-prompt-template.md`). The template is consolidated; the only branch is whether the user's tool loads `sdi-mode` as a skill (Claude Code / Codex) or as a custom mode (Roo / Kilo / OpenCode).
 3. **What's next** — typically Phase 0 scaffolding or, for projects with significant UI, a UI prototype (Claude Design or equivalent) before code.
 
 Keep the follow-up short. The artifacts are the deliverable.

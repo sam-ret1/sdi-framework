@@ -48,10 +48,10 @@ Don't ask multiple naming questions — pick a default and confirm.
 
 ## Generating the plan
 
-Use the same templates as `mvp-architect` Phase E:
+Use the templates carried by this skill (duplicated from `mvp-architect` so this skill is self-contained):
 
-- Core: `sdi-framework/mvp-architect/references/core-templates/implementation-plan-template.md`
-- Type appendix: `sdi-framework/mvp-architect/references/project-types/{type}/architecture-appendix.md` (for type-specific sections)
+- Core: `core-templates/implementation-plan-template.md`
+- Type appendix (for type-specific sections referenced by the plan): `project-types/{type}/architecture-appendix.md`
 
 But adapt §0 (Pre-requisites):
 
@@ -91,22 +91,23 @@ Update today's `docs/memory/YYYY-MM-DD.md` to mention the plan was generated and
 
 ## Handoff to sdi-mode
 
-After plan generation, instruct the user how to start. Pick the right tool:
-
-### Path A — Claude Code / Codex
+After plan generation, instruct the user how to start. The kickoff prompt has one consolidated shape with a single conditional line for how `sdi-mode` is loaded (skill vs custom mode).
 
 ```
 Plan generated at `docs/IMPLEMENTATION_PLAN_[name].md`.
 
-AGENTS.md is already at the project root, so the SDI discipline loads automatically in any new session.
+AGENTS.md is at the project root with the project facts (stack, doc map, conventions, work tracker). The SDI discipline itself comes from the `sdi-mode` skill (Claude Code / Codex) or the configured `sdi-mode` custom mode (Roo Code / Kilo Code / OpenCode).
 
-To start, open Claude Code (or Codex) in the project folder and paste:
+To start, paste:
 
 > Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
 >
+> [For Claude Code / Codex:] Use the `sdi-mode` skill for this work.
+> [For Roo Code / Kilo Code / OpenCode:] Activate the `sdi-mode` custom mode for this work.
+>
 > Read in this order before writing any code:
 > 1. README.md to get context.
-> 2. AGENTS.md (already loaded as context, but verify the conventions).
+> 2. AGENTS.md (project facts — stack, doc map, conventions, work tracker).
 > 3. docs/IMPLEMENTATION_PLAN_[name].md fully.
 > 4. docs/PROJECT_STRUCTURE.md for conventions.
 > 5. docs/ARCHITECTURE.md — at minimum the type-specific section and the critical flows.
@@ -120,24 +121,9 @@ To start, open Claude Code (or Codex) in the project folder and paste:
 > After the audit, propose the first deliverable and stop for review.
 ```
 
-### Path B — Roo Code / Kilo Code / OpenCode
+When generating the user-facing kickoff, drop the line that doesn't match their tool. If they haven't said which tool, leave both lines so they can pick, or ask before generating.
 
-```
-Plan generated at `docs/IMPLEMENTATION_PLAN_[name].md`.
-
-Before starting, configure `sdi-mode` in your tool following the adapter:
-- Roo Code: `sdi-framework/sdi-mode/adapters/roocode.md`
-- Kilo Code: `sdi-framework/sdi-mode/adapters/kilocode.md`
-- OpenCode: `sdi-framework/sdi-mode/adapters/opencode.md`
-
-With the mode active, paste:
-
-> Implementing [name] of this project per docs/IMPLEMENTATION_PLAN_[name].md.
->
-> Read in this order: README.md, docs/IMPLEMENTATION_PLAN_[name].md fully, docs/PROJECT_STRUCTURE.md, docs/ARCHITECTURE.md (type-specific section + critical flows).
->
-> You are operating under SDI mode discipline. Audit the plan against repo, produce audit report, then propose first deliverable and stop for review.
-```
+For tool-specific setup (installing the `sdi-mode` skill or registering the custom mode), point the user to the relevant adapter in their local copy of `sdi-framework/sdi-mode/adapters/`.
 
 ## Closing message
 

@@ -95,11 +95,11 @@ Mark the previous work item as ✓ if it isn't already.
 
 ## Handoff to sdi-mode
 
-After the plan is generated, the user starts implementation. Provide the kickoff prompt from `references/kickoff-prompt-template.md` (Path A for Claude Code/Codex with AGENTS.md, Path B for Roo/Kilo/OpenCode with custom mode).
+After the plan is generated, the user starts implementation. Provide the consolidated kickoff prompt from `references/kickoff-prompt-template.md`, selecting the single tool-specific line: `sdi-mode` skill for Claude Code/Codex, or `sdi-mode` custom mode for Roo/Kilo/OpenCode.
 
 Closing message pattern:
 
-> "Plan generated at `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. To start, use the kickoff prompt for your tool (Path A for Claude Code/Codex, Path B for Roo/Kilo/OpenCode). When you need review during execution, come back here — Phase D."
+> "Plan generated at `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. To start, use the kickoff prompt for your tool, with the `sdi-mode` skill/custom-mode line selected. When you need review during execution, come back here — Phase D."
 
 ## Common failure modes
 

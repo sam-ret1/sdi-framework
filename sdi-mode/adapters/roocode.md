@@ -2,12 +2,12 @@
 
 This guide shows how to install `sdi-mode` as a custom mode in Roo Code so the implementation discipline loads on every session.
 
-> **Status note (April 2026):** Roo Code's own docs announce that Roo Code products are scheduled to shut down on May 15, 2026. Keep this adapter for existing Roo projects, but prefer another maintained adapter for new long-lived setups.
+> **Status note (April 2026):** recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026. Keep this adapter for existing Roo projects, but prefer another maintained adapter for new long-lived setups.
 
 ## Prerequisites
 
 - Roo Code installed (VSCode extension)
-- This `sdi-framework/` repo cloned somewhere accessible (you'll copy [`MODE.md`](../MODE.md) content into the mode config)
+- This `sdi-framework/` repo cloned somewhere accessible (you'll copy the body of [`SKILL.md`](../SKILL.md) into the mode config)
 - A project where you want SDI mode active
 
 ## What you're configuring
@@ -25,7 +25,7 @@ Each mode has:
 
 - `slug` (required) — unique id, `[a-zA-Z0-9-]+`
 - `name` (required) — display name
-- `roleDefinition` (required) — system prompt where MODE.md content goes
+- `roleDefinition` (required) — system prompt where the SKILL.md body goes
 - `description` (optional) — short summary shown in the mode selector
 - `whenToUse` (optional) — guidance for Roo's automated mode-routing
 - `customInstructions` (optional) — appended near the end of the prompt
@@ -40,7 +40,7 @@ customModes:
     description: Spec-Driven Implementation discipline. Use after planning is complete.
     whenToUse: Use this mode whenever implementing against an IMPLEMENTATION_PLAN_*.md from a project under the sdi-framework.
     roleDefinition: |
-      <paste the full contents of sdi-framework/sdi-mode/MODE.md here, preserving markdown>
+      <paste the body of sdi-framework/sdi-mode/SKILL.md here, preserving markdown — start at "# SDI Mode — Spec-Driven Implementation" and skip the YAML frontmatter (the `---`-delimited block at the top is skill metadata, not part of the system prompt)>
     groups:
       - read
       - - edit
@@ -64,7 +64,7 @@ If you prefer JSON, the same mode looks like this:
       "name": "SDI — Implementation",
       "description": "Spec-Driven Implementation discipline. Use after planning is complete.",
       "whenToUse": "Use this mode whenever implementing against an IMPLEMENTATION_PLAN_*.md from a project under the sdi-framework.",
-      "roleDefinition": "<JSON-escaped MODE.md contents — newlines as \\n>",
+      "roleDefinition": "<JSON-escaped SKILL.md body — newlines as \\n; skip the YAML frontmatter at the top of SKILL.md>",
       "groups": [
         "read",
         ["edit", { "fileRegex": "^(?!docs/(PRD|ARCHITECTURE|ROADMAP)\\.md$).*", "description": "PRD/ARCHITECTURE/ROADMAP edited only via revision notes" }],
@@ -77,6 +77,8 @@ If you prefer JSON, the same mode looks like this:
 ```
 
 JSON requires escaping every newline as `\n` in `roleDefinition`. This is the main reason YAML is the recommended format — there's no equivalent of the `|` block-literal in JSON.
+
+> **About the SKILL.md frontmatter:** the `---`-delimited block at the top of `SKILL.md` (with `name:` and `description:`) is metadata used by skill discovery in Claude Code / Codex. It is **not** part of the SDI discipline and should not be pasted into `roleDefinition`. Start your paste at the first heading (`# SDI Mode — Spec-Driven Implementation`).
 
 ## Step 2 — Activate
 
@@ -96,7 +98,7 @@ Expected: Read → Audit → Propose → Implement in rounds → Tests alongside
 If the agent improvises, re-check that:
 - `.roomodes` parses (no errors in the Roo Code output panel)
 - The mode is selected (not "Code" or default)
-- `roleDefinition` actually contains MODE.md content (not truncated)
+- `roleDefinition` actually contains the SKILL.md body (not truncated)
 
 ## Planning skills
 
@@ -125,6 +127,6 @@ The `[\w-]+` matches `PHASE_1`, `PHASE_2`, `billing-portal`, `q1-perf-pass`, etc
 
 ## Tips
 
-- **Updating MODE.md:** when this framework updates `MODE.md`, re-paste into `.roomodes` (or update the global YAML) and reload the workspace.
+- **Updating the discipline:** when this framework updates `SKILL.md`, re-paste the body into `.roomodes` (or update the global YAML) and reload the workspace.
 - **One mode per workspace** is fine — no need to nest sdi-mode inside other modes.
 - **Mode-switch ritual:** when leaving implementation for scoping, switch out of SDI mode and use the native `mvp-architect` / `convert-to-sdi` skill or equivalent planning mode. SDI mode's discipline is for execution, not exploratory thinking.

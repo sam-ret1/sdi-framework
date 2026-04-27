@@ -15,8 +15,8 @@ At minimum, you should find under `docs/` (or equivalent):
 
 At repo root:
 
-- `AGENTS.md` — operating discipline + project-specific stack/conventions. Required when running via Claude Code or Codex; optional but recommended for parity when running via Roo Code/Kilo Code/OpenCode (which use mode metadata as the discipline carrier).
-- `CLAUDE.md` — present when using Claude Code; should import AGENTS.md with `@AGENTS.md`.
+- `AGENTS.md` — project-specific fact sheet: stack, document map, conventions, work tracker. Required for every SDI project; it does **not** carry the SDI discipline.
+- `CLAUDE.md` — present when using Claude Code; should import AGENTS.md with `@AGENTS.md` so Claude Code sees the same project facts Codex reads natively.
 
 Optionally:
 
@@ -30,11 +30,11 @@ Different tools carry the SDI discipline differently:
 
 | Tool | Discipline carrier |
 |---|---|
-| Claude Code | `CLAUDE.md` imports `AGENTS.md` with `@AGENTS.md` |
-| Codex | `AGENTS.md` (read natively) |
-| Roo Code / Kilo Code / OpenCode | Custom mode/agent `sdi-mode` configured per `sdi-mode/adapters/{tool}.md`; Kilo/OpenCode may also read `AGENTS.md` directly |
+| Claude Code | `sdi-mode` skill; `CLAUDE.md` imports `AGENTS.md` for project facts |
+| Codex | `sdi-mode` skill; Codex reads `AGENTS.md` natively for project facts |
+| Roo Code / Kilo Code / OpenCode | Custom mode/agent `sdi-mode` configured per `sdi-mode/adapters/{tool}.md`; Kilo/OpenCode may also read `AGENTS.md` directly for project facts |
 
-If neither AGENTS.md nor a configured custom mode is present, the SDI discipline isn't loaded. Ask the user before proceeding.
+If the `sdi-mode` skill or configured custom mode is not active, the SDI discipline isn't loaded. Ask the user to invoke/activate it before proceeding. If `AGENTS.md` is missing, the project fact sheet is missing; route the user to `convert-to-sdi` for an existing repo or `mvp-architect` for a greenfield bundle.
 
 ## How to recognize a complete handoff
 
@@ -48,7 +48,7 @@ Before starting a phase, verify:
 
 4. **PRD.md out-of-scope section is explicit.** If the PRD doesn't say what's *not* in the MVP, you'll likely over-build.
 
-5. **AGENTS.md (or active mode) exists** so the discipline is loaded. If not, surface this to the user before coding.
+5. **`sdi-mode` is active and `AGENTS.md` exists.** The skill/mode carries the discipline; `AGENTS.md` carries project facts. If either is missing, surface this to the user before coding.
 
 ## What to do when artifacts are missing or thin
 
@@ -56,9 +56,15 @@ Before starting a phase, verify:
 
 Don't improvise. Stop and tell the user:
 
-> "There's no `IMPLEMENTATION_PLAN_*.md` for [phase / work item]. I can either: (a) draft one based on the ROADMAP / current repo state and ask you to review before starting; or (b) you can generate one via the `mvp-architect` skill — Phase E for next-phase planning in an ongoing project, or full Phase 0-C for a new direction. Which do you prefer?"
+> "There's no `IMPLEMENTATION_PLAN_*.md` for [phase / work item]. To use `sdi-mode` correctly, the work item needs a plan first.
+>
+> - If the project already has an SDI bundle, run `mvp-architect` Phase E to generate the next work-item plan.
+> - If this is an existing codebase without a bundle, run `convert-to-sdi` first.
+> - If this is greenfield, run `mvp-architect` Phase 0-C to scope and generate the bundle.
+>
+> After that, come back and I'll handle implementation."
 
-Option (a) is OK for small, well-contained work items. Option (b) is better when the work introduces new architectural ideas or deserves the full discovery flow.
+Small, well-contained tasks can still be handled outside SDI if the user explicitly asks for that, but don't treat that as an SDI-mode run.
 
 ### Plan has gaps
 
@@ -74,7 +80,9 @@ Create it at the start of the phase. The first entry is your revision note or yo
 
 ### AGENTS.md missing or sparse
 
-If the file exists but only has the bare template (placeholders unfilled), expect to fill in stack and conventions during the audit. If the file is missing entirely on a Claude Code/Codex setup, surface it: "There's no AGENTS.md at the repo root. Generate one from `mvp-architect`'s template before I proceed, or I'll work without project-specific discipline anchored at the repo level."
+If the file exists but only has the bare template (placeholders unfilled), expect to fill in stack and conventions during the audit and propose updates for user approval. If the file is missing entirely, surface it: "There's no AGENTS.md at the repo root. Modern SDI expects AGENTS.md to be a project fact sheet. For an existing repo, run `convert-to-sdi`; for a greenfield project, generate it from `mvp-architect` Phase C before implementation."
+
+If `AGENTS.md` exists but contains discipline rules (8-step list, "audit before coding", checkpoint behavior, tone, precedence sections), treat it as an older format. Stop and suggest `convert-to-sdi` Phase 1.5 Strategy B to merge project facts into the current facts-only template and drop embedded discipline.
 
 ## Reading order for a new phase
 
@@ -112,7 +120,7 @@ The hierarchy below is from highest authority (top) to lowest (bottom). When two
 | Priority | Source | Authority |
 |---|---|---|
 | 1 | **Live repo state** (committed code) | Wins over every doc. Reality is the canonical truth. |
-| 2 | **AGENTS.md** / mode metadata | Current operating discipline + project-specific conventions. Wins over the planning docs because it's continuously updated to reflect actual repo state. |
+| 2 | **AGENTS.md** / mode metadata | Current project facts and project-specific conventions. Wins over planning docs for stack, paths, helper names, and work tracker because it is updated to reflect actual repo state. |
 | 3 | **PRD.md** | What & why. Establishes scope and intent. Higher than how/when because changing it implies a re-scope. |
 | 4 | **ARCHITECTURE.md** | How — stack, type-specific structural model, critical flows. Higher than the rest because it's the technical contract. |
 | 5 | **ROADMAP.md** | When — phases and acceptance criteria. |
@@ -151,7 +159,7 @@ When you find a conflict during the audit (or mid-phase):
 ### Special cases
 
 - **Live repo vs ARCHITECTURE.md disagree:** repo wins by definition (priority 1). But ask: did the repo drift accidentally, or was a deliberate decision made that wasn't documented? If accidental drift, ARCHITECTURE wins and you fix the repo. If deliberate, ARCHITECTURE needs update + a `DECISIONS.md` entry.
-- **AGENTS.md vs PROJECT_STRUCTURE.md disagree:** AGENTS.md wins on stack/conventions (it's the live operating manual). But propose updating PROJECT_STRUCTURE during housekeeping so external readers don't get confused.
+- **AGENTS.md vs PROJECT_STRUCTURE.md disagree:** AGENTS.md wins on stack/conventions (it's the live project fact sheet). But propose updating PROJECT_STRUCTURE during housekeeping so external readers don't get confused.
 - **PRD vs IMPLEMENTATION_PLAN disagree on a feature:** PRD wins. The plan is a translation, not an authority. Either the plan needs revision, or the PRD needs an explicit out-of-scope clause to deprecate the feature — not silent drift.
 - **Two same-level docs disagree** (e.g. ARCHITECTURE vs PROJECT_STRUCTURE on file paths): rare, but it happens. The one tied more directly to running code wins (PROJECT_STRUCTURE in this case). Update the other.
 

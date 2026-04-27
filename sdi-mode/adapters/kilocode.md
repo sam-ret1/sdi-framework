@@ -5,7 +5,7 @@ This guide shows how to install `sdi-mode` as a custom agent in Kilo Code.
 ## Prerequisites
 
 - Kilo Code installed
-- This `sdi-framework/` repo cloned or accessible (you'll reference [`MODE.md`](../MODE.md) from the agent file)
+- This `sdi-framework/` repo cloned or accessible (you'll copy the body of [`SKILL.md`](../SKILL.md) into the agent file)
 - A project where you want SDI mode active
 
 ## What you're configuring
@@ -42,7 +42,7 @@ permission:
   bash: ask
 ---
 
-<paste the full contents of sdi-framework/sdi-mode/MODE.md here>
+<paste the body of sdi-framework/sdi-mode/SKILL.md here — start at "# SDI Mode — Spec-Driven Implementation" and skip the YAML frontmatter at the top of SKILL.md (that block is skill-discovery metadata, not part of the system prompt)>
 ```
 
 The body of the file (everything after the closing `---`) becomes the system prompt. Markdown formatting is preserved.
@@ -70,7 +70,7 @@ If you prefer keeping all agents in one config file, create `kilo.jsonc` at the 
       "description": "Spec-Driven Implementation discipline. Use after planning is complete.",
       "mode": "primary",
       "color": "#3b82f6",
-      "prompt": "<JSON-escaped contents of MODE.md, OR a {file:./path/to/MODE.md} reference if your version supports it>",
+      "prompt": "<JSON-escaped body of SKILL.md, OR a {file:./path/to/SKILL.md} reference if your version supports it; in either case skip the YAML frontmatter at the top of SKILL.md>",
       "permission": {
         "edit": {
           "docs/PRD.md": "deny",
@@ -85,7 +85,9 @@ If you prefer keeping all agents in one config file, create `kilo.jsonc` at the 
 }
 ```
 
-**Caveat:** the `prompt` field needs JSON-escaped newlines (`\n`). For long content like MODE.md, the markdown agent file approach (A) is much easier — that's why it's recommended.
+**Caveat:** the `prompt` field needs JSON-escaped newlines (`\n`). For long content like the SKILL.md body, the markdown agent file approach (A) is much easier — that's why it's recommended.
+
+> **About the SKILL.md frontmatter:** the `---`-delimited block at the top of `SKILL.md` (with `name:` and `description:`) is metadata used by skill discovery in Claude Code / Codex. It is **not** part of the SDI discipline and should not be pasted into the agent prompt. Start your paste at the first heading (`# SDI Mode — Spec-Driven Implementation`).
 
 ## Planning skills
 
@@ -115,7 +117,7 @@ Expected: Read → Audit → Propose → Implement in rounds → Tests alongside
 
 If the agent improvises:
 - Verify the agent file path (`.kilo/agents/sdi.md` or the JSON config path) is correct
-- Check that the markdown body / `prompt` field actually contains MODE.md content (not truncated)
+- Check that the markdown body / `prompt` field actually contains the SKILL.md body (not truncated)
 - Confirm `sdi` is the selected agent (not the default)
 
 ## File restrictions
@@ -140,5 +142,5 @@ Glob `*` matches the slug or `PHASE_N` part. `ask` requires explicit user approv
 
 - **Planning vs implementation.** Keep `mvp-architect` and `convert-to-sdi` as skills, not primary implementation agents. Use the `sdi` agent only once a plan exists and code is being written.
 - **Global vs project:** per-project `.kilo/agents/sdi.md` travels with the repo. Global `~/.config/kilo/agent/sdi.md` is convenient when SDI is your default discipline everywhere.
-- **Updating MODE.md:** with the markdown approach, just re-paste the body. With the JSON approach, re-escape the string. Either way, reload Kilo afterward.
+- **Updating the discipline:** when this framework updates `SKILL.md`, re-paste the body in the markdown approach, or re-escape the string in the JSON approach. Either way, reload Kilo afterward.
 - **Configuration precedence (lowest → highest):** built-in defaults → global config → project `kilo.jsonc` → `.kilo/agents/*.md` files → environment overrides. Project markdown agents win over JSON config; useful if you keep a global JSON baseline and override per-project.

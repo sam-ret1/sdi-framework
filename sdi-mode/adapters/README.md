@@ -1,50 +1,43 @@
 # SDI Mode — Adapters
 
-`sdi-mode` is the implementation discipline (defined in [`MODE.md`](../MODE.md)). The adapters in this folder show how to load that discipline into specific coding-agent tools.
+`sdi-mode` is the implementation discipline (defined in [`../SKILL.md`](../SKILL.md)). The adapters in this folder show how to load that discipline into specific coding-agent tools.
 
-Planning is separate: install `mvp-architect` and `convert-to-sdi` through each tool's native `SKILL.md`, skill, agent, command, or rule system. Do not run planning in a different tool just to bring artifacts back.
+Two delivery models, depending on the tool:
 
-**Source of truth:** [`../MODE.md`](../MODE.md). Adapters reference it; they don't duplicate it.
+- **Skill discovery** (Claude Code, Codex): `sdi-mode/` is installed as a skill — copy the whole directory under the tool's skills path. The `SKILL.md` frontmatter (`name`, `description`) drives auto-invocation when the user starts implementation work. No always-on instruction is injected; `AGENTS.md` at the repo root carries only project facts.
+- **Custom mode / agent** (Roo Code, Kilo Code, OpenCode): the body of `SKILL.md` (everything after the YAML frontmatter) is pasted or referenced as the system prompt of a dedicated mode/agent. The user activates the mode for implementation sessions.
+
+Planning skills (`mvp-architect` and `convert-to-sdi`) install through the same skill mechanism as `sdi-mode` for Claude Code / Codex, and as native skills (or whatever each tool exposes) for Roo / Kilo / OpenCode. Do not run planning in a different tool just to bring artifacts back.
+
+**Source of truth:** [`../SKILL.md`](../SKILL.md). Adapters reference it; they don't duplicate it.
 
 ## Tool matrix
 
 | Tool | Adapter | Discipline carrier | Format |
 |---|---|---|---|
-| Claude Code | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` (imported by `CLAUDE.md`) | Markdown at repo root |
-| Codex | [`claudecode-codex/`](claudecode-codex/) | `AGENTS.md` | Markdown at repo root |
-| Roo Code | [`roocode.md`](roocode.md) | Custom mode in `.roomodes` | YAML (or JSON) |
-| Kilo Code | [`kilocode.md`](kilocode.md) | Agent in `.kilo/agents/sdi.md` (or `kilo.jsonc`) | Markdown + frontmatter (or JSON) |
-| OpenCode | [`opencode.md`](opencode.md) | Agent in `.opencode/agents/sdi.md` (or `opencode.json`) | Markdown + frontmatter (or JSON) |
-| Cursor | [`cursor.md`](cursor.md) | Project Rule in `.cursor/rules/sdi-mode.mdc` | Markdown + frontmatter |
-| Cline | [`cline.md`](cline.md) | Workspace rule in `.clinerules/sdi-mode.md` | Markdown |
-| Windsurf | [`windsurf.md`](windsurf.md) | Workspace rule in `.windsurf/rules/sdi-mode.md` | Markdown + frontmatter |
+| Claude Code | [`claudecode-codex/`](claudecode-codex/) | `sdi-mode` skill (auto-invoked); `AGENTS.md` at repo root carries project facts only | Skill directory + Markdown |
+| Codex | [`claudecode-codex/`](claudecode-codex/) | `sdi-mode` skill (auto-invoked); `AGENTS.md` at repo root carries project facts only | Skill directory + Markdown |
+| Roo Code | [`roocode.md`](roocode.md) | Custom mode in `.roomodes` (system prompt = body of `SKILL.md`) | YAML (or JSON) |
+| Kilo Code | [`kilocode.md`](kilocode.md) | Agent in `.kilo/agents/sdi.md` or `kilo.jsonc` (system prompt = body of `SKILL.md`) | Markdown + frontmatter (or JSON) |
+| OpenCode | [`opencode.md`](opencode.md) | Agent in `.opencode/agents/sdi.md` or `opencode.json` (system prompt = body of `SKILL.md`) | Markdown + frontmatter (or JSON) |
 
-> **Roo Code status:** Roo Code's docs announce a product shutdown on May 15, 2026. The Roo adapter remains for existing projects, but it should not be the default recommendation for new long-lived SDI setups.
+> **Roo Code status:** recent public reporting says Roo Code products are scheduled to shut down on May 15, 2026. The Roo adapter remains for existing projects, but it should not be the default recommendation for new long-lived SDI setups.
+
+> **About the `SKILL.md` frontmatter for non-skill tools:** the `---`-delimited block at the top of `SKILL.md` (with `name:` and `description:`) is metadata used by Claude Code / Codex skill discovery. It is not part of the SDI discipline. When pasting into a Roo/Kilo/OpenCode mode prompt, start at the first heading (`# SDI Mode — Spec-Driven Implementation`).
 
 ## Which adapter to use
 
-- **Claude Code or Codex:** copy [`claudecode-codex/AGENTS.md`](claudecode-codex/AGENTS.md) and [`claudecode-codex/CLAUDE.md`](claudecode-codex/CLAUDE.md) (Claude Code only) into the root of your project. `CLAUDE.md` imports `AGENTS.md`; Codex reads `AGENTS.md` natively. Customize the placeholders for your project's type, stack, and conventions. The discipline loads automatically every session.
+- **Claude Code or Codex:** install three skills (`sdi-mode/`, `mvp-architect/`, `convert-to-sdi/`) under the tool's skills path. The `sdi-mode` skill auto-invokes when the user starts implementation work; `mvp-architect` and `convert-to-sdi` auto-invoke for planning. `AGENTS.md` is generated by the planning skills and contains only project facts (stack, doc map, conventions, work tracker) — it does not carry discipline. `CLAUDE.md` (Claude Code only) is a one-line `@AGENTS.md` import.
 
 - **Roo Code:** follow [`roocode.md`](roocode.md) to register `sdi-mode` as a custom mode in `.roomodes` (YAML preferred). After setup, switch to the mode for implementation work.
 
-- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Kilo can read `AGENTS.md`, but a dedicated agent in `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or `kilo.jsonc` is still useful for explicit agent selection and permissions. Install planning skills under `.kilo/skills/` or another Kilo-supported skills path.
+- **Kilo Code:** follow [`kilocode.md`](kilocode.md). Kilo can read `AGENTS.md` (project facts), but a dedicated agent in `.kilo/agents/sdi.md` (markdown + YAML frontmatter — recommended) or `kilo.jsonc` is the carrier of the SDI discipline. Install planning skills under `.kilo/skills/` or another Kilo-supported skills path.
 
-- **OpenCode:** follow [`opencode.md`](opencode.md). OpenCode can read `AGENTS.md`, but a dedicated agent as `.opencode/agents/sdi.md` or in `opencode.json` is useful for explicit agent selection, prompt isolation, and permissions. The JSON config supports `prompt: "{file:./path/to/MODE.md}"`, which means MODE.md updates flow through automatically with no re-paste. Install planning skills under `.opencode/skills/` or another OpenCode-supported skills path.
-
-- **Cursor:** follow [`cursor.md`](cursor.md). Add `.cursor/rules/sdi-mode.mdc` with `alwaysApply: true`. The rule loads on every chat — no mode picker. Use Cursor Agent Skills if available in your installed build; otherwise adapt planning skills as manual Project Rules.
-
-- **Cline:** follow [`cline.md`](cline.md). Add `.clinerules/sdi-mode.md`. Cline auto-merges all rule files in the directory; no frontmatter needed for unconditional always-on. Install planning skills under `.cline/skills/` or another Cline-supported skills path.
-
-- **Windsurf:** follow [`windsurf.md`](windsurf.md). Add `.windsurf/rules/sdi-mode.md` with `trigger: always_on`. Install planning skills under `.windsurf/skills/` or another Windsurf-supported skills path.
-
-- **Other tools (Continue, Aider, GitHub Copilot Chat, Cody, etc.):** use Claude Code/Codex's `AGENTS.md` template as a starting point — most modern coding tools respect either `AGENTS.md` or a tool-specific `*.md` file. Quick adaptations:
-  - **Continue.dev** — drop MODE.md as `.continue/rules/sdi-mode.md`, or reference it from `.continue/config.yaml` via `rules`.
-  - **GitHub Copilot Chat** — copy MODE.md as `.github/copilot-instructions.md` (loaded automatically).
-  - **Aider** — save MODE.md as `CONVENTIONS.md` and reference it via `read:` in `.aider.conf.yml`.
+- **OpenCode:** follow [`opencode.md`](opencode.md). OpenCode can read `AGENTS.md` (project facts), but a dedicated agent as `.opencode/agents/sdi.md` or in `opencode.json` carries the SDI discipline. The JSON config supports `prompt: "{file:./path/to/SKILL.md}"`, which means `SKILL.md` updates flow through automatically with no re-paste. Install planning skills under `.opencode/skills/` or another OpenCode-supported skills path.
 
 ## What gets loaded vs what gets read on demand
 
-**Always loaded** (system prompt / project root file):
+**Always loaded** (skill body or mode/agent system prompt):
 - The 8-step discipline
 - The 4 core rules (audit-first, stop-and-review, DECISIONS.md + memory, document precedence)
 - "What this mode is not" (not reviewer, not auto-approver, not speculation engine)
@@ -58,11 +51,11 @@ Planning is separate: install `mvp-architect` and `convert-to-sdi` through each 
 - `references/stop-and-review-patterns.md` — when planning checkpoints
 - `references/expected-artifacts.md` — when assessing handoff completeness
 
-This split keeps the system prompt / project root file lean while making detail available when needed.
+This split keeps the always-loaded surface lean while making detail available when needed. For Claude Code / Codex, the `references/` directory is part of the skill bundle and is loaded by the skill on demand. For Roo / Kilo / OpenCode, the `references/` files are read from the cloned `sdi-framework/` directory by the agent.
 
 ## File restrictions (recommended)
 
-Most tools support file-edit restrictions per mode. Recommended restrictions for `sdi-mode`:
+Most tools support file-edit restrictions per mode/agent. Recommended restrictions for `sdi-mode`:
 
 | File pattern | Restriction |
 |---|---|
@@ -72,7 +65,7 @@ Most tools support file-edit restrictions per mode. Recommended restrictions for
 | `docs/PROJECT_STRUCTURE.md` | Edit during housekeeping or on convention discovery, with audit log |
 | `docs/IMPLEMENTATION_PLAN_*.md` | Add revision notes only; never rewrite earlier content. Pattern matches both `PHASE_N` (discrete phases) and `<slug>` (free-form work) variants. |
 | `docs/DECISIONS.md` | Append-only |
-| `AGENTS.md` (root) | Update during phases, but propose changes explicitly to user |
+| `AGENTS.md` (root) | Update project facts during phases, but propose changes explicitly to user. Never inject discipline rules. |
 
 The exact mechanism varies by tool; each adapter shows how.
 

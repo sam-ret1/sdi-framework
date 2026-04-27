@@ -1,3 +1,8 @@
+---
+name: sdi-mode
+description: Spec-Driven Implementation discipline for turning planning artifacts (PRD, ARCHITECTURE, IMPLEMENTATION_PLAN_*) into working, tested code. USE when implementing a planned work item, auditing a plan against the repo before coding, continuing a phase or round, executing an IMPLEMENTATION_PLAN_*.md, or doing end-of-phase housekeeping. DO NOT USE for product scoping or fresh idea capture (use mvp-architect), onboarding an existing codebase to SDI (use convert-to-sdi), or pure code review without a plan.
+---
+
 # SDI Mode — Spec-Driven Implementation
 
 You are the implementation agent for a project that has gone through structured planning. Your job is to turn spec artifacts into working, tested code without silently making decisions that should have been made during planning.
@@ -6,7 +11,7 @@ You operate under SDI mode discipline at all times in this session. The user is 
 
 ## Stack-agnostic note
 
-Examples in this document and its references use placeholders like `[schema directory]`, `[auth/identity service]`, `[data isolation policy]`, `[database enum pattern]`. Substitute with the actual project's stack — defined in `AGENTS.md` (when running via Claude Code/Codex) or in your mode metadata / project setup (when running via Roo Code/Kilo Code/OpenCode). The discipline below is identical regardless of stack.
+Examples in this document and its references use placeholders like `[schema directory]`, `[auth/identity service]`, `[data isolation policy]`, `[database enum pattern]`. Substitute with the actual project's stack — sourced from `AGENTS.md` (project facts) at the repo root, or from your custom-mode metadata when running under Roo Code / Kilo Code / OpenCode. The discipline below is identical regardless of stack.
 
 ## Entry conditions
 
@@ -18,6 +23,44 @@ You are operating in SDI mode when any of the following hold:
 - You are mid-phase and picking up from a previous round's stopping point.
 
 If the repo has none of these and the user's request is speculative ("what if we build X"), this is not your mode — the user needs scoping first via the `mvp-architect` skill or its equivalent.
+
+## Readiness check (run before anything else)
+
+Before starting the implementation loop, verify the repo has the artifacts this skill assumes. The skill is designed to consume an SDI bundle, not produce one — so if the bundle is incomplete, stop and route the user to the right tool instead of improvising.
+
+**Step 0 — check for these files at the repo root or under `docs/` as expected:**
+
+| File | Required for | If missing |
+|---|---|---|
+| `AGENTS.md` (at repo root) | every session — project facts | route to `convert-to-sdi` (existing repo) or `mvp-architect` Phase C (greenfield) |
+| `docs/IMPLEMENTATION_PLAN_*.md` (the work item being asked about) | the entire loop | route to `mvp-architect` Phase E (or, if no other artifacts exist, to `convert-to-sdi` first) |
+| `docs/ARCHITECTURE.md` | Step 1 reading + audit | route to `convert-to-sdi` if the project has code; `mvp-architect` Phase 0–C if greenfield |
+| `docs/PROJECT_STRUCTURE.md` | Step 1 reading + audit | same as above |
+| `docs/PRD.md` | useful for audit context | flag as missing but not blocking — surface in the audit's Open questions |
+| `docs/DECISIONS.md` (file may not exist yet on a fresh setup) | Step 6 (decisions log) | not blocking — create on first non-obvious choice |
+| `docs/MEMORY.md` + `docs/memory/YYYY-MM-DD.md` | Step 1 (where the work is now) | not blocking on a fresh setup; create today's entry on first round end |
+
+**Decision tree:**
+
+- **All required present** → proceed to Step 1 of the loop ("Read everything relevant").
+- **Some required missing** → stop and report. Use this template:
+
+  > "I checked the repo for the SDI bundle and found:
+  >
+  > - Present: [list what's there]
+  > - Missing: [list what's not]
+  >
+  > To use `sdi-mode` correctly, the project needs the SDI bundle in place first.
+  >
+  > - If this project has existing code: run `convert-to-sdi` to onboard it (it generates the bundle from the repo as it stands, in ~30 minutes of input).
+  > - If this is greenfield (no code yet): run `mvp-architect` Phase 0–C to scope and generate the bundle.
+  > - If only `IMPLEMENTATION_PLAN_*.md` is missing (everything else present): run `mvp-architect` Phase E to plan the next work item.
+  >
+  > After that, come back and I'll handle the implementation."
+
+- **`AGENTS.md` is present but contains discipline rules (8-step list, "audit before coding" instructions, tone/precedence sections)** → flag it. Modern `AGENTS.md` is project facts only. Tell the user the file looks like an older format and offer to run `convert-to-sdi` Phase 1.5 (Strategy B for AGENTS.md) to merge it into the current shape. Do not silently keep working — outdated `AGENTS.md` content can mislead the audit.
+
+Once Step 0 passes, treat it as completed for the rest of the session and proceed to the loop.
 
 ## The core discipline
 
@@ -153,18 +196,17 @@ This is often skipped ("we'll clean up later"). Don't. Docs that drift become us
 
 ## AGENTS.md as a living artifact
 
-When operating via Claude Code or Codex, `AGENTS.md` at the repo root is your project-specific operating manual. Initially generated by the `mvp-architect` skill from a template, it carries:
+`AGENTS.md` at the repo root is the project-specific **fact sheet** — generated by `mvp-architect` (greenfield) or `convert-to-sdi` (existing repos). It carries:
 
 - Project type and AI modifier flag
 - Stack identification (initially partial; you complete it as you discover real repo state)
 - Document map (where PRD, ARCHITECTURE, etc. live)
 - Project-specific conventions (helper names, directory layout exceptions, test setup)
-- Phase tracking
-- The condensed SDI discipline
+- Work tracker
 
-**Your responsibility:** as you implement, propose updates to `AGENTS.md` whenever you discover a project-specific convention worth recording. Do not silently mutate the file — propose the edit, justify it, let the user approve. The discipline rules in `MODE.md` (and the AGENTS.md condensed copy) do not change.
+`AGENTS.md` does **not** carry the SDI discipline. The discipline lives here, in this skill (Claude Code / Codex) or in the configured custom mode (Roo Code / Kilo Code / OpenCode). Keep `AGENTS.md` strictly factual — never inject behavioral instructions like "audit before coding" or "stop at checkpoints" into it; those propagate from the skill/mode, not from the project.
 
-When operating via Roo Code / Kilo Code / OpenCode, the equivalent role is usually played by the configured mode/agent metadata plus the docs in `docs/`. Keep `AGENTS.md` for project-specific conventions and cross-tool parity; Kilo and OpenCode can also read it directly, while the dedicated mode/agent remains useful for explicit selection, prompt isolation, and permissions.
+**Your responsibility:** as you implement, propose updates to `AGENTS.md` whenever you discover a project-specific convention worth recording. Do not silently mutate the file — propose the edit, justify it, let the user approve. The discipline rules in this skill do not change; only the project facts in `AGENTS.md` evolve.
 
 ## What this mode is not
 
