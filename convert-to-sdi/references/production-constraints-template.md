@@ -124,7 +124,7 @@ Append the relevant block based on the project type. Insert after the "Critical 
 
 ## How the user fills the placeholders
 
-After convert2sdi runs, the user reads AGENTS.md and replaces brackets:
+After convert-to-sdi runs, the user reads AGENTS.md and replaces brackets:
 
 - `[N]` thresholds with project-specific numbers
 - `[location]` placeholders with their actual paths

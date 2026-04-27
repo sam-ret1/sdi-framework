@@ -1,6 +1,6 @@
 # Existing artifact handling
 
-When `convert2sdi` runs against a project that already has artifacts (`PRD.md`, `ARCHITECTURE.md`, `ROADMAP.md`, ADRs, etc.) — possibly in formats different from the framework's canonical structure — the skill must NOT silently overwrite them. This reference defines:
+When `convert-to-sdi` runs against a project that already has artifacts (`PRD.md`, `ARCHITECTURE.md`, `ROADMAP.md`, ADRs, etc.) — possibly in formats different from the framework's canonical structure — the skill must NOT silently overwrite them. This reference defines:
 
 1. The four canonical **strategies** for handling existing artifacts
 2. The **default strategy per artifact** (a matrix the skill applies)
@@ -20,7 +20,7 @@ The whole point: never lose user content, never silently fight with their conven
 - [Phase 1.5 decision flow](#phase-15-decision-flow) — present matrix → user respond → confirm
 - [Strategy execution rules](#strategy-execution-rules) — how each strategy is applied in Phase 2
 - [Don't-do list](#dont-do-list) — rules to avoid breaking user content
-- [Recovery if convert2sdi was already run badly](#recovery-if-convert2sdi-was-already-run-badly) — git-based safety net
+- [Recovery if convert-to-sdi was already run badly](#recovery-if-convert-to-sdi-was-already-run-badly) — git-based safety net
 
 ## The four strategies
 
@@ -330,13 +330,13 @@ When generating in Phase 2, apply the chosen strategy:
 - ❌ Don't try to migrate Notion/Linear/Figma content into the repo. Strategy D exists for a reason.
 - ❌ Don't apply ADR Option 2 (convert all ADRs to DECISIONS.md format) unless user explicitly asks. Default is always Option 1 (keep ADRs + index).
 
-## Recovery if convert2sdi was already run badly
+## Recovery if convert-to-sdi was already run badly
 
-If a previous convert2sdi run already overwrote things (because the older version of this skill didn't have this protocol), the user can recover via git:
+If a previous convert-to-sdi run already overwrote things (because the older version of this skill didn't have this protocol), the user can recover via git:
 
-1. `git log --diff-filter=M -- docs/PRD.md` to find pre-convert2sdi version.
+1. `git log --diff-filter=M -- docs/PRD.md` to find pre-convert-to-sdi version.
 2. Restore the pre-existing version: `git show HEAD~N:docs/PRD.md > docs/PRD.md.recovered`.
-3. Re-run convert2sdi with the corrected handling.
+3. Re-run convert-to-sdi with the corrected handling.
 4. The recovery is logged in `docs/memory/YYYY-MM-DD.md` for traceability.
 
 This is the framework's "we don't lose user content" guarantee. If anything goes wrong, git is the safety net.

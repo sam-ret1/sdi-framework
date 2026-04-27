@@ -125,7 +125,7 @@ Glob `*` matches the slug or `PHASE_N` part. `ask` requires explicit user approv
 
 ## Tips
 
-- **Markdown approach scales.** When you add `mvp-architect` / `convert2sdi` style agents later, define them as additional `.kilo/agents/*.md` files — same pattern, different `description` and frontmatter.
+- **Markdown approach scales.** When you add `mvp-architect` / `convert-to-sdi` style agents later, define them as additional `.kilo/agents/*.md` files — same pattern, different `description` and frontmatter.
 - **Global vs project:** per-project `.kilo/agents/sdi.md` travels with the repo. Global `~/.config/kilo/agent/sdi.md` is convenient when SDI is your default discipline everywhere.
 - **Updating MODE.md:** with the markdown approach, just re-paste the body. With the JSON approach, re-escape the string. Either way, reload Kilo afterward.
 - **Configuration precedence (lowest → highest):** built-in defaults → global config → project `kilo.jsonc` → `.kilo/agents/*.md` files. Project markdown agents win over JSON config; useful if you keep a global JSON baseline and override per-project.

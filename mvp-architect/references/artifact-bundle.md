@@ -18,7 +18,7 @@ The standard set of artifacts produced at the end of Phase C. Each has a specifi
 
 7. **IMPLEMENTATION_PLAN_PHASE_1.md** (or `IMPLEMENTATION_PLAN_<slug>.md`) — detailed implementation spec for the first work item. This is the artifact the coding agent consumes most directly. Much more prescriptive than the others. Universal core (`core-templates/implementation-plan-template.md`) merged with type-specific sections.
 
-   **Naming:** the framework treats `IMPLEMENTATION_PLAN_*.md` uniformly. Use `PHASE_N` for projects with a discrete linear roadmap (greenfield, structured migrations) and `<slug>` for free-form work in ongoing projects (features, maintenance, perf passes). Phase E of this skill (and the `convert2sdi` skill for legacy projects) generate plans for subsequent work items, picking the appropriate naming.
+   **Naming:** the framework treats `IMPLEMENTATION_PLAN_*.md` uniformly. Use `PHASE_N` for projects with a discrete linear roadmap (greenfield, structured migrations) and `<slug>` for free-form work in ongoing projects (features, maintenance, perf passes). Phase E of this skill (and the `convert-to-sdi` skill for legacy projects) generate plans for subsequent work items, picking the appropriate naming.
 
    **ROADMAP coupling:** `ROADMAP.md` uses "Phase 0/1/2..." structure and is generated when a project has discrete planned phases. Continuous-feature or maintenance-mode projects may skip ROADMAP entirely or keep it minimal — work items are scoped one at a time via Phase E.
 

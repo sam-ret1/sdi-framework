@@ -13,7 +13,7 @@ Stack-agnostic. Single-developer scale. Designed for the IDE-based AI coding wor
 | Piece | Type | Purpose | When |
 |---|---|---|---|
 | **`mvp-architect`** | Skill | Plan from idea to spec bundle. Review during implementation. Plan subsequent work items. | Starting greenfield, OR mid-implementation review/next-plan |
-| **`convert2sdi`** | Skill | Adopt the framework on a project that already has code. | Joining a legacy project, or formalizing an in-flight greenfield |
+| **`convert-to-sdi`** | Skill | Adopt the framework on a project that already has code. | Joining a legacy project, or formalizing an in-flight greenfield |
 | **`sdi-mode`** | Custom mode + `AGENTS.md` template | Execute work with audit-first discipline, binary-gate checkpoints, decisions log, daily memory. | Whenever code is being written against a spec |
 
 The skills handle the *thinking*; the mode handles the *doing*. They were designed to compose.
@@ -30,7 +30,7 @@ The skills handle the *thinking*; the mode handles the *doing*. They were design
 
                     Joining / adopting an existing codebase?
                               │
-                              └──► convert2sdi (Phase 0 → 1 → 1.5 → 2 → 3)
+                              └──► convert-to-sdi (Phase 0 → 1 → 1.5 → 2 → 3)
                                    Audit + thin artifacts + first plan.
                                    Then load sdi-mode.
 
@@ -95,22 +95,22 @@ End of Phase 1: housekeeping
 [Existing codebase, no framework artifacts yet]
     │
     ▼
-convert2sdi Phase 0 — auto-audit (no questions)
+convert-to-sdi Phase 0 — auto-audit (no questions)
     │
     ▼
-convert2sdi Phase 1 — ≤5 triage questions ("don't know" always accepted)
+convert-to-sdi Phase 1 — ≤5 triage questions ("don't know" always accepted)
     │
     ▼
-convert2sdi Phase 1.5 — existing artifact handling (only if pre-existing
+convert-to-sdi Phase 1.5 — existing artifact handling (only if pre-existing
     docs detected). User picks A/B/C/D strategy per file.
     │
     ▼
-convert2sdi Phase 2 — generate bundle (with confidence flags marking
+convert-to-sdi Phase 2 — generate bundle (with confidence flags marking
     thin artifacts). Production-constraints section in AGENTS.md if
     project is in production.
     │
     ▼
-convert2sdi Phase 3 — generate first IMPLEMENTATION_PLAN for the next
+convert-to-sdi Phase 3 — generate first IMPLEMENTATION_PLAN for the next
     concrete work item the user states.
     │
     ▼
@@ -123,7 +123,7 @@ sdi-mode loaded → implement
 mvp-architect Phase D ↔ Phase E loop continues from here
 ```
 
-After convert2sdi runs once, **never run it again on the same project**. Subsequent work uses `mvp-architect` Phase E.
+After convert-to-sdi runs once, **never run it again on the same project**. Subsequent work uses `mvp-architect` Phase E.
 
 ---
 
@@ -133,10 +133,10 @@ After convert2sdi runs once, **never run it again on the same project**. Subsequ
 
 The skills live in your Claude Code skills directory:
 
-- **Project-scoped:** `.claude/skills/mvp-architect/` and `.claude/skills/convert2sdi/`
-- **User-scoped (global):** `~/.claude/skills/mvp-architect/` and `~/.claude/skills/convert2sdi/`
+- **Project-scoped:** `.claude/skills/mvp-architect/` and `.claude/skills/convert-to-sdi/`
+- **User-scoped (global):** `~/.claude/skills/mvp-architect/` and `~/.claude/skills/convert-to-sdi/`
 
-Copy the `mvp-architect/` and `convert2sdi/` directories from this repo to one of those locations.
+Copy the `mvp-architect/` and `convert-to-sdi/` directories from this repo to one of those locations.
 
 For execution discipline, copy `sdi-mode/adapters/claudecode-codex/AGENTS.md` and `CLAUDE.md` to the root of any project where you want SDI mode active. `CLAUDE.md` imports `AGENTS.md` so Claude Code loads the same discipline Codex reads natively.
 
@@ -146,10 +146,10 @@ Codex reads `AGENTS.md` natively from the project root. Copy `sdi-mode/adapters/
 
 Codex also supports skills with the same `SKILL.md` format as Claude Code, but with a different discovery path:
 
-- **Project-scoped:** `.codex/skills/mvp-architect/` and `.codex/skills/convert2sdi/`
-- **User-scoped (global):** `$CODEX_HOME/skills/mvp-architect/` and `$CODEX_HOME/skills/convert2sdi/` (defaults to `~/.codex/skills/...`)
+- **Project-scoped:** `.codex/skills/mvp-architect/` and `.codex/skills/convert-to-sdi/`
+- **User-scoped (global):** `$CODEX_HOME/skills/mvp-architect/` and `$CODEX_HOME/skills/convert-to-sdi/` (defaults to `~/.codex/skills/...`)
 
-Copy the `mvp-architect/` and `convert2sdi/` directories from this repo to one of those locations. The `SKILL.md` frontmatter (`name`, `description`) is identical between Claude Code and Codex, so the framework's skills drop in directly. Restart Codex after adding skills so they're picked up.
+Copy the `mvp-architect/` and `convert-to-sdi/` directories from this repo to one of those locations. The `SKILL.md` frontmatter (`name`, `description`) is identical between Claude Code and Codex, so the framework's skills drop in directly. Restart Codex after adding skills so they're picked up.
 
 ### Roo Code / Kilo Code / OpenCode (custom-mode / agent tools)
 
@@ -171,7 +171,7 @@ These tools don't have custom modes but read project rule files. Configure `sdi-
 
 ### Planning skills with tools that lack a skills system
 
-Claude Code and Codex both support `SKILL.md`-based skills (different paths — see above — but identical format). For tools that don't have a skills system (Roo Code, Kilo Code, OpenCode, Cursor, Cline, Windsurf, etc.), run `mvp-architect` / `convert2sdi` in a separate Claude Code or Codex session and bring the generated artifacts back into your primary tool. The AGENTS.md / rule file then carries the SDI discipline during implementation.
+Claude Code and Codex both support `SKILL.md`-based skills (different paths — see above — but identical format). For tools that don't have a skills system (Roo Code, Kilo Code, OpenCode, Cursor, Cline, Windsurf, etc.), run `mvp-architect` / `convert-to-sdi` in a separate Claude Code or Codex session and bring the generated artifacts back into your primary tool. The AGENTS.md / rule file then carries the SDI discipline during implementation.
 
 ### Other tools (Continue, Aider, GitHub Copilot Chat, Cody…)
 
@@ -218,7 +218,7 @@ These are non-negotiable. They live in `sdi-mode/MODE.md` and propagate to every
 
 ## Living documents at project root
 
-After running `mvp-architect` or `convert2sdi`, the project root carries living docs that the coding agent reads on every session:
+After running `mvp-architect` or `convert-to-sdi`, the project root carries living docs that the coding agent reads on every session:
 
 - **`AGENTS.md`** — operating discipline + project-specific stack/conventions/work tracker. The framework's primary anchor at the project level. Updated as the project evolves.
 - **`docs/MEMORY.md`** + **`docs/memory/YYYY-MM-DD.md`** — daily breadcrumb trail. What was worked on, blocked on, planned next.
@@ -244,7 +244,7 @@ sdi-framework/
 │       └── modifiers/
 │           └── ai.md                     (AI/LLM cross-cutting)
 │
-├── convert2sdi/                          ← skill: adopt on legacy projects
+├── convert-to-sdi/                          ← skill: adopt on legacy projects
 │   ├── SKILL.md                          (Phase 0/1/1.5/2/3 adoption flow)
 │   └── references/                       (auto-audit, triage, artifact handling…)
 │
@@ -267,7 +267,7 @@ sdi-framework/
 
 - **Not a code reviewer.** sdi-mode implements with discipline; the human reviews the work. The framework explicitly resists rubber-stamping.
 - **Not an auto-approver.** Stop-and-review checkpoints are binary gates. Silence is not consent.
-- **Not a refactor agent.** `convert2sdi` documents reality; it never edits source code.
+- **Not a refactor agent.** `convert-to-sdi` documents reality; it never edits source code.
 - **Not a scope-from-scratch tool for in-flight projects.** Use Phase E for next-plan, not Phase A/B/C.
 - **Not bureaucracy.** If a step adds friction without increasing clarity, quality, or auditability, it should be questioned and redesigned — but never bypassed informally.
 

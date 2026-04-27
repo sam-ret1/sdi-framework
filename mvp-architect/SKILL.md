@@ -1,6 +1,6 @@
 ---
 name: mvp-architect
-description: Plan products from rough concept to a spec bundle (PRD, ARCHITECTURE, ROADMAP, PROJECT_STRUCTURE, DESIGN_SYSTEM if UI, IMPLEMENTATION_PLAN, AGENTS.md), then accompany implementation as consultative reviewer (Phase D) and next-phase planner (Phase E). Covers 8 project types: web SaaS multi-tenant, landing pages, dashboards, web APIs, mobile apps, data pipelines, AI agents/MCP servers, automation workflows. Use when a user arrives with an idea ("I have an idea for...", "let's plan a project"), asks for review of in-progress work ("agent delivered round N — your opinion", "does this decision make sense?"), or asks to plan the next work item after a phase closes ("phase X closed — let's plan the next", "let's scope feature Y"). For review-only or next-phase-planning entries, skip Phase 0/A/B/C and go directly to Phase D or E.
+description: Plan products from concept to a spec bundle, then review work in progress and plan subsequent work items. Covers 8 project types (web SaaS, landing page, dashboard, web API, mobile, data pipeline, AI agent/MCP, automation). USE when the user has a product idea to scope, needs review of an in-progress plan or round, or asks to plan the next work item after one closes. DO NOT USE when the project already has code without an SDI bundle (use convert-to-sdi first) or when the request is pure code execution with no planning need.
 ---
 
 # MVP Architect

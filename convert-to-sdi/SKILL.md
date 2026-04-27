@@ -1,9 +1,9 @@
 ---
-name: convert2sdi
-description: Adopt the sdi-framework workflow on a project that already has code — without refounding it. Auto-audits the repo, asks ≤5 focused questions (each accepts "don't know"), then generates the artifact bundle: AGENTS.md, PROJECT_STRUCTURE, ARCHITECTURE, DECISIONS seed, MEMORY init, PRD/ROADMAP placeholders, first IMPLEMENTATION_PLAN. For projects in production, emits a `Production constraints` section in AGENTS.md so sdi-mode behaves safely against live systems. Use when the user says "I have a project already in progress and want to use the framework", "taking over this legacy repo", "need to create AGENTS.md here", or any variant where the project has existing code and the user wants to adopt the SDI discipline going forward. Entry skill for ANY project not started via `mvp-architect` Phase 0–C.
+name: convert-to-sdi
+description: Onboard an existing codebase to the sdi-framework workflow by generating the artifact bundle from the repo as it stands. USE when the project already has code and the user wants to adopt SDI going forward. DO NOT USE for greenfield projects (use mvp-architect), code refactor or review work, throwaway scripts, or projects already converted (use mvp-architect Phase E for subsequent work).
 ---
 
-# convert2sdi
+# convert-to-sdi
 
 This skill is how an existing project adopts the sdi-framework workflow. It does not refactor the code, rewrite history, or interrogate the user about decisions made years ago. It documents the reality of the repo as it stands today, accepts gaps honestly, and hands the project over to `sdi-mode` so all future work follows the discipline.
 
@@ -15,7 +15,7 @@ This skill is how an existing project adopts the sdi-framework workflow. It does
 
 **Do NOT use** for:
 - Greenfield projects with no code yet — use `mvp-architect` (Phase 0–C).
-- Reviewing or refactoring existing code — convert2sdi only generates docs; it never edits source code.
+- Reviewing or refactoring existing code — convert-to-sdi only generates docs; it never edits source code.
 - Single-file scripts or throwaway prototypes — overhead exceeds value.
 
 ## Core principle
@@ -65,7 +65,7 @@ Do **not** ask additional questions proactively. If the user volunteers more con
 
 ### Phase 1.5 — Existing artifact triage (only if Phase 0 detected pre-existing canonical artifacts)
 
-This phase **runs only when needed**. Skip entirely if Phase 0 found no existing canonical artifacts (or all detected ones are absent / clearly compatible with the framework). When it does run, it prevents `convert2sdi` from silently overwriting the user's PRD, ARCHITECTURE, ROADMAP, etc.
+This phase **runs only when needed**. Skip entirely if Phase 0 found no existing canonical artifacts (or all detected ones are absent / clearly compatible with the framework). When it does run, it prevents `convert-to-sdi` from silently overwriting the user's PRD, ARCHITECTURE, ROADMAP, etc.
 
 Read `references/existing-artifact-handling.md` for the full protocol, including the matrix of default strategies, format compatibility heuristics, and the four canonical handling strategies:
 
@@ -124,7 +124,7 @@ After generation, instruct the user how to load `sdi-mode`:
 
 Closing message:
 
-> "Setup complete. The project is now under the framework. For the next work item after this plan closes, use Phase E of the `mvp-architect` skill (don't run `convert2sdi` again — it's one-shot)."
+> "Setup complete. The project is now under the framework. For the next work item after this plan closes, use Phase E of the `mvp-architect` skill (don't run `convert-to-sdi` again — it's one-shot)."
 
 ## Tone
 
@@ -138,7 +138,7 @@ Closing message:
 - **Not a refactor agent.** Doesn't change code structure, naming, or organization.
 - **Not a documentation rewrite.** Existing docs (README, ARCHITECTURE, etc.) are preserved if they exist; the skill complements them.
 - **Not a scope-from-scratch tool.** Doesn't replace `mvp-architect` Phase 0–C. If the user wants to re-scope the product, that's a separate exercise.
-- **Not an audit tool for code quality.** SDI mode does its own audit per work item; convert2sdi only sets up the framework.
+- **Not an audit tool for code quality.** SDI mode does its own audit per work item; convert-to-sdi only sets up the framework.
 - **Not run repeatedly.** One-shot per project. Subsequent work uses Phase E of `mvp-architect`.
 
 ## Smoke check after run
@@ -149,7 +149,7 @@ User should be able to:
 2. Open the generated `IMPLEMENTATION_PLAN_*.md` and see a plan grounded in current code.
 3. Start a session in their coding agent (Claude Code / Codex / Roo / Kilo / OpenCode), paste the kickoff prompt, and have the agent operate with SDI discipline.
 
-If any of those fail, the convert2sdi run is incomplete — investigate before considering it done.
+If any of those fail, the convert-to-sdi run is incomplete — investigate before considering it done.
 
 ## References
 

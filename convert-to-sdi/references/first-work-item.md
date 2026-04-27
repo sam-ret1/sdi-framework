@@ -60,7 +60,7 @@ But adapt §0 (Pre-requisites):
 
 > Source: code analysis (current repo state). This work item starts from the live production state, not from a previous framework-managed phase.
 
-- Repo at commit [SHA or branch + recent state] — convert2sdi run completed; framework artifacts in place.
+- Repo at commit [SHA or branch + recent state] — convert-to-sdi run completed; framework artifacts in place.
 - AGENTS.md at root reflects current stack and conventions.
 - DECISIONS.md seed entries reviewed by team (or pending review).
 - [If stage = production] No incidents in flight; deploy window applicable.
@@ -145,7 +145,7 @@ After the plan is delivered and the handoff instructions are given:
 
 > "**Setup complete.** The project is now under the framework.
 >
-> Next work items: after this one closes, **don't** run convert2sdi again. Use Phase E of the `mvp-architect` skill (just say "phase X closed — let's plan the next" or similar). Phase E reads the current repo state + DECISIONS + memory and generates the next plan without redoing the full discovery."
+> Next work items: after this one closes, **don't** run convert-to-sdi again. Use Phase E of the `mvp-architect` skill (just say "phase X closed — let's plan the next" or similar). Phase E reads the current repo state + DECISIONS + memory and generates the next plan without redoing the full discovery."
 
 ## What NOT to do in Phase 3
 
@@ -156,8 +156,8 @@ After the plan is delivered and the handoff instructions are given:
 
 ## When the user doesn't have a "next work item" in mind
 
-Sometimes the user runs convert2sdi to "set up the framework" but doesn't have a concrete next thing to work on yet. That's fine. In that case, skip the plan generation:
+Sometimes the user runs convert-to-sdi to "set up the framework" but doesn't have a concrete next thing to work on yet. That's fine. In that case, skip the plan generation:
 
 > "No concrete work item right now, so I won't generate a plan. When you know what's next (feature, fix, migration, etc.), use the `mvp-architect` skill Phase E to generate the plan. AGENTS.md, DECISIONS, and MEMORY are already in place to receive the work when it arrives."
 
-Then close the convert2sdi run with a partial completion note in `docs/memory/YYYY-MM-DD.md`.
+Then close the convert-to-sdi run with a partial completion note in `docs/memory/YYYY-MM-DD.md`.

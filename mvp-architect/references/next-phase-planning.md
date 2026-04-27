@@ -54,7 +54,7 @@ If the user already answered these implicitly (e.g., the trigger phrase already 
 |---|---|
 | Project follows a discrete linear ROADMAP (greenfield, structured migrations) | Free-form feature work, bugfixes, maintenance batches, perf passes in ongoing projects |
 | The work item maps cleanly to "next phase" in ROADMAP | The work item is one of many concurrent or unordered streams |
-| User started with `mvp-architect` Phase 0–C | User started with `convert2sdi` (legacy adoption) or has been using slugs |
+| User started with `mvp-architect` Phase 0–C | User started with `convert-to-sdi` (legacy adoption) or has been using slugs |
 | Examples: `PHASE_2`, `PHASE_3` | Examples: `billing-portal`, `q1-perf-pass`, `customer-x-bugfix`, `auth-refactor` |
 
 The framework treats `IMPLEMENTATION_PLAN_*.md` uniformly — both styles work. Pick what fits the project's mental model.

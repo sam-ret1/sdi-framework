@@ -118,6 +118,6 @@ If the agent improvises:
 ## Tips
 
 - **`{file:...}` is a killer feature.** With Approach B, MODE.md updates flow through automatically — no copy-paste cycle. This is the recommended setup if you have `sdi-framework/` checked out as a sibling or sub-directory of your project.
-- **Multiple agents.** When you set up `mvp-architect` / `convert2sdi` analogues later in OpenCode, define each as a separate `.md` file under `.opencode/agents/` or as another entry under the `agent` object in JSON.
+- **Multiple agents.** When you set up `mvp-architect` / `convert-to-sdi` analogues later in OpenCode, define each as a separate `.md` file under `.opencode/agents/` or as another entry under the `agent` object in JSON.
 - **Updating MODE.md:** Approach A → re-paste the body and reload. Approach B → no action; reload picks up the new file content.
 - **Permission tuning:** `bash: { "*": "ask" }` is the safest default. As trust grows on a project, you can add `"npm test": "allow"`, `"npm run *": "allow"`, etc.
