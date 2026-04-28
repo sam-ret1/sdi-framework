@@ -103,14 +103,105 @@ Phase N is done when:
 1. [Testable criterion]
 2. ...
 
-## 11. Decisions Log (for DECISIONS.md)
+## 11. Implementation checkpoints (for sdi-mode)
+
+This phase is implemented in checkpoints per the sdi-mode discipline. The canonical gate text below is mirrored from sdi-mode's `stop-and-review-patterns.md` so this plan is self-contained for review without sdi-mode installed. If the sdi-mode skill ever diverges from what's mirrored here, follow the skill — it carries the live discipline.
+
+Skip checkpoints that don't apply (e.g. drop Checkpoint 4 if there is no UI). **Checkpoints 1 (Foundation) and 5 (Housekeeping) are non-negotiable.**
+
+### Checkpoint 1 — Foundation **(user-gated)**
+
+**Covers:** §0 Pre-requisites, §1 Scope (audit framing), §1.5 Runtime Dependencies, §2 schema/migrations/types (foundation only — no business logic).
+
+**Standard gates (all ✓ before next checkpoint):**
+- [ ] Audit report posted in canonical format
+- [ ] All Blockers from the audit are either resolved or explicitly waived by the user
+- [ ] All Open Questions from the audit are answered
+- [ ] Each **material** plan-vs-repo Divergence has a corresponding `DECISIONS.md` entry; mechanical divergences are noted in the round report only
+- [ ] Plan has a revision note (`rN`) summarizing audit changes (if any landed)
+- [ ] User has given explicit go ("yes", "go", "proceed") — silence is **not** consent
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
+
+**Phase-specific gates (optional — list only items unique to this phase):**
+- [ ] [optional, e.g. "Migration 0008_billing_tables applied to local DB"]
+
+### Checkpoint 2 — Core domain logic **(auto-review eligible)**
+
+**Covers:** §3 Algorithm, §4+ pure logic sections, §8 unit tests for above.
+
+**Standard gates:**
+- [ ] All pure functions in scope for this checkpoint are implemented
+- [ ] Unit tests cover the edge cases called out in the plan (count vs plan list)
+- [ ] All unit tests pass (real count from the runner, not approximation)
+- [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
+- [ ] Round report posted in canonical format
+- [ ] User has given explicit go to move into integrations (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry summarizes the round
+
+**Phase-specific gates:**
+- [ ] [optional]
+
+### Checkpoint 3 — Wire up integrations **(auto-review eligible)**
+
+**Covers:** §2 endpoints/handlers, §5 Rate Limiting, §7 Background jobs, §9 Observability, §8 integration tests.
+
+**Standard gates:**
+- [ ] All endpoints/handlers/workers in scope for this checkpoint exist and respond
+- [ ] Integration tests cover the canonical happy path + at least one failure mode per surface
+- [ ] All integration tests pass against a real local instance (not mocks-only)
+- [ ] Observability is wired (logs, metrics, tracing) per `ARCHITECTURE.md` requirements
+- [ ] Manual smoke command attempted (curl/httpie/CLI) and result documented
+- [ ] Round report posted
+- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+
+**Phase-specific gates:**
+- [ ] [optional]
+
+### Checkpoint 4 — UI (skip if no UI in §6) **(auto-review eligible)**
+
+**Covers:** §6 UI Surfaces.
+
+**Standard gates:**
+- [ ] Every page/screen in scope is reachable from navigation
+- [ ] Forms validate per the schemas defined in Checkpoint 2
+- [ ] Loading, empty, and error states exist for each data-driven surface
+- [ ] Manual walkthrough of the primary flow completed; screenshots in the round report
+- [ ] No console errors or accessibility warnings on the primary flow
+- [ ] Round report posted
+- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+
+**Phase-specific gates:**
+- [ ] [optional]
+
+### Checkpoint 5 — Housekeeping **(user-gated)**
+
+**Covers:** §10 Acceptance Criteria mapping, §12 Decisions Log materialization, §13 Known divergences resolution, doc updates (`PROJECT_STRUCTURE`, `AGENTS.md`).
+
+**Standard gates:**
+- [ ] Every acceptance criterion in the current `IMPLEMENTATION_PLAN_*.md` §Acceptance Criteria has linked evidence
+- [ ] `PROJECT_STRUCTURE.md` reflects the actual repo (no documented paths missing in code, no code paths missing in doc)
+- [ ] `AGENTS.md` updates proposed and approved by user
+- [ ] `DESIGN_SYSTEM.md` audit complete (UI types only) — tokens documented match tokens in code
+- [ ] `DECISIONS.md` end-of-phase sweep done — no orphan/contradictory entries
+- [ ] All revision notes on the plan reference resolved changes
+- [ ] Lint passes
+- [ ] Typecheck passes
+- [ ] All unit + integration test suites pass
+- [ ] Manual smoke test of the main acceptance criterion completed live and documented
+- [ ] Phase tracker in `AGENTS.md` updated to ✓ with date
+- [ ] Today's `docs/memory/YYYY-MM-DD.md` entry marks the phase as closed
+
+**Phase-specific gates:**
+- [ ] [optional]
+
+## 12. Decisions Log (for DECISIONS.md)
 
 Record at end of phase:
 
 - [ ] [Decision X — why]
 - [ ] ...
 
-## 12. Known divergences from earlier docs
+## 13. Known divergences from earlier docs
 
 [Call out places where this plan knowingly disagrees with the higher-level PRD/ARCHITECTURE — and why. Usually resolved in ARCHITECTURE or ROADMAP updates at end of phase.]
 
@@ -122,12 +213,12 @@ Record at end of phase:
 
 > "Implement Phase N per `docs/IMPLEMENTATION_PLAN_PHASE_N.md` (rN). Follow `docs/PROJECT_STRUCTURE.md` for file locations and `AGENTS.md` for stack/conventions. When the plan disagrees with the actual repo, the repo wins — note the divergence in `DECISIONS.md` and proceed.
 >
-> Start by proposing:
-> 1. [First deliverable — usually schema/foundation]
-> 2. [Second — usually dependencies]
-> 3. [Third — usually a narrow confirmation question about conventions]
+> Implement in checkpoints per §11 of the plan; standard gates for each checkpoint are inlined there. Start by proposing:
+> 1. [First deliverable — usually Checkpoint 1 Foundation: schema + deps + audit]
+> 2. [Second — Checkpoint 1 audit findings]
+> 3. [Third — narrow confirmation question about conventions]
 >
-> Stop there and wait for review. Do NOT start on [subsequent scope items] yet."
+> Stop there and wait for review. Do NOT start on Checkpoint 2 (Core domain logic) yet."
 ```
 
 ## Writing tips
@@ -136,8 +227,11 @@ Record at end of phase:
 - **Type-specific schemas/contracts/specs (§2) should be close to production-ready.** Not final, but the structure should survive the implementation with only minor tweaks.
 - **API contracts (when applicable) should include every status code.** If your contract table has 3 rows, you're missing error cases.
 - **Acceptance criteria (§10) are a checklist the user can actually verify.** Avoid "X is stable" — use "X is covered by test Y" or "smoke test Z passes."
-- **§11 Decisions Log is a checklist for end-of-phase housekeeping.** Each becomes a real DECISIONS.md entry at phase close.
-- **§12 is where the plan is honest about its own limitations.** Usually empty at initial draft; populated during audit.
+- **§11 Implementation checkpoints maps work to the sdi-mode discipline.** Both the canonical gates (mirrored from sdi-mode for self-containment) and phase-specific slots appear inline. Only add phase-specific gates when the phase has constraints unique to it; don't restate the standard gates.
+
+> **Maintenance note (for framework maintainers, not for inclusion in generated plans):** §11's standard gates are mirrored from the sdi-mode skill's `stop-and-review-patterns.md`. Both planning skills carry their own copy on purpose so a generated plan can be reviewed without sdi-mode installed. When the canonical gates change, update both copies (`mvp-architect/references/core-templates/implementation-plan-template.md` and `convert-to-sdi/references/core-templates/implementation-plan-template.md`) to match. Same convention as `agents-template.md`.
+- **§12 Decisions Log is a checklist for end-of-phase housekeeping.** Each becomes a real DECISIONS.md entry at phase close.
+- **§13 is where the plan is honest about its own limitations.** Usually empty at initial draft; populated during audit.
 
 ## Revision notes (r2, r3, ...)
 
@@ -161,4 +255,5 @@ Revision notes stack at the top of the doc, newest first. Never delete prior rev
 - **Missing out-of-scope.** §1 "out of scope for this phase" prevents scope creep. Don't skip it.
 - **No acceptance criteria.** §10 is the contract for "when are we done." Don't leave vague.
 - **Skipping the type-specific section.** §2 must be filled with the appropriate type appendix; otherwise the plan loses its prescriptive value.
+- **Empty §11 Implementation checkpoints.** A plan without checkpoint mapping forces the implementer to retrofit the discipline at execution time. Map every §2–§9 work unit to a checkpoint, drop checkpoints that don't apply, and always keep Checkpoints 1 and 5.
 - **Missing the kickoff prompt.** §"How to feed this to the coding agent" is valuable — users copy-paste it. If the plan doesn't have one, the user has to invent it, and they'll miss things.

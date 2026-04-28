@@ -29,7 +29,7 @@ Four fields, each one short. An entry fits on a screen.
 - Choosing one library / framework / service over another when the reasons aren't obvious.
 - Deferring a feature to a later phase (explicit: what, why, when to revisit).
 - Accepting a trade-off (over-matching regex, at-most-once job dispatch, no grace period on secret rotation, etc.).
-- Resolving a plan-vs-repo divergence (the plan said X, repo has Y, we did Z).
+- Resolving a **material** plan-vs-repo divergence (see "Material vs mechanical divergences" below).
 - Deviating from a convention for a local reason.
 - Changing the interpretation of an artifact (what "done" means for a particular AC).
 
@@ -40,6 +40,28 @@ Four fields, each one short. An entry fits on a screen.
 - Things any competent dev would decide the same way. No entry.
 
 Rule of thumb: if you had to explain *why* this choice to a peer, and the explanation wasn't obvious, it's an entry.
+
+## Material vs mechanical divergences
+
+A plan-vs-repo divergence becomes a `DECISIONS.md` entry only when it is **material** — when the resolution required a judgment call and a future reader would benefit from knowing why. **Mechanical** divergences (idiomatic corrections with no real trade-off) are noted in the round report's "Delivered" section instead.
+
+### Mechanical (round report only — no DECISIONS entry)
+
+- Plan said `getCwd()`, repo has `getCurrentWorkingDirectory()` — used repo's name.
+- Plan listed `axios` as a new dep, repo already uses `node-fetch` for the same purpose — used existing.
+- Plan said file goes in `src/lib/`, repo convention is `src/utils/` — followed convention.
+- Plan referenced a missing env var; added it during setup.
+
+### Material (DECISIONS entry)
+
+- Plan said use Postgres native enum, repo uses `text` + check constraint — kept repo pattern. Trade-off: no automatic enum exhaustiveness in TS, but consistency across schema.
+- Plan said use Inngest for background jobs, repo already has BullMQ wired — chose BullMQ to avoid two job systems.
+- Plan referenced `agents.id` FK, but `agents` is in Phase 2 — used plain UUID with comment instead. FK added when the table exists.
+- Plan said use Postgres RLS for tenant isolation, repo enforces in app layer — kept app-layer enforcement; trade-off documented.
+
+### Rule of thumb (material vs mechanical)
+
+If the resolution would surprise the next reader, or you'd want to explain *why* to a peer, it's material. If you'd describe it as "just used the repo's name", it's mechanical.
 
 ## Example entries
 

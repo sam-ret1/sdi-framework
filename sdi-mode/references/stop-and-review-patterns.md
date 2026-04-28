@@ -18,7 +18,15 @@ If you're tempted to skip a gate "because it's just one item", that's exactly wh
 
 These are typical — adapt to the specific phase.
 
-### Checkpoint 1: Foundation (after audit)
+### Auto-review eligibility
+
+In default mode, every checkpoint waits for explicit user go. When the user enables **auto-review mode** for the session (see `auto-review-mode.md`), the user-go gate at Checkpoints 2, 3, 4 may be replaced by a structured subagent verdict (PASS / FAIL / ESCALATE with file:line evidence per gate).
+
+**Checkpoint 1 (Foundation) and Checkpoint 5 (Housekeeping) stay user-gated regardless** — the cost of an auto-pass at those points is too high. Any round that produces a `DECISIONS.md` entry, any blocker, any emergency deviation, any plan revision, and any always-escalate trigger from `auto-review-mode.md` also stays user-gated even within an eligible checkpoint.
+
+Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoints have a single user-go gate that accommodates both modes.
+
+### Checkpoint 1: Foundation (after audit) **(user-gated)**
 
 **Deliver:**
 - Audit report of plan vs repo (see `audit-first-protocol.md`).
@@ -33,7 +41,7 @@ These are typical — adapt to the specific phase.
 - [ ] Audit report posted in canonical format
 - [ ] All Blockers from the audit are either resolved or explicitly waived by the user
 - [ ] All Open Questions from the audit are answered
-- [ ] Each plan-vs-repo Divergence has a corresponding `DECISIONS.md` entry
+- [ ] Each **material** plan-vs-repo Divergence has a corresponding `DECISIONS.md` entry; mechanical divergences are noted in the round report only (see `decisions-log-format.md` for the material vs mechanical distinction)
 - [ ] Plan has a revision note (`rN`) summarizing audit changes (if any landed)
 - [ ] User has given explicit go ("yes", "go", "proceed") — silence is **not** consent
 - [ ] Today's `docs/memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
@@ -43,7 +51,7 @@ These are typical — adapt to the specific phase.
 
 ---
 
-### Checkpoint 2: Core domain logic (pure functions, services, types)
+### Checkpoint 2: Core domain logic (pure functions, services, types) **(auto-review eligible)**
 
 **Deliver:**
 - Pure functions (mapping, validation, hashing/signing, normalization, state transitions, prompt rendering, etc.).
@@ -59,12 +67,12 @@ These are typical — adapt to the specific phase.
 - [ ] All unit tests pass (real count from the runner, not approximation)
 - [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
 - [ ] Round report posted in canonical format
-- [ ] User has given explicit go to move into integrations
+- [ ] User has given explicit go to move into integrations (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
 - [ ] Today's `docs/memory/YYYY-MM-DD.md` entry summarizes the round
 
 ---
 
-### Checkpoint 3: Wire up integrations
+### Checkpoint 3: Wire up integrations **(auto-review eligible)**
 
 **Deliver:**
 - Route handlers / API endpoints / background workers / pipeline stages / agent loop wiring.
@@ -81,11 +89,11 @@ These are typical — adapt to the specific phase.
 - [ ] Observability is wired (logs, metrics, tracing) per `ARCHITECTURE.md` requirements
 - [ ] Manual smoke command attempted (curl/httpie/CLI) and result documented
 - [ ] Round report posted
-- [ ] User has given explicit go
+- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
 
 ---
 
-### Checkpoint 4: UI (only if the phase includes it)
+### Checkpoint 4: UI (only if the phase includes it) **(auto-review eligible)**
 
 **Deliver:**
 - Pages, screens, forms, tables, dialogs, navigation.
@@ -102,11 +110,11 @@ These are typical — adapt to the specific phase.
 - [ ] Manual walkthrough of the primary flow completed; screenshots in the round report
 - [ ] No console errors or accessibility warnings on the primary flow
 - [ ] Round report posted
-- [ ] User has given explicit go
+- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
 
 ---
 
-### Checkpoint 5: Housekeeping (end of phase)
+### Checkpoint 5: Housekeeping (end of phase) **(user-gated)**
 
 **Deliver:**
 - Acceptance criteria mapped to evidence (test file + line, or smoke step).

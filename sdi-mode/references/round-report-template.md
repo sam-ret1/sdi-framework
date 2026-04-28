@@ -25,6 +25,15 @@ Every implementation round ends with a report. Same sections, same order. Users 
 - Integration tests: X new, Y total (all passing)
 - Manual smoke test: [describe what you ran, or "pending"]
 
+### Auto-review history (only if auto-review mode was used this round)
+
+[For each subagent review attempt, in order:
+- **Attempt N — verdict**: PASS / FAIL / ESCALATE.
+- **Per-gate**: ✓/✗ with file:line evidence (paste the subagent's structured output).
+- **Issues found** (if FAIL/ESCALATE): list and the fix applied between attempts.
+
+If the round was not auto-reviewed, omit this section entirely. See `auto-review-mode.md`.]
+
 ### Not done in this round (and why)
 
 [Explicit list of scope items deferred. For each: what, why, where it goes.]
@@ -86,6 +95,12 @@ Actionable questions can be answered with a short reply.
 ### The "next suggested round" recommendation
 
 You've been deep in the code; you have the best sense of what should come next and why. Make a recommendation, even if it's "fix these follow-ups then proceed to X." Don't leave the user guessing.
+
+### Auto-review history is not optional when auto-review was used
+
+If the round was auto-reviewed, the history must appear in the report — every attempt, every verdict, every gate, with file:line evidence as the subagent returned it. The user uses this to spot-check the subagent's calls. Don't summarize ("3 attempts, eventual PASS"); paste the structured output. Omitting or compressing it defeats the purpose of the audit trail.
+
+If the round was not auto-reviewed (default mode, or always-user-gated checkpoint), omit the section entirely.
 
 ## What NOT to include
 

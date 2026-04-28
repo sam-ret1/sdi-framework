@@ -127,7 +127,7 @@ Each audit finding goes in one bucket:
 
 - **Blocker**: prevents starting. Must be resolved first. Examples: missing tables the plan assumes exist, contradictory `[data isolation policy]`, unresolved "how should X work" questions in the plan.
 
-- **Divergence (repo-wins)**: plan says one thing, repo has another, and the repo's version is correct/idiomatic. Document and proceed.
+- **Divergence (repo-wins)**: plan says one thing, repo has another, and the repo's version is correct/idiomatic. Material divergences (judgment-call resolutions) → `DECISIONS.md` entry; mechanical divergences (idiomatic corrections) → noted in the round report only. See `decisions-log-format.md` for the distinction.
 
 - **Divergence (plan-wins, needs migration)**: plan describes the target state; repo is out of date. Proceed per the plan, register the migration needed.
 

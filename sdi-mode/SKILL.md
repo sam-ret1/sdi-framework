@@ -132,6 +132,16 @@ At the end of each round, deliver a structured report. Read `references/round-re
 
 Then stop. Don't continue to the next round automatically.
 
+### Step 4.5: Auto-review (opt-in)
+
+By default, every checkpoint waits for the user. The user may enable **auto-review mode** for the current session ("use auto-review for this phase"), which delegates checkpoint verification to a fresh subagent for **Checkpoints 2, 3, 4 only**. Foundation (Checkpoint 1), Housekeeping (Checkpoint 5), any round producing a `DECISIONS.md` entry, and any blocker stay user-gated regardless.
+
+The subagent receives a self-contained packet (diff + plan §s + gate checklist + per-gate verifiable criteria) and returns a structured PASS / FAIL / ESCALATE verdict with file:line evidence per gate. Loop cap: 2 retries, then escalate. Auto-review history is appended to the round report so the user can spot-check.
+
+Auto-review is session-scoped — never persisted, never default. The user enables and disables it explicitly per session.
+
+Read `references/auto-review-mode.md` for the full protocol, the always-escalate triggers, the review-packet shape, and the subagent prompt template.
+
 ### Step 5: Write tests alongside, not after
 
 Tests are part of the round, not a later phase. Patterns:
@@ -228,6 +238,7 @@ Load these as needed:
 - `references/expected-artifacts.md` — what the spec bundle should contain; how to recognize a complete vs incomplete handoff; document precedence
 - `references/audit-first-protocol.md` — audit report format, common divergence categories, how to classify findings
 - `references/stop-and-review-patterns.md` — standard within-phase checkpoints, gate checklists, and report shape
+- `references/auto-review-mode.md` — opt-in delegated checkpoint verification for Checkpoints 2–4 (subagent verdict, loop cap, escalation triggers)
 - `references/round-report-template.md` — end-of-round report format
 - `references/decisions-log-format.md` — how to write a DECISIONS.md entry
 - `references/memory-discipline.md` — daily memory under `docs/memory/`, indexed by `docs/MEMORY.md`

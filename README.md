@@ -174,6 +174,7 @@ sdi-framework/
     SKILL.md
     references/
       audit-first-protocol.md
+      auto-review-mode.md
       decisions-log-format.md
       expected-artifacts.md
       memory-discipline.md
@@ -193,7 +194,7 @@ sdi-framework/
 ## What SDI Is Not
 
 - **Not a code reviewer.** `sdi-mode` implements with discipline; the human still reviews the work.
-- **Not an auto-approver.** Checkpoints require explicit review.
+- **Not an auto-approver.** Checkpoints require explicit review. Mid-phase checkpoints (Core, Integrations, UI) can be verified by a fresh review subagent in opt-in auto-review mode, but the discipline still requires per-gate evidence with file:line citations — not implementer self-approval. Foundation and Housekeeping checkpoints stay user-gated regardless.
 - **Not a refactor agent.** `convert-to-sdi` documents reality; it never edits source code.
 - **Not scope-from-scratch for in-flight projects.** Use Phase E for next-plan work.
 - **Not bureaucracy for its own sake.** Friction should earn its keep by improving clarity, quality, or auditability.

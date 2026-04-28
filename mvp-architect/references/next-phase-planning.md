@@ -30,7 +30,7 @@ Load context from the **current state of the repo**, not from your memory of ear
 1. **`AGENTS.md`** (root) — current stack, conventions, work tracker. This is the operating truth.
 2. **`docs/MEMORY.md` index + last 2–3 daily entries from `docs/memory/`** — what's been happening, blockers, observations the user made, open questions still pending.
 3. **`docs/DECISIONS.md`** — what's been decided. The next plan must respect these, not contradict them. Skim headers; read entries that relate to the area of the next work item.
-4. **The most recent `docs/IMPLEMENTATION_PLAN_*.md`** — what was just delivered (or is closing). Look for §12 Known divergences (resolved? deferred?), §11 Decisions Log items (all materialized?), and any deferred scope that must carry over.
+4. **The most recent `docs/IMPLEMENTATION_PLAN_*.md`** — what was just delivered (or is closing). Look for §13 Known divergences (resolved? deferred?), §12 Decisions Log items (all materialized?), and any deferred scope that must carry over.
 5. **`docs/ROADMAP.md`** — what was originally planned next. May still be accurate; may have shifted.
 6. **`docs/PRD.md` §Out of scope** — what was explicitly deferred. The next work item may be unlocking one of these; verify before assuming.
 7. **Code areas the next work item will touch** — directories, helpers, schemas. Saves the user from repeating "this lives at X" later.
@@ -68,8 +68,9 @@ Inside the plan:
 - **§0 Pre-requisites** — list what from the previous work item must be green before starting this one. Reference round reports or commits where applicable. Examples: "Phase 1 housekeeping complete (smoke test green)", "DECISIONS #28-#31 materialized in code", "Migration `0007_add_billing_tables` applied".
 - **§1 Scope** — concrete in-scope and out-of-scope. The PRD §Out-of-scope is your guide for what's deferred; verify each item against the current work item.
 - **§2 Type-specific (database / API / UI / etc.)** — reference DECISIONS already taken (link `DECISIONS.md #N`), don't duplicate. New schema/contracts get sketched here.
-- **§11 Decisions Log** — only the decisions you anticipate this work item will memorialize. Don't pre-record decisions from earlier work items.
-- **§12 Known divergences** — pre-populate with anything the audit of recent memory dailies surfaced.
+- **§11 Implementation checkpoints** — map §2–§9 work units to the standard 5 checkpoints (Foundation, Core, Integrations, UI, Housekeeping). Drop checkpoints not applicable to this work item (e.g., no UI → drop Checkpoint 4). The standard gates per checkpoint are inlined in the plan template (mirrored from sdi-mode for self-containment). Add phase-specific gates only when the phase has constraints unique to it.
+- **§12 Decisions Log** — only the decisions you anticipate this work item will memorialize. Don't pre-record decisions from earlier work items.
+- **§13 Known divergences** — pre-populate with anything the audit of recent memory dailies surfaced.
 
 Plan length: same target as Phase C plans (400–600 lines). Don't pad.
 
