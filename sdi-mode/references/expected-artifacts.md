@@ -58,7 +58,7 @@ Don't improvise. Stop and tell the user:
 
 > "There's no `IMPLEMENTATION_PLAN_*.md` for [phase / work item]. To use `sdi-mode` correctly, the work item needs a plan first.
 >
-> - If the project already has an SDI bundle, run `mvp-architect` Phase E to generate the next work-item plan.
+> - If the project already has an SDI bundle, run `sdi-next-plan` to generate the next work-item plan.
 > - If this is an existing codebase without a bundle, run `convert-to-sdi` first.
 > - If this is greenfield, run `mvp-architect` Phase 0-C to scope and generate the bundle.
 >
@@ -169,6 +169,6 @@ When you find a conflict during the audit (or mid-phase):
 - Plan-vs-architecture contradictions that compound across phases.
 - DECISIONS.md becoming a graveyard of contradictions to higher-level docs that no one ever resolves.
 
-## Talking to the planner agent
+## Talking to the planner / reviewer agent
 
-The user may pair you with a second agent acting as the `mvp-architect` skill, consultatively during implementation. If the user relays a question or takes audit suggestions back to the planner, that's normal. Don't get defensive; it's a good-faith review loop. Respond to the planner's feedback the same way you respond to the user's.
+The user may pair you with a second agent acting as the `sdi-review` skill (consultative review during implementation), or invoke the `sdi-next-plan` skill at end of phase to scope the next work item. Plan generation for fresh projects happens in `mvp-architect`. If the user relays a question or takes audit suggestions back to one of those skills, that's normal. Don't get defensive; it's a good-faith review loop. Respond to their feedback the same way you respond to the user's.

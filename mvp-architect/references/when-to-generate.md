@@ -75,4 +75,4 @@ Don't mark planning as "done" — mark it as "first pass complete." The user wil
 - Ask to update the docs with the answers. Do it.
 - Eventually hand the bundle to the coding agent.
 
-Once implementation starts, you shift to **Phase D review support** (see the main SKILL.md).
+Once implementation starts, this skill is done — the user shifts to the `sdi-mode` skill for execution and the `sdi-review` / `sdi-next-plan` skills for review and follow-on planning.

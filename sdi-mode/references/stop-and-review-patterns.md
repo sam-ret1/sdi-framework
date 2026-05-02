@@ -20,11 +20,11 @@ These are typical — adapt to the specific phase.
 
 ### Auto-review eligibility
 
-In default mode, every checkpoint waits for explicit user go. When the user enables **auto-review mode** for the session (see `auto-review-mode.md`), the user-go gate at Checkpoints 2, 3, 4 may be replaced by a structured subagent verdict (PASS / FAIL / ESCALATE with file:line evidence per gate).
+**Auto-review is the default for Checkpoints 2, 3, and 4** — verification is delegated to a different-model reviewer ensemble: an Opus subagent + `codex exec` (typically gpt-5.5 with reasoning effort `xhigh`) running in parallel on attempt 1; one retry reviewer runs on attempts 2-3 (Opus by default, degraded Codex-only only when Opus is unavailable and Codex was the surviving attempt-1 reviewer). Different models find partially-disjoint bugs; the union catches more than either alone. The checkpoint gate at those checkpoints is closed by a structured merged verdict (PASS / FAIL / ESCALATE with file:line evidence per gate). The user can opt out per session — see `auto-review-mode.md`.
 
 **Checkpoint 1 (Foundation) and Checkpoint 5 (Housekeeping) stay user-gated regardless** — the cost of an auto-pass at those points is too high. Any round that produces a `DECISIONS.md` entry, any blocker, any emergency deviation, any plan revision, and any always-escalate trigger from `auto-review-mode.md` also stays user-gated even within an eligible checkpoint.
 
-Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoints have a single user-go gate that accommodates both modes.
+Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoints have a single gate that accommodates both default auto-review and opt-out user-gated modes.
 
 ### Checkpoint 1: Foundation (after audit) **(user-gated)**
 
@@ -67,7 +67,7 @@ Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoin
 - [ ] All unit tests pass (real count from the runner, not approximation)
 - [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
 - [ ] Round report posted in canonical format
-- [ ] User has given explicit go to move into integrations (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out of auto-review and gave explicit go to move into integrations (see `auto-review-mode.md`)
 - [ ] Today's `docs/memory/YYYY-MM-DD.md` entry summarizes the round
 
 ---
@@ -89,7 +89,7 @@ Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoin
 - [ ] Observability is wired (logs, metrics, tracing) per `ARCHITECTURE.md` requirements
 - [ ] Manual smoke command attempted (curl/httpie/CLI) and result documented
 - [ ] Round report posted
-- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out and gave explicit go (see `auto-review-mode.md`)
 
 ---
 
@@ -110,7 +110,7 @@ Each checkpoint header below carries an eligibility tag. Auto-eligible checkpoin
 - [ ] Manual walkthrough of the primary flow completed; screenshots in the round report
 - [ ] No console errors or accessibility warnings on the primary flow
 - [ ] Round report posted
-- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode — see `auto-review-mode.md`)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out and gave explicit go (see `auto-review-mode.md`)
 
 ---
 
@@ -149,8 +149,8 @@ Simple phases may have 2–3. Complex phases (lots of integration, many UI surfa
 
 1. **Deliver the round report.** Same format every time. Read `round-report-template.md`.
 2. **Walk through the gates.** Confirm each ✓ in the report. If any are ✗, surface them and propose remediation, do not pretend the checkpoint is complete.
-3. **Explicitly say you're stopping.** "Stopping here for review. Next proposed: [X]."
-4. **Do not proceed until the user gives go.** Silence is not consent.
+3. **Explicitly state the gate mode.** User-gated: "Stopping here for review. Next proposed: [X]." Auto-reviewed PASS: "Merged PASS closed this gate. Next proposed: [X]."
+4. **Proceed only when the gate mode allows it.** User-gated checkpoints require explicit user go; auto-reviewed checkpoints may proceed after merged PASS once the report is posted, unless the user interjects or an always-escalate trigger fired. Silence is not consent at user-gated checkpoints.
 5. **Answer questions.** If the user raises concerns, address them before moving forward.
 
 ## How to know it's time to stop
@@ -172,7 +172,7 @@ If you catch yourself thinking "might as well also do X while I'm at it", stop �
 - **Test status**: counts and pass/fail.
 - **Observations**: anything noteworthy (a design choice, a small bug, a follow-up).
 - **Next suggested deliverable** with rationale (why this, why now).
-- **Explicit "waiting for review"** — gives the user the cue to engage.
+- **Explicit gate status** — "waiting for review" for user-gated checkpoints, or "merged PASS closed the gate" for auto-reviewed checkpoints.
 
 ## What NOT to do
 

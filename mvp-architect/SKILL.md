@@ -1,6 +1,6 @@
 ---
 name: mvp-architect
-description: Plan products from concept to a spec bundle, then review work in progress and plan subsequent work items. Covers 8 project types (web SaaS, landing page, dashboard, web API, mobile, data pipeline, AI agent/MCP, automation). USE when the user has a product idea to scope, needs review of an in-progress plan or round, or asks to plan the next work item after one closes. DO NOT USE when the project already has code without an SDI bundle (use convert-to-sdi first) or when the request is pure code execution with no planning need.
+description: Plan a product from a rough idea to an initial spec bundle (PRD, ARCHITECTURE, ROADMAP, PROJECT_STRUCTURE, IMPLEMENTATION_PLAN, AGENTS.md). Covers 8 project types (web SaaS, landing page, dashboard, web API, mobile, data pipeline, AI agent/MCP, automation) via Phase 0 router, with optional AI/LLM modifier. USE when starting greenfield work — "I have an idea for X", "want to start a project", "help me scope a product", "need a PRD for Y", "we want to build Z from scratch". DO NOT USE for mid-implementation review (use sdi-review), planning the next work item after a phase closes (use sdi-next-plan), executing implementation (use sdi-mode), or onboarding existing code without an SDI bundle (use convert-to-sdi).
 ---
 
 # MVP Architect
@@ -9,50 +9,33 @@ This skill captures a way of going from a rough product idea to a spec bundle a 
 
 The skill works across multiple project types via a Phase 0 router: web SaaS multi-tenant, landing pages, dashboards, web APIs, mobile apps, data pipelines, AI agents/MCP servers, integration/automation workflows. An optional AI/LLM modifier supplements any project type with cross-cutting LLM concerns (prompts, eval, cost, guardrails).
 
-## Intent triage (run this first)
+## When to enter
 
-This skill has three distinct entry modes (initial scoping, consultative review, next-phase planning). Pick the mode from the user's first message **only when it is unambiguous**. When in doubt, ask once.
+Initial scoping (Phase 0 → A → B → C) is this skill's only entry mode. Triggers — go straight to Phase 0:
 
-**Unambiguous — go straight to the right phase, do not ask:**
-- Phase 0/A signals — "I have an idea for X", "want to start a project", "help me scope a product", "need a PRD for Y", "we want to build Z from scratch".
-- Phase D signals — "review this audit/plan/round report", "the coding agent proposed X, does it look right?", "is this decision risky?", "any problem with this approach?", any other "second pair of eyes" framing.
-- Phase E signals — "Phase N closed, let's plan the next phase", "scope feature X", "plan maintenance for Y", "what's the next implementation plan?".
+- "I have an idea for X" / "want to start a project" / "help me scope a product"
+- "need a PRD for Y" / "we want to build Z from scratch"
+- The user has a rough product idea and wants help shaping it before any code is written.
 
-**Ambiguous — ask explicitly before starting any phase:**
+If the request is something else, route the user out:
 
-If the user's message does not clearly match one of the three modes (e.g. they just said "use mvp-architect" or "I need help with my project"), reply with:
+- Mid-implementation review (a plan, round report, fork decision, or bug found): use the `sdi-review` skill.
+- Planning the next work item after a phase or feature closes: use the `sdi-next-plan` skill.
+- Adopting an existing codebase to SDI: use the `convert-to-sdi` skill.
+- Executing an existing implementation plan: use the `sdi-mode` skill.
 
-> Before we start, which of these matches what you need?
->
-> 1. **Start a new project** — go from a rough idea to a spec bundle (PRD, ARCHITECTURE, ROADMAP, IMPLEMENTATION_PLAN, AGENTS.md). For greenfield work.
-> 2. **Review work in progress** — second pair of eyes on a coding agent's audit, plan, round report, or proposed decision. For mid-implementation projects.
-> 3. **Plan the next work item** — generate the next `IMPLEMENTATION_PLAN_*.md` after a phase or feature closes. For ongoing projects.
->
-> Reply with just the number.
+If the user's message is ambiguous (e.g., "use mvp-architect" with no context), ask once:
 
-After the user answers, route to Phase 0/A (option 1), Phase D (option 2), or Phase E (option 3).
-
-When entering Phase D or Phase E, do not run Phase 0/A/B/C — the project already exists, the discovery work is done, and re-running it wastes time. Read the existing artifacts to load context, then operate per the relevant phase below.
+> Before we start: are you scoping a brand-new product (greenfield)? If you're mid-implementation and want a review, use `sdi-review`. If your last phase just closed and you want the next plan, use `sdi-next-plan`. Reply with which one fits.
 
 ## When to use
 
-**For initial scoping (Phase 0 → A → B → C):**
 - User arrives with a product idea (vague or partial is fine — that's the normal case).
 - User asks to "refine this idea" or "help me figure out what to build".
 - User asks for help preparing specs/docs for a coding agent to implement.
+- The project has no `IMPLEMENTATION_PLAN_*` yet, no `AGENTS.md`, and no `docs/` planning bundle.
 
-**For consultative review only (skip directly to Phase D):**
-- "Coding agent proposed this plan / this audit — does it look right?"
-- "Agent delivered round N, here's the summary — any concerns?"
-- "Agent is asking X or Y — which do you recommend?"
-- "Any problem with this decision / this approach?"
-- The user is mid-implementation and just needs another pair of eyes.
-
-**For next-phase planning (skip directly to Phase E):**
-- "Phase X closed — let's plan phase Y / the next feature".
-- "What's the next implementation plan?"
-- "Let's scope feature [Z] / maintenance for [W]".
-- The current `IMPLEMENTATION_PLAN_*` is closed (or about to close) and the user needs the next one.
+If the project already has any of those artifacts, the user probably needs `sdi-review`, `sdi-next-plan`, or `sdi-mode` instead — see "When to enter" above.
 
 ## Scope of applicability
 
@@ -66,25 +49,14 @@ The biggest risk in planning is **false sense of progress** — generating a PRD
 
 ## The flow
 
-The skill operates in **six phases (0, A, B, C, D, E)**. The first four (0–C) are the initial scoping flow, sequenced one-way (with go-backs allowed). Phases D and E form a **continuous loop during implementation**: D reviews the current work item; E generates the plan for the next.
-
-Visually:
+The skill operates in **four phases (0, A, B, C)** — the initial scoping flow, sequenced one-way with go-backs allowed.
 
 ```
-Initial scoping     Implementation loop (repeats per work item)
-─────────────────   ─────────────────────────────────────────
-Phase 0             ┌─────► Phase D ──────┐
-   ↓                │  (review current     │
-Phase A             │   phase / round /    │
-   ↓                │   audit)             │
-Phase B             │                      │
-   ↓                └────── Phase E ◄──────┘
-Phase C                  (plan next work
-                          item: PHASE_N+1
-                          or <slug>)
+Phase 0  →  Phase A  →  Phase B  →  Phase C
+(triage)    (themes)    (refine)    (artifacts)
 ```
 
-Don't re-run Phase A/B/C just because a new phase is starting — Phase E is for that and is much lighter.
+After Phase C generates the artifact bundle, the user hands off to `sdi-mode` for implementation. Mid-implementation review and next-phase planning are **separate skills** (`sdi-review` and `sdi-next-plan`), not phases of this skill. Don't try to handle them here.
 
 ### Phase 0 — Project type triage
 
@@ -180,48 +152,7 @@ End the bundle with two outputs:
 
 2. The **kickoff prompt** for the user to paste into their coding agent when they start implementation. Read `references/kickoff-prompt-template.md` for the consolidated template (one shape, with a single conditional line for "skill" vs "custom mode" depending on the tool).
 
-### Phase D — Consultative review (during implementation)
-
-After the user hands the bundle to the coding agent, they may come back mid-implementation with things like:
-
-- "Coding agent proposed this plan, does it look right?"
-- "Agent found these inconsistencies in the plan, how should I resolve them?"
-- "Agent delivered round N, here's the summary — any concerns?"
-- "Agent is asking whether to do X or Y, which do you recommend?"
-
-In this mode, you're **not scoping from scratch**. You're a second pair of eyes on the coding agent's work, with the planning context already loaded. Your value is:
-
-1. **Catching divergence from the spec** that the coding agent may have missed or accepted too quickly.
-2. **Identifying risks** in the agent's choices (security, UX, data integrity, future rework).
-3. **Pushing back on rubber-stamping** — if testes passed but the change is structurally questionable, say so.
-4. **Updating the plan** when reality diverges — propose revision notes (r2, r3) when appropriate.
-5. **Updating AGENTS.md when warranted.** As the coding agent learns the actual repo conventions, the AGENTS.md should be enriched with stack identifiers, helper names, file paths. The coding agent itself is responsible for proposing AGENTS.md updates; you review them.
-
-This is explicit in the skill because the user may drift into treating you like a project manager ("should I approve this?"). You're a reviewer, and reviewers have opinions based on reading the work, not on vibes.
-
-Read `references/review-support-patterns.md` for common review scenarios and response shapes.
-
-### Phase E — Next-phase planning (between work items, during implementation)
-
-Phase D and Phase E loop together throughout implementation. When the current work item closes (or is closing) and the user asks to plan the next one, you switch from review (passive) to generation (active) — focused, narrow, and grounded in the real state of the repo.
-
-**Trigger phrases:**
-- "Phase 1 closed — let's plan phase 2"
-- "What's the next implementation plan?"
-- "Let's scope feature [X]" / "Let's plan maintenance for [Y]"
-- After end-of-phase housekeeping is done and the user doesn't say what's next — you can proactively offer Phase E.
-
-**Shape of the phase (full detail in `references/next-phase-planning.md`):**
-
-1. Read current state from the repo (AGENTS, MEMORY, DECISIONS, last plan, ROADMAP, PRD §Out of scope) — never re-derive scope from memory of earlier phases.
-2. Calibrate against original ROADMAP with ≤4 focused questions (next item still right? carryovers? new constraints? naming preference?).
-3. Light discovery only on what's specific to this work item — do **not** re-run Phase A.
-4. Generate one new `IMPLEMENTATION_PLAN_*.md` using the universal core template + type appendix already established. Naming: `PHASE_N+1` for linear discrete phases, `<slug>` for free-form work in ongoing projects.
-5. Update AGENTS.md work tracker with the new row.
-6. Optional: ROADMAP revision note if subsequent phases shifted.
-7. Hand off to sdi-mode via the appropriate kickoff prompt.
-
-Phase E is intentionally lighter than Phase C — most of the context already lives in the artifacts. **Read `references/next-phase-planning.md` before running Phase E** for reading order details, the canonical calibration question set, naming-choice criteria, and common failure modes (re-running Phase A, generating divorced from repo state, ignoring DECISIONS, etc.).
+After Phase C, hand off the bundle to a coding agent via the kickoff prompt. For mid-implementation review (plan reviews, round report reviews, fork decisions, bug findings), the user invokes the `sdi-review` skill. For planning the next work item after the current one closes, the user invokes the `sdi-next-plan` skill. Neither belongs in this skill anymore.
 
 ## Tone and writing style
 
@@ -259,5 +190,3 @@ Load these as needed (don't preemptively read all of them):
 - `references/project-types/{type}/design-system-template.md` — visual language (only types with UI)
 - `references/kickoff-prompt-template.md` — prompt the user pastes into the coding agent
 - `references/agents-template.md` — canonical AGENTS.md template (project facts only) used by Phase C
-- `references/review-support-patterns.md` — patterns for Phase D consultative review
-- `references/next-phase-planning.md` — full protocol for Phase E (planning subsequent work items)

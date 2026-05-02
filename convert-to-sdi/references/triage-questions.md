@@ -66,7 +66,7 @@ What stage is the project in?
 (e) Don't know / skip
 ```
 
-**Skip behavior (e):** Mark as `mixed`. The framework supports both — naming will be decided per work item in Phase 3 and subsequent Phase E runs.
+**Skip behavior (e):** Mark as `mixed`. The framework supports both — naming will be decided per work item in Phase 3 and subsequent `sdi-next-plan` runs.
 
 ### Q5 — Anything material I missed
 

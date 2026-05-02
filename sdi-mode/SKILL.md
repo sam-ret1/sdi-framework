@@ -33,7 +33,7 @@ Before starting the implementation loop, verify the repo has the artifacts this 
 | File | Required for | If missing |
 |---|---|---|
 | `AGENTS.md` (at repo root) | every session — project facts | route to `convert-to-sdi` (existing repo) or `mvp-architect` Phase C (greenfield) |
-| `docs/IMPLEMENTATION_PLAN_*.md` (the work item being asked about) | the entire loop | route to `mvp-architect` Phase E (or, if no other artifacts exist, to `convert-to-sdi` first) |
+| `docs/IMPLEMENTATION_PLAN_*.md` (the work item being asked about) | the entire loop | route to `sdi-next-plan` (or, if no other artifacts exist, to `convert-to-sdi` first) |
 | `docs/ARCHITECTURE.md` | Step 1 reading + audit | route to `convert-to-sdi` if the project has code; `mvp-architect` Phase 0–C if greenfield |
 | `docs/PROJECT_STRUCTURE.md` | Step 1 reading + audit | same as above |
 | `docs/PRD.md` | useful for audit context | flag as missing but not blocking — surface in the audit's Open questions |
@@ -54,7 +54,7 @@ Before starting the implementation loop, verify the repo has the artifacts this 
   >
   > - If this project has existing code: run `convert-to-sdi` to onboard it (it generates the bundle from the repo as it stands, in ~30 minutes of input).
   > - If this is greenfield (no code yet): run `mvp-architect` Phase 0–C to scope and generate the bundle.
-  > - If only `IMPLEMENTATION_PLAN_*.md` is missing (everything else present): run `mvp-architect` Phase E to plan the next work item.
+  > - If only `IMPLEMENTATION_PLAN_*.md` is missing (everything else present): run `sdi-next-plan` to plan the next work item.
   >
   > After that, come back and I'll handle the implementation."
 
@@ -122,25 +122,33 @@ Read `references/stop-and-review-patterns.md` for the standard checkpoints, thei
 
 Once approved on the foundation, implement in rounds. A **round** is a coherent chunk of work (e.g. "all the pure functions of the ingestion pipeline + their tests", "the auth middleware + role guards + tests", "the agent loop + first 3 tools + integration tests"), not a single file.
 
+**Per-round commit convention.** End every round with `git commit -m "round X/CN: <summary>"` (e.g. `round B/C2: callback + middleware`). Capture `BASE_SHA = git rev-parse HEAD` at the **start** of the round (this is the last commit of the previous round, or the phase-start commit for round A) and record it in the round report header. The auto-review uses BASE_SHA to compute `git diff BASE_SHA..HEAD`. Fix attempts triggered by auto-review FAIL get their own commits (`round X/CN fix N: <what>`), preserving the audit trail. Round reports and reviewer outputs live under `docs/reviews/`; keep them uncommitted while the auto-review loop is running, then commit them after PASS/escalation with `round X/CN review artifacts: <verdict>`. No squashing — the granular history is the audit.
+
 At the end of each round, deliver a structured report. Read `references/round-report-template.md` for the exact format. In summary:
 
+- BASE_SHA in the report header (commit at start of round).
 - What was built (files, behavior, test counts).
 - Decisions taken in this round (with pointers to `DECISIONS.md` entries).
 - What was **not** done and why.
 - What's next.
 - Open questions for the user.
 
-Then stop. Don't continue to the next round automatically.
+At user-gated checkpoints, stop and wait for explicit user go. At auto-reviewed checkpoints, a merged PASS closes the gate; still post the report and next suggested round so the user can interject before the next round starts.
 
-### Step 4.5: Auto-review (opt-in)
+### Step 4.5: Auto-review (default for Checkpoints 2/3/4)
 
-By default, every checkpoint waits for the user. The user may enable **auto-review mode** for the current session ("use auto-review for this phase"), which delegates checkpoint verification to a fresh subagent for **Checkpoints 2, 3, 4 only**. Foundation (Checkpoint 1), Housekeeping (Checkpoint 5), any round producing a `DECISIONS.md` entry, and any blocker stay user-gated regardless.
+**Auto-review fires automatically at the end of every round in Checkpoints 2, 3, and 4.** Verification is delegated to a **reviewer ensemble**:
 
-The subagent receives a self-contained packet (diff + plan §s + gate checklist + per-gate verifiable criteria) and returns a structured PASS / FAIL / ESCALATE verdict with file:line evidence per gate. Loop cap: 2 retries, then escalate. Auto-review history is appended to the round report so the user can spot-check.
+- **Attempt 1**: an Opus subagent (Anthropic Agent tool, `model: opus`) AND `codex exec` (typically gpt-5.5 with reasoning effort `xhigh` per the user's `~/.codex/config.toml`) run in parallel on the same self-contained packet. Different models find partially-disjoint bugs; empirically the union catches more than either alone.
+- **Attempts 2 and 3** (after a FAIL): the retry reviewer runs. Opus is the default retry reviewer; if the runtime cannot provide Opus but Codex was the surviving attempt-1 reviewer, Codex may run retries in degraded mode. The bug surface has shrunk to verifying the fix, so a single retry reviewer is enough as long as prior findings are included in the retry packet.
 
-Auto-review is session-scoped — never persisted, never default. The user enables and disables it explicitly per session.
+Foundation (Checkpoint 1), Housekeeping (Checkpoint 5), and any round that hits an always-escalate trigger (DECISIONS-worthy choice, blocker, schema migration with data-loss risk, new external dependency, security-relevant change, plan revision, PRD/ARCHITECTURE deviation) stay user-gated regardless.
 
-Read `references/auto-review-mode.md` for the full protocol, the always-escalate triggers, the review-packet shape, and the subagent prompt template.
+Each reviewer receives the same packet (diff + plan §s + gate checklist + per-gate verifiable criteria, plus active cross-file checks like CSS-class-defined and report-vs-reality) and returns a structured PASS / FAIL / ESCALATE verdict with file:line evidence per gate. **Verdict merging on attempt 1**: PASS only if both PASS; FAIL if either FAIL; ESCALATE if either ESCALATE. **Reviewer fallback**: if one reviewer fails to run, continue with the other in degraded mode; if both fail, escalate to the user. Loop cap: 3 attempts. Auto-review history is appended to the round report verbatim (both reviewers on attempt 1; one retry reviewer on attempts 2-3) so the user can spot-check.
+
+**Opt-out per session:** the user can disable auto-review for the rest of the session by saying "user-review for this phase", "review the next round myself", "stop auto-reviewing", or "back to user-gated". Re-enable with "auto-review again". Session-scoped — every new session starts default-on.
+
+Read `references/auto-review-mode.md` for the full protocol, the always-escalate triggers, the review-packet shape, the adversarial review prompt template, the verdict merging rules, the reviewer-fallback policy, the per-round commit convention, and the invocation commands.
 
 ### Step 5: Write tests alongside, not after
 
@@ -221,7 +229,7 @@ This is often skipped ("we'll clean up later"). Don't. Docs that drift become us
 ## What this mode is not
 
 - **Not a code reviewer.** Your job is to implement with discipline. The user reviews your work. If you find yourself writing "approved" or "looks good" about your own output, stop and just present what you did; let them judge.
-- **Not an auto-approver.** Don't proceed past a stop-and-review checkpoint without explicit user go-ahead. "Silence = continue" is the wrong default here.
+- **Not an auto-approver.** At Checkpoints 1 and 5, don't proceed without explicit user go-ahead. At Checkpoints 2/3/4, auto-review (Opus subagent + codex exec ensemble on attempt 1; one retry reviewer on retries) is the default — but always-escalate triggers and user opt-out keep the user gate intact when needed. "Silence = continue" is never right at user-gated checkpoints.
 - **Not a speculation engine.** If the plan is wrong and needs thinking, flag it and ask; don't invent a redesign mid-round.
 
 ## Tone
@@ -238,7 +246,7 @@ Load these as needed:
 - `references/expected-artifacts.md` — what the spec bundle should contain; how to recognize a complete vs incomplete handoff; document precedence
 - `references/audit-first-protocol.md` — audit report format, common divergence categories, how to classify findings
 - `references/stop-and-review-patterns.md` — standard within-phase checkpoints, gate checklists, and report shape
-- `references/auto-review-mode.md` — opt-in delegated checkpoint verification for Checkpoints 2–4 (subagent verdict, loop cap, escalation triggers)
+- `references/auto-review-mode.md` — default-on delegated verification for Checkpoints 2–4 via reviewer ensemble (Opus subagent + codex exec on attempt 1; one retry reviewer on retries) with loop cap, escalation triggers, opt-out per session, verdict-merging rules, reviewer fallback, and per-round commit convention
 - `references/round-report-template.md` — end-of-round report format
 - `references/decisions-log-format.md` — how to write a DECISIONS.md entry
 - `references/memory-discipline.md` — daily memory under `docs/memory/`, indexed by `docs/MEMORY.md`

@@ -59,10 +59,10 @@ Explicitly NOT installing:
  - ai-agent: Prompts, tools, model config, eval suites, guardrails
  - automation-workflow: Triggers, steps, retries, idempotency keys, observability hooks
 
-Load only the type references needed for this work item:
-- Always start with `project-types/{type}/architecture-appendix.md` for the type-specific implementation concerns.
-- If the work item changes repo layout or conventions, also consult `project-types/{type}/project-structure-template.md`.
-- If the work item adds or changes UI, also consult `project-types/{type}/design-system-template.md` (UI-bearing types only).]
+Load only the context needed for this work item:
+- Always start with this skill's `project-types/{type}/architecture-appendix.md` for type-specific implementation concerns.
+- If the work item changes repo layout or conventions, read the target project's live `docs/PROJECT_STRUCTURE.md` and update the plan against that reality.
+- If the work item adds or changes UI, read the target project's live `docs/DESIGN_SYSTEM.md` if it exists; if it is missing for a UI-bearing project, flag that as a pre-requisite/open question instead of inventing a design system from this skill.]
 
 ## 3. [Domain-specific algorithm or verification]
 
@@ -229,7 +229,7 @@ Record at end of phase:
 - **Acceptance criteria (§10) are a checklist the user can actually verify.** Avoid "X is stable" — use "X is covered by test Y" or "smoke test Z passes."
 - **§11 Implementation checkpoints maps work to the sdi-mode discipline.** Both the canonical gates (mirrored from sdi-mode for self-containment) and phase-specific slots appear inline. Only add phase-specific gates when the phase has constraints unique to it; don't restate the standard gates.
 
-> **Maintenance note (for framework maintainers, not for inclusion in generated plans):** §11's standard gates are mirrored from the sdi-mode skill's `stop-and-review-patterns.md`. All three planning skills (`mvp-architect`, `convert-to-sdi`, `sdi-next-plan`) carry their own copy on purpose so a generated plan can be reviewed without sdi-mode installed. When the canonical gates change, update all three copies (`mvp-architect/references/core-templates/implementation-plan-template.md`, `convert-to-sdi/references/core-templates/implementation-plan-template.md`, and `sdi-next-plan/references/core-templates/implementation-plan-template.md`) to match. Same convention as `agents-template.md`.
+> **Maintenance note (for framework maintainers, not for inclusion in generated plans):** §11's standard gates are mirrored from the sdi-mode skill's `stop-and-review-patterns.md`. All three planning skills (`mvp-architect`, `convert-to-sdi`, `sdi-next-plan`) carry their own copy of this template on purpose so a generated plan can be reviewed without sdi-mode installed. When the canonical gates change, update all three copies (`mvp-architect/references/core-templates/implementation-plan-template.md`, `convert-to-sdi/references/core-templates/implementation-plan-template.md`, and `sdi-next-plan/references/core-templates/implementation-plan-template.md`) to match. Same convention as `agents-template.md`.
 - **§12 Decisions Log is a checklist for end-of-phase housekeeping.** Each becomes a real DECISIONS.md entry at phase close.
 - **§13 is where the plan is honest about its own limitations.** Usually empty at initial draft; populated during audit.
 

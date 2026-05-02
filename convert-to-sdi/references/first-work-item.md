@@ -5,10 +5,10 @@ After Phase 2 generates the artifact bundle, Phase 3 generates the **first** `IM
 ## Why this phase exists
 
 Without Phase 3, the user has artifacts but no plan to start working from. They'd have to either:
-- Run `mvp-architect` Phase E manually (works, but Phase E expects a previous IMPLEMENTATION_PLAN to read for context — there isn't one yet).
+- Run the `sdi-next-plan` skill manually (works, but it expects a previous IMPLEMENTATION_PLAN to read for context — there isn't one yet).
 - Improvise the first plan themselves (defeats the framework's purpose).
 
-Phase 3 bridges this. It's a specialized variant of Phase E that knows:
+Phase 3 bridges this. It's a specialized variant of `sdi-next-plan` that knows:
 - This is the first plan in the project's framework history.
 - §0 Pre-requisites references "current production state" or "current repo state", not "Phase N-1 delivered".
 - The plan is grounded in code reality, not in a previous framework-managed phase.
@@ -77,7 +77,7 @@ Keep questions concrete. Aim for 2–4 questions max. Each accepts "don't know �
 
 ## Plan length
 
-Target same as Phase C / Phase E plans: 400–600 lines. For a small bugfix or single-file feature, OK to be shorter (200–300). Don't pad.
+Target same as Phase C / `sdi-next-plan` plans: 400–600 lines. For a small bugfix or single-file feature, OK to be shorter (200–300). Don't pad.
 
 ## Update the work tracker
 
@@ -131,19 +131,19 @@ After the plan is delivered and the handoff instructions are given:
 
 > "**Setup complete.** The project is now under the framework.
 >
-> Next work items: after this one closes, **don't** run convert-to-sdi again. Use Phase E of the `mvp-architect` skill (just say "phase X closed — let's plan the next" or similar). Phase E reads the current repo state + DECISIONS + memory and generates the next plan without redoing the full discovery."
+> Next work items: after this one closes, **don't** run convert-to-sdi again. Use the `sdi-next-plan` skill (just say "phase X closed — let's plan the next" or similar). It reads the current repo state + DECISIONS + memory and generates the next plan without redoing the full discovery."
 
 ## What NOT to do in Phase 3
 
 - ❌ **Don't generate multiple plans at once.** First work item only. The framework wants one plan per work item, generated when the previous closes (or for the first one, now).
 - ❌ **Don't skip §0 Pre-requisites.** It's how the plan grounds itself in current reality. Without it, the audit phase of sdi-mode has nothing to compare against.
-- ❌ **Don't ask the user to define the entire roadmap.** The user only needs to define this *one* work item now. Future items are scoped via Phase E later.
+- ❌ **Don't ask the user to define the entire roadmap.** The user only needs to define this *one* work item now. Future items are scoped via the `sdi-next-plan` skill later.
 - ❌ **Don't skip the handoff instructions.** Even an experienced user benefits from the explicit kickoff prompt — it activates the framework's audit-first discipline cleanly.
 
 ## When the user doesn't have a "next work item" in mind
 
 Sometimes the user runs convert-to-sdi to "set up the framework" but doesn't have a concrete next thing to work on yet. That's fine. In that case, skip the plan generation:
 
-> "No concrete work item right now, so I won't generate a plan. When you know what's next (feature, fix, migration, etc.), use the `mvp-architect` skill Phase E to generate the plan. AGENTS.md, DECISIONS, and MEMORY are already in place to receive the work when it arrives."
+> "No concrete work item right now, so I won't generate a plan. When you know what's next (feature, fix, migration, etc.), use the `sdi-next-plan` skill to generate the plan. AGENTS.md, DECISIONS, and MEMORY are already in place to receive the work when it arrives."
 
 Then close the convert-to-sdi run with a partial completion note in `docs/memory/YYYY-MM-DD.md`.

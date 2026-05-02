@@ -1,6 +1,6 @@
 ---
 name: convert-to-sdi
-description: Onboard an existing codebase to the sdi-framework workflow by generating the artifact bundle from the repo as it stands. USE when the project already has code and the user wants to adopt SDI going forward. DO NOT USE for greenfield projects (use mvp-architect), code refactor or review work, throwaway scripts, or projects already converted (use mvp-architect Phase E for subsequent work).
+description: Onboard an existing codebase to the sdi-framework workflow by generating the artifact bundle from the repo as it stands. USE when the project already has code and the user wants to adopt SDI going forward. DO NOT USE for greenfield projects (use mvp-architect), code refactor or review work, throwaway scripts, or projects already converted (use sdi-next-plan for subsequent work).
 ---
 
 # convert-to-sdi
@@ -97,7 +97,7 @@ Read `references/artifact-generation-rules.md` and `references/confidence-flags.
 - **DECISIONS.md** (seed, 3–5 entries) — obvious patterns detected (e.g. "uses Drizzle ORM", "monorepo with pnpm workspaces"). Marked `Source: code analysis — confirm rationale with team`.
 - **docs/MEMORY.md + docs/memory/YYYY-MM-DD.md** (fresh) — index empty except for today's entry, which describes the framework setup itself.
 - **PRD.md** (thin by design) — `Current state` (extracted from code/README) + `Out of scope` placeholder.
-- **ROADMAP.md** (optional) — only if Q4 = "discrete phases planned" and the user has visibility into future work; otherwise minimal note pointing to Phase E of `mvp-architect` for forward planning.
+- **ROADMAP.md** (optional) — only if Q4 = "discrete phases planned" and the user has visibility into future work; otherwise minimal note pointing to the `sdi-next-plan` skill for forward planning.
 
 Each artifact carries a confidence flag at the top indicating the source (code analysis / user-confirmed / best-effort placeholder).
 
@@ -119,12 +119,12 @@ Generate the corresponding `IMPLEMENTATION_PLAN_*.md`:
 The plan's §0 Pre-requisites lists the **current production state as the foundation** — not "Phase N-1 delivered". The plan is grounded in the live repo.
 
 After generation, instruct the user how to load `sdi-mode`:
-- Claude Code / Codex: install the `sdi-mode` skill under the tool's skills path (alongside `mvp-architect` and `convert-to-sdi`) if it isn't there yet. AGENTS.md (project facts) is already at repo root. Paste the kickoff prompt to start the work item — the `sdi-mode` skill auto-invokes from there.
+- Claude Code / Codex: install the `sdi-mode`, `sdi-review`, and `sdi-next-plan` skills under the tool's skills path (alongside `mvp-architect` and `convert-to-sdi`) if they aren't there yet. AGENTS.md (project facts) is already at repo root. Paste the kickoff prompt to start the work item — the `sdi-mode` skill auto-invokes from there.
 - Roo Code / Kilo Code / OpenCode: configure the `sdi-mode` custom mode following the appropriate guide in your local copy of `sdi-framework/installation-guides/`. Once active, paste the kickoff prompt.
 
 Closing message:
 
-> "Setup complete. The project is now under the framework. For the next work item after this plan closes, use Phase E of the `mvp-architect` skill (don't run `convert-to-sdi` again — it's one-shot)."
+> "Setup complete. The project is now under the framework. For the next work item after this plan closes, use the `sdi-next-plan` skill (don't run `convert-to-sdi` again — it's one-shot)."
 
 ## Tone
 
@@ -139,7 +139,7 @@ Closing message:
 - **Not a documentation rewrite.** Existing docs (README, ARCHITECTURE, etc.) are preserved if they exist; the skill complements them.
 - **Not a scope-from-scratch tool.** Doesn't replace `mvp-architect` Phase 0–C. If the user wants to re-scope the product, that's a separate exercise.
 - **Not an audit tool for code quality.** SDI mode does its own audit per work item; convert-to-sdi only sets up the framework.
-- **Not run repeatedly.** One-shot per project. Subsequent work uses Phase E of `mvp-architect`.
+- **Not run repeatedly.** One-shot per project. Subsequent work uses the `sdi-next-plan` skill.
 
 ## Smoke check after run
 

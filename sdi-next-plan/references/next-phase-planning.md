@@ -1,27 +1,27 @@
-# Next-phase planning (Phase E)
+# Next-phase planning
 
-Phase E generates the `IMPLEMENTATION_PLAN_*.md` for the **next** work item in an ongoing project. It runs after Phase D (review) and before the user kicks off the next round of implementation. Together D and E form a continuous loop while the project is being built.
+This skill generates the `IMPLEMENTATION_PLAN_*.md` for the **next** work item in an ongoing project. It runs after a review of the current item (typically via the `sdi-review` skill) and before the user kicks off the next round of implementation. Together review and next-plan form a continuous loop while the project is being built.
 
-This is **not** Phase C. Phase C generates the full bundle (PRD, ARCHITECTURE, ROADMAP, etc.) once at project birth. Phase E generates a single artifact (one new implementation plan, optionally a ROADMAP revision) using context already established. Don't re-derive scope, stack, or conventions — they live in the existing artifacts.
+This is **not** the initial bundle (handled by `mvp-architect` Phase 0–C). It generates a single artifact (one new implementation plan, optionally a ROADMAP revision) using context already established. Don't re-derive scope, stack, or conventions — they live in the existing artifacts.
 
-## When to enter Phase E
+## When to enter
 
 Strong signals — proactive offer or user-initiated:
 
-- The current `IMPLEMENTATION_PLAN_*` has had its end-of-phase housekeeping done (per SDI mode Step 8): all gates green, AC mapped to evidence, AGENTS.md tracker updated.
+- The current `IMPLEMENTATION_PLAN_*` has had its end-of-phase housekeeping done (per sdi-mode Step 8): all gates green, AC mapped to evidence, AGENTS.md tracker updated.
 - The user says: "phase X closed — let's plan the next", "what's the next plan?", "let's scope feature [Y]", "let's plan maintenance for [W]".
 - ROADMAP.md indicates the next phase and its pre-requisites are met.
 
-Soft signals — Phase E may be appropriate but verify with user first:
+Soft signals — this skill may be appropriate but verify with user first:
 
 - A round (not full phase) just closed and the user is clearly thinking ahead about the next phase.
 - The user shows a memory entry that mentions next-phase pre-work.
 
-Don't enter Phase E if:
+Don't enter if:
 
-- The current work item is mid-flight (incomplete rounds, pending blockers). Stay in Phase D.
-- The user is asking for review of the current plan, not generation of the next. Stay in Phase D.
-- The project is so early that there's no `IMPLEMENTATION_PLAN_*` closed yet — that's still Phase C territory or initial work.
+- The current work item is mid-flight (incomplete rounds, pending blockers). Stay in `sdi-review`.
+- The user is asking for review of the current plan, not generation of the next. Stay in `sdi-review`.
+- The project is so early that there's no `IMPLEMENTATION_PLAN_*` closed yet — that's still mvp-architect Phase C territory or initial work.
 
 ## Reading order before generating
 
@@ -61,7 +61,7 @@ The framework treats `IMPLEMENTATION_PLAN_*.md` uniformly — both styles work. 
 
 ## Generation rules
 
-Use `core-templates/implementation-plan-template.md` for the universal structure + `project-types/{type}/architecture-appendix.md` for type-specific guidance (already loaded during Phase C; the type doesn't change between phases of the same project).
+Use `core-templates/implementation-plan-template.md` for the universal structure + `project-types/{type}/architecture-appendix.md` for type-specific guidance. The type was chosen during initial scoping at mvp-architect Phase 0 and doesn't change between phases of the same project; pick the appendix matching the project's recorded type. For repo layout, conventions, and UI details, read the target project's live `docs/PROJECT_STRUCTURE.md` and `docs/DESIGN_SYSTEM.md` (when present) rather than looking for type templates inside this skill.
 
 Inside the plan:
 
@@ -72,7 +72,7 @@ Inside the plan:
 - **§12 Decisions Log** — only the decisions you anticipate this work item will memorialize. Don't pre-record decisions from earlier work items.
 - **§13 Known divergences** — pre-populate with anything the audit of recent memory dailies surfaced.
 
-Plan length: same target as Phase C plans (400–600 lines). Don't pad.
+Plan length: same target as initial-bundle plans (400–600 lines). Don't pad.
 
 ## Optional ROADMAP update
 
@@ -82,7 +82,7 @@ If subsequent phases shifted in priority or content as a result of this work ite
 > **Revision note (r2 — 2026-04-25):** Phase 3 (analytics) reordered after Phase 2 (billing) per customer prioritization. Phase 4 unchanged.
 ```
 
-Don't rewrite ROADMAP wholesale. If the change is large enough to warrant a rewrite, that's a re-scoping conversation — exit Phase E and propose returning to Phase C for scope refresh.
+Don't rewrite ROADMAP wholesale. If the change is large enough to warrant a rewrite, that's a re-scoping conversation — exit this skill and propose returning to `mvp-architect` for scope refresh.
 
 ## Update the work tracker in AGENTS.md
 
@@ -100,24 +100,24 @@ After the plan is generated, the user starts implementation. Provide the consoli
 
 Closing message pattern:
 
-> "Plan generated at `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. To start, use the kickoff prompt for your tool, with the `sdi-mode` skill/custom-mode line selected. When you need review during execution, come back here — Phase D."
+> "Plan generated at `docs/IMPLEMENTATION_PLAN_<name>.md`. Pre-requisites: [list from §0]. To start, use the kickoff prompt for your tool, with the `sdi-mode` skill/custom-mode line selected. When you need review during execution, use `sdi-review`. When this work item closes, come back here for the next plan."
 
 ## Common failure modes
 
-- **Re-running Phase A.** Tempting to "verify the universal themes again" — don't. Phase 0/A/B/C established type, modifier, stack, scope, conventions. Phase E only asks about what's specific to the next work item.
+- **Re-running Phase A.** Tempting to "verify the universal themes again" — don't. mvp-architect Phase 0/A/B/C established type, modifier, stack, scope, conventions. This skill only asks about what's specific to the next work item.
 - **Generating plan divorced from current repo state.** If you skip the reading order (especially DECISIONS and recent memory), the plan ignores constraints already established. Always read first.
 - **Speculating about phase N+2.** The plan is for the **next** work item, not the one after that. Future phases stay in ROADMAP, not in the next plan.
 - **Ignoring DECISIONS already taken.** A DECISIONS entry that says "we use approach X for [area]" is binding — the next plan must follow it or explicitly supersede with a new entry. Never silently ignore.
 - **Naming inconsistency.** Mixing `PHASE_N` and `<slug>` in the same project causes confusion in tracking. If the project started with phases, prefer to continue with phases unless a clear shift happens (e.g., MVP launched, now in continuous-feature mode). Document the shift in DECISIONS.
-- **Skipping the work tracker update.** AGENTS.md is the operating truth. If the tracker doesn't reflect the new work item, Step 1 of sdi-mode reads stale state.
+- **Skipping the work tracker update.** AGENTS.md is the operating truth. If the tracker doesn't reflect the new work item, sdi-mode Step 1 reads stale state.
 
-## Difference from Phase C
+## Difference from initial bundle
 
-| | Phase C (initial bundle) | Phase E (next plan) |
+| | mvp-architect Phase C (initial bundle) | sdi-next-plan (next plan) |
 |---|---|---|
 | When | Once, at project birth | Repeatedly, between work items |
 | Reads | Phase 0/A/B context (in-session) | The repo itself (post-implementation reality) |
 | Outputs | 7–8 artifacts (full bundle) | 1 artifact (one IMPLEMENTATION_PLAN), optionally 1 ROADMAP revision |
 | Discovery | Full universal + type-specific | Light — only what's specific to the next item |
-| Follows | Phase B (scope agreed) | Phase D (review of current item) |
-| Precedes | Phase D (implementation begins) | Phase D (review of next item begins) |
+| Follows | mvp-architect Phase B (scope agreed) | sdi-review (review of current item) |
+| Precedes | sdi-mode (implementation begins) | sdi-mode + sdi-review (next item begins) |

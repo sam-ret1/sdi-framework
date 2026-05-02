@@ -135,7 +135,7 @@ Skip checkpoints that don't apply (e.g. drop Checkpoint 4 if there is no UI). **
 - [ ] All unit tests pass (real count from the runner, not approximation)
 - [ ] No TODO/FIXME left in the code without a corresponding `DECISIONS.md` or memory entry
 - [ ] Round report posted in canonical format
-- [ ] User has given explicit go to move into integrations (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out of auto-review and gave explicit go to move into integrations (see `auto-review-mode.md`)
 - [ ] Today's `docs/memory/YYYY-MM-DD.md` entry summarizes the round
 
 **Phase-specific gates:**
@@ -152,7 +152,7 @@ Skip checkpoints that don't apply (e.g. drop Checkpoint 4 if there is no UI). **
 - [ ] Observability is wired (logs, metrics, tracing) per `ARCHITECTURE.md` requirements
 - [ ] Manual smoke command attempted (curl/httpie/CLI) and result documented
 - [ ] Round report posted
-- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out and gave explicit go (see `auto-review-mode.md`)
 
 **Phase-specific gates:**
 - [ ] [optional]
@@ -168,7 +168,7 @@ Skip checkpoints that don't apply (e.g. drop Checkpoint 4 if there is no UI). **
 - [ ] Manual walkthrough of the primary flow completed; screenshots in the round report
 - [ ] No console errors or accessibility warnings on the primary flow
 - [ ] Round report posted
-- [ ] User has given explicit go (default mode) **OR** auto-review subagent returned PASS with all gates ✓ and no escalations (auto-review mode)
+- [ ] Auto-review (default) — reviewer ensemble returned merged PASS with all gates ✓ **OR** user opted out and gave explicit go (see `auto-review-mode.md`)
 
 **Phase-specific gates:**
 - [ ] [optional]
@@ -229,7 +229,7 @@ Record at end of phase:
 - **Acceptance criteria (§10) are a checklist the user can actually verify.** Avoid "X is stable" — use "X is covered by test Y" or "smoke test Z passes."
 - **§11 Implementation checkpoints maps work to the sdi-mode discipline.** Both the canonical gates (mirrored from sdi-mode for self-containment) and phase-specific slots appear inline. Only add phase-specific gates when the phase has constraints unique to it; don't restate the standard gates.
 
-> **Maintenance note (for framework maintainers, not for inclusion in generated plans):** §11's standard gates are mirrored from the sdi-mode skill's `stop-and-review-patterns.md`. Both planning skills carry their own copy on purpose so a generated plan can be reviewed without sdi-mode installed. When the canonical gates change, update both copies (`mvp-architect/references/core-templates/implementation-plan-template.md` and `convert-to-sdi/references/core-templates/implementation-plan-template.md`) to match. Same convention as `agents-template.md`.
+> **Maintenance note (for framework maintainers, not for inclusion in generated plans):** §11's standard gates are mirrored from the sdi-mode skill's `stop-and-review-patterns.md`. All three planning skills (`mvp-architect`, `convert-to-sdi`, `sdi-next-plan`) carry their own copy on purpose so a generated plan can be reviewed without sdi-mode installed. When the canonical gates change, update all three copies (`mvp-architect/references/core-templates/implementation-plan-template.md`, `convert-to-sdi/references/core-templates/implementation-plan-template.md`, and `sdi-next-plan/references/core-templates/implementation-plan-template.md`) to match. Same convention as `agents-template.md`.
 - **§12 Decisions Log is a checklist for end-of-phase housekeeping.** Each becomes a real DECISIONS.md entry at phase close.
 - **§13 is where the plan is honest about its own limitations.** Usually empty at initial draft; populated during audit.
 

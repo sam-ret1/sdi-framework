@@ -7,6 +7,8 @@ Every implementation round ends with a report. Same sections, same order. Users 
 ```markdown
 ## Round [letter or number] — [one-line description]
 
+> **BASE_SHA:** [sha of the commit at the start of this round — last commit of the previous round, or phase-start commit for round A. Used by auto-review to compute `git diff BASE_SHA..HEAD`. Captured by the implementer at round start (see `auto-review-mode.md` §"Per-round commit convention").]
+
 ### Delivered
 
 [Table or bullet list. For each file touched or created, one line:
@@ -25,14 +27,25 @@ Every implementation round ends with a report. Same sections, same order. Users 
 - Integration tests: X new, Y total (all passing)
 - Manual smoke test: [describe what you ran, or "pending"]
 
-### Auto-review history (only if auto-review mode was used this round)
+### Auto-review history (default for Checkpoints 2/3/4)
 
-[For each subagent review attempt, in order:
-- **Attempt N — verdict**: PASS / FAIL / ESCALATE.
-- **Per-gate**: ✓/✗ with file:line evidence (paste the subagent's structured output).
-- **Issues found** (if FAIL/ESCALATE): list and the fix applied between attempts.
+[For each attempt, in order. Attempt 1 has TWO reviewers (Opus subagent + codex). Attempts 2 and 3 have one retry reviewer (Opus by default; degraded Codex-only only when Opus is unavailable and Codex was the surviving attempt-1 reviewer).
 
-If the round was not auto-reviewed, omit this section entirely. See `auto-review-mode.md`.]
+**Attempt 1 — merged verdict**: PASS / FAIL / ESCALATE.
+  - **Opus subagent verdict**: PASS / FAIL / ESCALATE (or "skipped: <reason>" if it failed to run).
+    - Full output verbatim from `docs/reviews/round-XN-attempt-1-opus.md` (findings + verdict line).
+  - **Codex verdict**: PASS / FAIL / ESCALATE (or "skipped: <reason>" if it failed to run).
+    - Full output verbatim from `docs/reviews/round-XN-attempt-1-codex.md` (findings + verdict line).
+  - **Merge rule applied**: e.g., "Opus FAIL + Codex PASS → FAIL (either FAIL blocks)".
+  - **Issues found** (union of both reviewers' findings if FAIL/ESCALATE): list and the fix applied between attempts, with the fix commit SHA.
+
+**Attempt N (N ≥ 2) — verdict**: PASS / FAIL / ESCALATE.
+  - **Retry reviewer verdict**: PASS / FAIL / ESCALATE.
+    - Full output verbatim from `docs/reviews/round-XN-attempt-N-{reviewer}.md`.
+  - **Prior findings re-checked**: list the prior findings included in `[PRIOR_REVIEW_FINDINGS]`.
+  - **Issues found** (if FAIL/ESCALATE): list and the fix applied between attempts, with the fix commit SHA.
+
+Omit this section only when (a) the round was Checkpoint 1 or 5 (always user-gated), (b) the user opted out of auto-review for this session, or (c) an always-escalate trigger fired and the round was user-gated. See `auto-review-mode.md`.]
 
 ### Not done in this round (and why)
 
@@ -96,11 +109,11 @@ Actionable questions can be answered with a short reply.
 
 You've been deep in the code; you have the best sense of what should come next and why. Make a recommendation, even if it's "fix these follow-ups then proceed to X." Don't leave the user guessing.
 
-### Auto-review history is not optional when auto-review was used
+### Auto-review history is not optional when auto-review fired
 
-If the round was auto-reviewed, the history must appear in the report — every attempt, every verdict, every gate, with file:line evidence as the subagent returned it. The user uses this to spot-check the subagent's calls. Don't summarize ("3 attempts, eventual PASS"); paste the structured output. Omitting or compressing it defeats the purpose of the audit trail.
+Auto-review is the default for Checkpoints 2/3/4. If it fired, the history must appear in the report — every attempt, every reviewer's verdict, every gate, with file:line evidence as the reviewers returned it (verbatim from `docs/reviews/round-XN-attempt-N-{reviewer}.md`). On attempt 1 BOTH reviewers' outputs appear; on attempts 2-3 the retry reviewer's output appears, along with the prior findings it was asked to re-check. The user uses this to spot-check the reviewers' calls. Don't summarize ("3 attempts, eventual PASS"); paste the structured output. Omitting or compressing it defeats the purpose of the audit trail.
 
-If the round was not auto-reviewed (default mode, or always-user-gated checkpoint), omit the section entirely.
+If auto-review did not fire (Checkpoint 1 or 5, user opt-out, or always-escalate trigger), omit the section entirely.
 
 ## What NOT to include
 

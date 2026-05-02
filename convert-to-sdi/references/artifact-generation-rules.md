@@ -226,7 +226,7 @@ Sections:
 
 > Source: best-effort placeholder. Critical to fill in before scoping new work — undefined out-of-scope leads to over-building.
 
-(empty — populate during first Phase E run, or now if user volunteers)
+(empty — populate during first `sdi-next-plan` run, or now if user volunteers)
 
 ## 5. Success metrics (TO BE POPULATED)
 
@@ -243,7 +243,7 @@ Generate only if Q4 = "discrete phases planned" AND the user volunteers visibili
 
 If skipped:
 
-**File flag:** `> Source: not generated — project follows continuous-feature/maintenance cadence per Q4. Future work items are scoped one-at-a-time via Phase E of mvp-architect skill. Convert this file to a real roadmap if the project shifts to discrete-phase planning.`
+**File flag:** `> Source: not generated — project follows continuous-feature/maintenance cadence per Q4. Future work items are scoped one-at-a-time via the sdi-next-plan skill. Convert this file to a real roadmap if the project shifts to discrete-phase planning.`
 
 If generated, follow `core-templates/roadmap-template.md` (carried by this skill) with whatever phases the user names.
 
