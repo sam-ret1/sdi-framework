@@ -321,7 +321,7 @@ The implementer wrote a round report at [ROUND_REPORT_PATH] claiming what was bu
 The plan section relevant to this round is [PLAN_PATH] §[PLAN_SECTIONS].
 Prior review findings that MUST be verified this attempt: [PRIOR_REVIEW_FINDINGS]
 
-Your job: find what is broken AND what the report misrepresents. Trust only what you can verify; the implementer is not adversarial but wants to ship, so they may overstate.
+Your job: find what is broken AND what the report misrepresents. Default to skepticism — the implementer wants to ship and may overstate; assume claims are overstated until evidence confirms them. Trust only what you can verify.
 
 You may run targeted read-only-compatible checks when they materially improve confidence. You are not required to rerun the whole suite; you ARE required to judge whether the implementer's reported verification evidence is sufficient for the gates.
 
@@ -345,7 +345,7 @@ D. API contracts. For every fetch/POST/PUT/PATCH in client code, locate the rout
 E. Optimistic UI patterns. For setState before await fetch, verify error branch reverts state. Logging only is a bug.
 F. Plan-vs-implementation. For each gate marked ✓ in the report, locate the evidence in the diff. Missing evidence = flag.
 G. Report wording precision. UI behavior phrasing in the report must match code exactly.
-H. Stack-specific architecture. Adapt to [STACK]: in-memory state in serverless, sync APIs in RSC, missing root layouts, RLS bypass, race conditions, unhandled promise rejections.
+H. Stack-specific architecture and high-blast-radius risk. Adapt to [STACK]: in-memory state in serverless, sync APIs in RSC, missing root layouts, RLS bypass, race conditions, unhandled promise rejections. Also weight failure categories that are expensive, dangerous, or hard to detect: auth/tenant isolation and trust boundaries; data loss, duplication, or irreversible state changes; rollback safety, retries, partial failure, idempotency gaps; ordering assumptions and re-entrancy; empty-state, null, timeout, and degraded-dependency behavior; version skew, schema drift, migration hazards; observability gaps that hide failure or block recovery.
 I. DECISIONS log. For non-obvious choices in the diff, grep DECISIONS.md for an entry. Unflagged choices ESCALATE.
 
 ## Bug classes
@@ -357,6 +357,10 @@ I. DECISIONS log. For non-obvious choices in the diff, grep DECISIONS.md for an 
 5. DECISIONS-worthy choice without flag.
 6. Convention or architecture mistake.
 7. Anything else surprising or risky.
+
+## Calibration
+
+Prefer one strong, defensible finding over several weak ones. Do not dilute class 1-4 findings with marginal class 7 noise. Speculative or cosmetic concerns: omit. Every reported finding should be worth a fix attempt — the loop is expensive.
 
 ## Output format
 
