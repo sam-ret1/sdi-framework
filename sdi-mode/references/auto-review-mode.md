@@ -37,6 +37,29 @@ Auto-review is structured around per-round git commits.
 
 The reviewers read the code diff via `git diff BASE_SHA..HEAD` — so BASE_SHA stays fixed across all attempts in a round. The report draft is read directly from `[ROUND_REPORT_PATH]`; it does not need to be committed for reviewers to inspect it. Each attempt re-evaluates the round's deliverable in full (initial commit + any fix commits), not just the last fix delta. This protects against fix-attempt-N reintroducing a problem that passed in fix-attempt-N-1.
 
+## Verification evidence policy
+
+Auto-review audits the implementer's verification evidence; it does not move test ownership to the reviewers.
+
+- **The implementer runs the checks required by the round before review.** This includes the relevant unit tests, integration tests, typecheck/lint/build, evals, or manual smoke checks called for by the plan and checkpoint gates.
+- **The round report records exact evidence.** Include the command, result, test counts, skipped tests/checks, runtime-relevant notes, and any manual smoke evidence. "Tests pass" without command/result/count is not enough.
+- **The reviewer judges sufficiency.** A reviewer may run targeted checks that are compatible with the runtime and sandbox, but is not required to rerun the whole suite. If the report's evidence is absent, vague, contradictory, or too weak for the gate, the reviewer returns `FAIL`.
+- **Codex stays read-only by default.** `codex exec --sandbox read-only` is the default reviewer mode. Checks that require writing caches, build output, snapshots, local DB state, or generated files are the implementer's responsibility and must be evidenced in the report.
+
+The reviewer's job is to verify that the implemented diff, the plan gates, and the reported verification evidence agree. A PASS means the evidence is adequate and no class 1-6 finding was found; it does not mean the reviewer reran every command.
+
+## Preflight before invoking reviewers
+
+Before building the packet or starting reviewers, the implementer performs a clean-state preflight:
+
+1. Confirm `HEAD` contains the current round commit (`round X/CN: <summary>`) or the current fix commit (`round X/CN fix N: <what>`).
+2. Run a working-tree check such as `git status --short`.
+3. The only allowed uncommitted files are `.sdi-review-prompt-tmp.txt` and this round's artifacts under `docs/reviews/round-XN-*`.
+4. If intended code/doc/test changes from the round are still uncommitted, commit them before review.
+5. If unrelated or user-owned changes are present, do not run auto-review. Escalate to the user with the file list and ask whether to commit, stash, move to a separate worktree, or switch to manual review.
+
+Do not create a separate worktree by default. A review worktree is an explicit advanced fallback for cases where unrelated user-owned changes must remain in place or where a reviewer needs an isolated writable environment. Without a clean preflight, reviewers may compare `git diff BASE_SHA..HEAD` against files on disk that include unrelated uncommitted state, which makes the audit ambiguous.
+
 ## Disabling and re-enabling per session
 
 **Auto-review is the default. Every new session starts with auto-review on.**
@@ -102,9 +125,9 @@ Surface the trigger explicitly when escalating: "Auto-review skipped because [tr
                  │ no
                  ▼
 ┌────────────────────────────────────────┐
-│ Build review packet                    │
-│ (substitute placeholders into prompt   │
-│  template; write to                    │
+│ Preflight clean workspace              │
+│ + build review packet                  │
+│ (substitute placeholders; write to     │
 │  .sdi-review-prompt-tmp.txt)           │
 └────────────────────────────────────────┘
                  │
@@ -229,7 +252,7 @@ Rules in plain language:
 
 ## Reviewer fallback (one reviewer fails to run)
 
-If a reviewer cannot be invoked or produces unusable output (binary missing, network down, malformed output, no parseable `VERDICT:` line):
+If a reviewer cannot be invoked or produces unusable output (binary missing, network down, timeout, malformed output, no parseable `VERDICT:` line):
 
 | Situation | Action |
 |---|---|
@@ -237,6 +260,17 @@ If a reviewer cannot be invoked or produces unusable output (binary missing, net
 | Both reviewers failed | **Escalate to the user.** Surface: "Both reviewers failed: [opus reason], [codex reason]. Auto-review unavailable for this round — please review manually or fix the reviewer setup." |
 
 For attempts 2 and 3, use the configured retry reviewer. Default is Opus. If Opus is unavailable in this runtime and Codex produced the only usable attempt-1 review, Codex may be used as the degraded retry reviewer. If the configured retry reviewer fails, escalate immediately.
+
+## Reviewer timeouts
+
+Reviewer orchestration uses a wall-clock timeout so "still thinking" does not become an invisible stall.
+
+- **Default soft timeout:** 20 minutes per reviewer.
+- **Attempt 1:** start Opus and Codex in parallel. If one reviewer returns usable output and the other exceeds 20 minutes, treat the slow reviewer as timed out, continue with the surviving reviewer via reviewer fallback, and record the timeout in the round report. If both exceed 20 minutes without usable output, `ESCALATE`.
+- **Attempts 2 and 3:** if the retry reviewer exceeds 20 minutes without usable output, `ESCALATE`.
+- **Large-diff exception:** before launching review, the implementer may declare a longer timeout in the round report when the diff is unusually large. If a review is expected to need more than 45 minutes, split the round or escalate instead of silently waiting.
+
+Use the host runtime's background-process/subagent timeout mechanism when available. If the runtime cannot enforce timeouts automatically, the implementer must record start time, check elapsed wall-clock time, and apply the policy manually.
 
 ## Building the review packet
 
@@ -251,6 +285,13 @@ Before invoking either reviewer, build a self-contained prompt by substituting p
 | `[PLAN_PATH]` | path to the implementation plan, e.g. `docs/IMPLEMENTATION_PLAN_PHASE_2.md` |
 | `[PLAN_SECTIONS]` | the §s relevant to this round, e.g. "§3, §6.1, §11" |
 | `[PRIOR_REVIEW_FINDINGS]` | attempt 1+ findings that must be re-checked on retries; use "None — first attempt." for attempt 1 |
+
+Packet checklist before invocation:
+- No placeholder token remains in the final prompt.
+- `[BASE_SHA]`, `[ROUND_REPORT_PATH]`, `[PLAN_PATH]`, `[PLAN_SECTIONS]`, and `[PRIOR_REVIEW_FINDINGS]` are filled with concrete values.
+- `[ROUND_REPORT_PATH]` exists before review starts.
+- The round report includes a `Testing` section with exact commands/checks, results, counts, skips, and manual smoke evidence where applicable.
+- On retries, `[PRIOR_REVIEW_FINDINGS]` includes the union of earlier findings and the fix commit(s) that claim to address them.
 
 Write/update the round report draft at `[ROUND_REPORT_PATH]` before invoking reviewers. Then write the substituted prompt to `.sdi-review-prompt-tmp.txt` at the repo root (used as stdin to codex; the same file content is passed as the `prompt` parameter to the Opus subagent). Add this file to `.gitignore` if it isn't already (it is temporary and recreated per attempt). Delete after the round closes.
 
@@ -282,19 +323,23 @@ Prior review findings that MUST be verified this attempt: [PRIOR_REVIEW_FINDINGS
 
 Your job: find what is broken AND what the report misrepresents. Trust only what you can verify; the implementer is not adversarial but wants to ship, so they may overstate.
 
+You may run targeted read-only-compatible checks when they materially improve confidence. You are not required to rerun the whole suite; you ARE required to judge whether the implementer's reported verification evidence is sufficient for the gates.
+
 ## Steps you must perform
 
 1. Run `git diff [BASE_SHA]..HEAD` to see the full round diff.
-2. Read [ROUND_REPORT_PATH] end to end.
-3. Read [PLAN_PATH] sections [PLAN_SECTIONS] to know what this round was supposed to deliver.
-4. Read AGENTS.md for stack and conventions.
-5. For each concrete claim in the round report, verify it against the diff and the actual file system. Use git/ls/cat/grep as needed.
-6. If prior review findings are listed, verify each one was actually fixed. Do not PASS a retry until every prior finding is either fixed or explicitly escalated.
+2. Run `git status --short`. If uncommitted files outside `.sdi-review-prompt-tmp.txt` and this round's `docs/reviews/round-XN-*` artifacts are present, file a class-4 finding because the reviewed state is ambiguous.
+3. Read [ROUND_REPORT_PATH] end to end.
+4. Read [PLAN_PATH] sections [PLAN_SECTIONS] to know what this round was supposed to deliver.
+5. Read AGENTS.md for stack and conventions.
+6. For each concrete claim in the round report, verify it against the diff and the actual file system. Use git/ls/cat/grep as needed.
+7. Audit the report's Testing section: commands run, results, counts, skips, and manual smoke evidence. If the evidence is missing, vague, contradictory, or too weak for the gate, file a class-4 finding.
+8. If prior review findings are listed, verify each one was actually fixed. Do not PASS a retry until every prior finding is either fixed or explicitly escalated.
 
 ## Things you MUST actively check (beyond standard code review)
 
 A. Report-vs-reality for files. For each NEW or MODIFIED file in the round report, verify it exists in the diff. Fabricated file claims are bugs.
-B. Report-vs-reality for tests. For each test claim ("N tests pass"), verify the test file exists and contains tests matching the claim. No test file = fabricated evidence.
+B. Report-vs-reality for tests. For each test/check claim, verify the named files or commands are plausible from the repo and that counts/results/skips are specific. No test file, no command, no count, or vague "passes" evidence = class-4 finding.
 C. CSS class definitions. For every className referenced in JSX/TSX, verify the class is defined in styles/globals.css, a CSS module, tailwind.config.*, or is a built-in tailwind utility. Undefined classes are bugs.
 D. API contracts. For every fetch/POST/PUT/PATCH in client code, locate the route handler and compare request body shape vs handler validation (Zod schema). Mismatches are bugs.
 E. Optimistic UI patterns. For setState before await fetch, verify error branch reverts state. Logging only is a bug.
@@ -308,7 +353,7 @@ I. DECISIONS log. For non-obvious choices in the diff, grep DECISIONS.md for an 
 1. Internal inconsistency — report claims X, code does Y; or two parts of the code disagree.
 2. Contract mismatch — caller sends one shape, handler expects another.
 3. Missing prerequisite — code or report references a file, component, helper, hook, env var, test, or convention that doesn't exist.
-4. Vague or unverifiable claim — gate or report claim that cannot be marked ✓/✗ from evidence.
+4. Vague or unverifiable claim — gate, test/check, or report claim that cannot be marked ✓/✗ from evidence.
 5. DECISIONS-worthy choice without flag.
 6. Convention or architecture mistake.
 7. Anything else surprising or risky.
@@ -359,6 +404,7 @@ Every auto-reviewed round must include the auto-review history in its round repo
 For each attempt:
 - Attempt N — reviewers run (`opus + codex` on attempt 1; Opus retry reviewer on attempts 2-3 unless the runtime is in a documented degraded reviewer mode) and verdict (merged on attempt 1, direct on retries).
 - Per reviewer: full structured output verbatim from `docs/reviews/round-XN-attempt-N-{reviewer}.md` (findings + verdict line).
+- Runtime notes: degraded mode, timeout, or extended timeout declaration if applicable.
 - Issues found (if any) and the fix applied between attempts (with the fix commit SHA).
 
 Do not summarize ("3 attempts, eventual PASS"). The user uses the history to spot-check the reviewers' calls — omitting it defeats the purpose of the audit trail.
@@ -389,35 +435,40 @@ codex exec --ephemeral \
 
 Notes:
 - `--ephemeral` — codex doesn't persist this run as a session.
-- `--sandbox read-only` — reviewer runs read-only; the CLI still writes the final message to `--output-last-message`.
+- `--sandbox read-only` — reviewer runs read-only; the CLI still writes the final message to `--output-last-message`. Do not switch to writable sandbox just to let Codex rerun cache-writing tests; the implementer should run those checks and report evidence before review.
 - `--output-last-message <FILE>` — captures only the final agent message in the output file. Skips intermediate stdout noise (e.g., PowerShell profile errors on Windows machines that have script execution disabled).
 - `-C [REPO_ROOT]` — sets codex's working directory.
 - `- < <prompt-file>` — passes the prompt via stdin (cleaner than escaping inline arguments).
 
 Windows note: if PowerShell resolves `codex` to an npm `codex.ps1` shim and script execution is disabled, invoke from a real Bash shell as shown above, or call the `codex.exe` binary directly in the tool-specific command wrapper.
 
-The run typically takes 3–10 minutes with xhigh reasoning on a meaningful round diff. Run as a background command (your tool's mechanism for long-running shell commands) and let the user know you're waiting.
+The run typically takes 3–10 minutes with xhigh reasoning on a meaningful round diff. Run as a background command (your tool's mechanism for long-running shell commands), record start time, and apply the 20-minute reviewer timeout above.
 
 ## Parallel orchestration (attempt 1 only)
 
 On attempt 1, the implementer fires both reviewers and waits for both:
 
-1. Write/update `docs/reviews/round-XN-report.md` as the report draft for this attempt.
-2. Write the substituted prompt to `.sdi-review-prompt-tmp.txt` with `[PRIOR_REVIEW_FINDINGS] = "None — first attempt."`.
-3. Spawn the Opus subagent (Agent tool, `run_in_background: true`).
-4. Start `codex exec` as a background Bash command.
-5. Wait for both to complete (the runtime notifies on each completion).
-6. Read both output files. Parse VERDICT from each. Apply the merge table.
-7. If either reviewer failed to produce usable output, apply §"Reviewer fallback".
+1. Write/update `docs/reviews/round-XN-report.md` as the report draft for this attempt, including the Testing evidence.
+2. Run the clean-state preflight. Do not invoke reviewers if uncommitted non-artifact changes remain.
+3. Write the substituted prompt to `.sdi-review-prompt-tmp.txt` with `[PRIOR_REVIEW_FINDINGS] = "None — first attempt."`.
+4. Run the packet checklist. Do not invoke reviewers if placeholders remain or required paths/sections are missing.
+5. Spawn the Opus subagent (Agent tool, `run_in_background: true`) and record start time.
+6. Start `codex exec` as a background Bash command and record start time.
+7. Wait for both to complete, applying the 20-minute timeout policy.
+8. Read both output files. Parse VERDICT from each. Apply the merge table.
+9. If either reviewer failed to produce usable output, apply §"Reviewer fallback".
 
-On attempts 2 and 3, update the report draft and substitute `[PRIOR_REVIEW_FINDINGS]` with the union of findings from earlier attempts plus the fix commit(s) that claim to address them. Fire the configured retry reviewer (Opus by default; degraded Codex-only only when Opus is unavailable and Codex was the surviving attempt-1 reviewer). Wait, parse VERDICT, proceed per the loop.
+On attempts 2 and 3, update the report draft and substitute `[PRIOR_REVIEW_FINDINGS]` with the union of findings from earlier attempts plus the fix commit(s) that claim to address them. Run the clean-state preflight and packet checklist again before invocation. Fire the configured retry reviewer (Opus by default; degraded Codex-only only when Opus is unavailable and Codex was the surviving attempt-1 reviewer). Wait with the 20-minute timeout, parse VERDICT, proceed per the loop.
 
 After the round closes (PASS or escalation), append final auto-review history to `docs/reviews/round-XN-report.md`, delete `.sdi-review-prompt-tmp.txt` (it's gitignored and recreated per attempt anyway), and commit the round report + per-attempt output files with `round X/CN review artifacts: <verdict>`. Do NOT delete the per-attempt output files in `docs/reviews/` — those are the audit trail.
 
 ## Common pitfalls
 
 - **Vague gate criteria.** "Verify the integration tests pass" is not enough. The gate must say what counts as ✓ ("Integration test count matches plan §8 list and all pass per the runner output below"). Without that, even adversarial prompts will rubber-stamp.
+- **Thin verification evidence.** "All tests pass" without exact command, result, count, and skips is not reviewable. The reviewer should FAIL vague evidence instead of assuming the checks happened.
+- **Dirty workspace at review time.** If uncommitted non-artifact changes are present, `git diff BASE_SHA..HEAD` no longer describes the same state the reviewer sees on disk. Commit intended round changes first; escalate on unrelated/user-owned changes.
 - **Forgetting to substitute placeholders.** Neither reviewer expands `[BASE_SHA]` or `[ROUND_REPORT_PATH]` — substitute them into the prompt template before writing to disk / passing to the subagent, or the run is wasted.
+- **Waiting forever on a reviewer.** Apply the 20-minute timeout. A timed-out reviewer is unavailable for this attempt; the fallback/escalation policy exists so the loop stays mechanical.
 - **Each reviewer is a fresh subprocess with no shared context.** Build the packet to be entirely self-contained. The parent session's conversation context is invisible to both reviewers.
 - **If the diff is too large for either reviewer's context, the round was too big.** Modern models handle 100k+ tokens, but extremely large rounds may overflow. Split the round (one commit's worth of work each) and re-invoke per chunk.
 - **Treating PASS as "skip the round report".** PASS still requires the report. The user reads the report to track progress; the auto-review history is an addendum, not a replacement.

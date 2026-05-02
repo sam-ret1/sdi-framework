@@ -124,10 +124,13 @@ Once approved on the foundation, implement in rounds. A **round** is a coherent 
 
 **Per-round commit convention.** End every round with `git commit -m "round X/CN: <summary>"` (e.g. `round B/C2: callback + middleware`). Capture `BASE_SHA = git rev-parse HEAD` at the **start** of the round (this is the last commit of the previous round, or the phase-start commit for round A) and record it in the round report header. The auto-review uses BASE_SHA to compute `git diff BASE_SHA..HEAD`. Fix attempts triggered by auto-review FAIL get their own commits (`round X/CN fix N: <what>`), preserving the audit trail. Round reports and reviewer outputs live under `docs/reviews/`; keep them uncommitted while the auto-review loop is running, then commit them after PASS/escalation with `round X/CN review artifacts: <verdict>`. No squashing — the granular history is the audit.
 
+Before auto-review, `HEAD` must contain the round/fix commit being reviewed and the working tree must be clean except for `.sdi-review-prompt-tmp.txt` and this round's `docs/reviews/round-XN-*` artifacts. If unrelated or user-owned uncommitted changes are present, skip auto-review and escalate with the file list instead of reviewing an ambiguous state.
+
 At the end of each round, deliver a structured report. Read `references/round-report-template.md` for the exact format. In summary:
 
 - BASE_SHA in the report header (commit at start of round).
 - What was built (files, behavior, test counts).
+- Exact verification evidence: commands/checks run, results, counts, skips, and manual smoke evidence when applicable.
 - Decisions taken in this round (with pointers to `DECISIONS.md` entries).
 - What was **not** done and why.
 - What's next.
@@ -144,7 +147,7 @@ At user-gated checkpoints, stop and wait for explicit user go. At auto-reviewed 
 
 Foundation (Checkpoint 1), Housekeeping (Checkpoint 5), and any round that hits an always-escalate trigger (DECISIONS-worthy choice, blocker, schema migration with data-loss risk, new external dependency, security-relevant change, plan revision, PRD/ARCHITECTURE deviation) stay user-gated regardless.
 
-Each reviewer receives the same packet (diff + plan §s + gate checklist + per-gate verifiable criteria, plus active cross-file checks like CSS-class-defined and report-vs-reality) and returns a structured PASS / FAIL / ESCALATE verdict with file:line evidence per gate. **Verdict merging on attempt 1**: PASS only if both PASS; FAIL if either FAIL; ESCALATE if either ESCALATE. **Reviewer fallback**: if one reviewer fails to run, continue with the other in degraded mode; if both fail, escalate to the user. Loop cap: 3 attempts. Auto-review history is appended to the round report verbatim (both reviewers on attempt 1; one retry reviewer on attempts 2-3) so the user can spot-check.
+Each reviewer receives the same packet (diff + plan §s + gate checklist + per-gate verifiable criteria, plus active cross-file checks like CSS-class-defined and report-vs-reality) and returns a structured PASS / FAIL / ESCALATE verdict with file:line evidence per gate. Reviewers audit the implementer's verification evidence; they may run targeted read-only-compatible checks, but the implementer owns tests/checks that require writing caches, build output, snapshots, local DB state, or generated files. **Verdict merging on attempt 1**: PASS only if both PASS; FAIL if either FAIL; ESCALATE if either ESCALATE. **Reviewer fallback**: if one reviewer fails to run or times out, continue with the other in degraded mode; if both fail or time out, escalate to the user. Default reviewer timeout is 20 minutes; unusually large reviews can declare a longer timeout up front, but expected reviews over 45 minutes should be split or escalated. Loop cap: 3 attempts. Auto-review history is appended to the round report verbatim (both reviewers on attempt 1; one retry reviewer on attempts 2-3) so the user can spot-check.
 
 **Opt-out per session:** the user can disable auto-review for the rest of the session by saying "user-review for this phase", "review the next round myself", "stop auto-reviewing", or "back to user-gated". Re-enable with "auto-review again". Session-scoped — every new session starts default-on.
 
