@@ -32,13 +32,16 @@ Target length: 400–600 lines (longer for complex phases).
 
 ## 1. Scope
 
-[Brief description of what this phase produces.]
+[Brief description of what this phase produces — 2-3 sentences max.]
+
+> **In-scope items are SECTION POINTERS, not restatements.** Each bullet names a deliverable in ≤1 line and references the canonical section (e.g., "`POST /api/chat` streaming endpoint — see §3.1"). Do NOT restate shapes, contracts, status codes, or behavior here; that creates drift between §1 and §2–§9 every time a fact is updated. §1 is the table of contents, not the story.
 
 In scope:
-- [bullets]
+- `[deliverable]` — see §[N]
+- ...
 
 Out of scope for this phase:
-- [bullets — explicit deferrals]
+- [bullets — explicit deferrals; OK to be brief, no section pointer needed]
 
 ## 1.5 Runtime Dependencies to Install
 
@@ -100,6 +103,8 @@ Load only the context needed for this work item:
 
 Phase N is done when:
 
+> **Criterion format:** each criterion is a SHORT, TESTABLE invariant. Avoid long narrative criteria that restate flows from §3–§7; instead, point to the canonical section ("Per §3.1: 21 chat requests in 60s → 21st returns 429"). Narrative criteria drift the moment the underlying section is updated.
+
 1. [Testable criterion]
 2. ...
 
@@ -123,6 +128,9 @@ Skip checkpoints that don't apply (e.g. drop Checkpoint 4 if there is no UI). **
 - [ ] Today's `docs/memory/YYYY-MM-DD.md` entry mentions this checkpoint passing
 
 **Phase-specific gates (optional — list only items unique to this phase):**
+
+> **Gate format:** phase-specific gates should reference canonical sections, not restate them. Use `- [ ] Per §3.1, /api/chat exports maxDuration = 30` rather than re-narrating the requirement. Restated gates drift the moment §3.1 is revised.
+
 - [ ] [optional, e.g. "Migration 0008_billing_tables applied to local DB"]
 
 ### Checkpoint 2 — Core domain logic **(auto-review eligible)**
@@ -223,6 +231,8 @@ Record at end of phase:
 
 ## Writing tips
 
+- **Each fact has ONE canonical section.** Tool shapes in §2; contracts in §3; helper signatures in §4; UI behavior in §6; observability in §9; acceptance criteria in §10. Other sections reference by §-number, never restate. Restatement is the #1 source of cross-section drift between revisions — every duplicated fact is a copy that must be edited in sync, and adversarial review reliably catches the missed copies one round later.
+- **§1 In-scope bullets are TOC entries, not summaries.** ≤1 line each, ending in "see §[N]". Resist the urge to summarize what §2–§9 contain; the summary rots the moment §2–§9 are revised. Same rule for §10 acceptance criteria and §11 phase-specific gates.
 - **Every "in scope" bullet corresponds to something specific elsewhere in the doc.** If §3 doesn't describe an algorithm for "ingest leads", don't list it in scope.
 - **Type-specific schemas/contracts/specs (§2) should be close to production-ready.** Not final, but the structure should survive the implementation with only minor tweaks.
 - **API contracts (when applicable) should include every status code.** If your contract table has 3 rows, you're missing error cases.
@@ -250,6 +260,7 @@ Revision notes stack at the top of the doc, newest first. Never delete prior rev
 
 ## Common failure modes
 
+- **Cross-section drift.** The same fact (tool shape, error code, env var policy, dep pin) is restated in §1, §2.2, §10, §11, §13, and the kickoff prompt. When a revision updates one, the others are missed and adversarial review catches the contradictions one round later. Mitigate by following the SSOT pattern in Writing tips: each fact lives in ONE canonical section; other sections reference by §-number.
 - **Too abstract.** If the plan reads like a PRD, it's not detailed enough. Include signature formats, status codes, prompt templates, schema fragments.
 - **Too speculative.** Don't plan phases N+2 inside the Phase N plan. That's ROADMAP territory.
 - **Missing out-of-scope.** §1 "out of scope for this phase" prevents scope creep. Don't skip it.
